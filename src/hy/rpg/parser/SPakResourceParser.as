@@ -4,7 +4,7 @@ package hy.rpg.parser
 	import flash.utils.ByteArray;
 	
 	import hy.game.manager.SReferenceManager;
-	import hy.game.render.SRenderBitmap;
+	import hy.game.render.SRenderBitmapData;
 	import hy.rpg.enmu.SLoadPriorityType;
 	import hy.rpg.pak.SAnimationDecoder;
 	import hy.rpg.pak.SDirectAnimationDecoder;
@@ -161,7 +161,7 @@ package hy.rpg.parser
 		 * @return
 		 *
 		 */
-		public function getBitmapDataByFrame(frame : int) : SRenderBitmap
+		public function getBitmapDataByFrame(frame : int) : SRenderBitmapData
 		{
 			if (_decoder)
 				return _decoder.getResult(frame - 1);

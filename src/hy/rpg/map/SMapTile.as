@@ -42,10 +42,10 @@ package hy.rpg.map
 
 		public function load() : void
 		{
-				if (_parser && !_parser.isLoaded && !_parser.isLoading)
-				{
-						_parser.load();
-				}
+			if (_parser && !_parser.isLoaded && !_parser.isLoading)
+			{
+				_parser.load();
+			}
 		}
 
 		public function get isLoaded() : Boolean
@@ -54,7 +54,7 @@ package hy.rpg.map
 				return _parser.isLoaded;
 			return false;
 		}
-		
+
 		public function get isLoading() : Boolean
 		{
 			if (_parser)
@@ -81,11 +81,11 @@ package hy.rpg.map
 			_parser && _parser.clearBitmap();
 		}
 
-		public function get parser():SMapResourceParser
+		public function get parser() : SMapResourceParser
 		{
 			return _parser;
 		}
-		
+
 		public function destroy() : void
 		{
 			if (_isDisposed)

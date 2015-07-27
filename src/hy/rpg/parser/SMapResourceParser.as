@@ -42,7 +42,7 @@ package hy.rpg.parser
 			if (!_decoder.isSend)
 			{
 				_decoder.isSend = true;
-				var send_arr : Array = [_id, version, priority];
+				var send_arr : Array = [id, version, priority];
 				//SThreadEvent.dispatchEvent(SThreadEvent.LOAD_SEND, send_arr);
 			}
 		}
