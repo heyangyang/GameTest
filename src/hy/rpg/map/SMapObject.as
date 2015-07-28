@@ -29,120 +29,112 @@ package hy.rpg.map
 	public class SMapObject extends GameObject
 	{
 		/**
-		 * 地图宽度
+		 * 地图宽高 
 		 */
-		protected var _mapWidth : int;
+		protected var m_mapWidth : int;
+		protected var m_mapHeight : int;
 
 		/**
-		 * 地图宽度
+		 * 地图总列数/行数
 		 */
-		protected var _mapHeight : int;
+		protected var m_mapCols : int;
+		protected var m_mapRows : int;
 
 		/**
-		 * 地图总列数
+		 * 每个格子的宽高 
 		 */
-		protected var _mapTotalX : int;
-		/**
-		 * 地图总行数
-		 */
-		protected var _mapTotalY : int;
-
-		protected var _tileWidth : int;
-		protected var _tileHeight : int;
+		protected var m_tileWidth : int;
+		protected var m_tileHeight : int;
 
 		/**
-		 * 缓冲区列数
+		 * 缓冲区列数/行数
 		 */
-		protected var _bufferCols : int;
+		protected var m_bufferCols : int;
+		protected var m_bufferRows : int;
 		/**
-		 * 缓冲区行数
+		 * 可视区域宽高度
 		 */
-		protected var _bufferRows : int;
-		/**
-		 * 可视区域宽度
-		 */
-		protected var _viewWidth : int;
-		/**
-		 * 可视区域高度
-		 */
-		protected var _viewHeight : int;
+		protected var m_viewWidth : int;
+		protected var m_viewHeight : int;
 
 		/**
 		 * 未加载时的地图黑块
 		 */
-		private var _blackBitmapData : BitmapData;
+		private var m_blackBitmapData : BitmapData;
 
 		/**
-		 * 地图缓冲区
+		 * 容器
 		 */
-		protected var _container : IContainer;
-
-		/**
-		 * 地图名称
-		 */
-		protected var _mapName : String;
+		protected var m_container : IContainer;
 
 		/**
 		 * 用于坐标记录
 		 */
-		private var _loadTilePos : Point = new Point();
+		private var m_loadTilePos : Point = new Point();
 		/**
 		 * 地图配置文件
 		 */
-		protected var _config : XML;
-		private var _fileVersions : Dictionary;
+		protected var m_config : XML;
+		
+		/**
+		 * 地址版本信息 
+		 */
+		private var m_fileVersions : Dictionary;
 
-		//小地图，马塞克
-		protected var _smallMapBitmapData : BitmapData;
-		protected var _smallMapParser : SMapResourceParser;
-		protected var _mosaicMatrix : Matrix = new Matrix();
+		/**
+		 *  小地图
+		 */
+		protected var m_smallMapBitmapData : BitmapData;
+		protected var m_smallMapParser : SMapResourceParser;
+		protected var m_mosaicMatrix : Matrix = new Matrix();
 
 		/**
 		 * 小地图
 		 */
-		protected var _smallPreviewerMapParser : SImageResourceParser;
+		protected var m_smallPreviewerMapParser : SImageResourceParser;
 		/**
 		 * 保存加载过的地图块位图
 		 */
-		protected var _tiles : Dictionary;
-		private var _blackTitles : Dictionary;
+		protected var m_tiles : Dictionary;
+		/**
+		 * 保存未加载马赛克 
+		 */
+		private var m_blackTitles : Dictionary;
 
 		/**
 		 * 上一帧的缓冲区起始X索引
 		 */
-		private var _lastStartTileX : int;
+		private var m_lastStartTileCol : int;
 
 		/**
 		 * 上一帧的缓冲区起始Y索引
 		 */
-		private var _lastStartTileY : int;
+		private var m_lastStartTileRow : int;
 
 		/**
 		 * 上一帧的屏幕偏移X值
 		 */
-		private var _lastViewX : Number;
+		private var m_lastViewX : Number;
 
 		/**
 		 * 上一帧的屏幕偏移Y值
 		 */
-		private var _lastViewY : Number;
+		private var m_lastViewY : Number;
 
 		/**
 		 * 当前帧的缓冲区起始X索引
 		 */
-		protected var _startTileX : int;
+		protected var m_startTileCol : int;
 
 		/**
 		 * 当前帧的缓冲区起始Y索引
 		 */
-		protected var _startTileY : int;
-
-		protected var _transparent : Boolean;
+		protected var m_startTileRow : int;
 
 		/**
 		 * 缓冲区域大小
 		 */
-		private var _pretreatmentNum : int = 1;
+		private var m_pretreatmentNum : int = 1;
 
 		/**
 		 * 摄像头
@@ -153,6 +145,15 @@ package hy.rpg.map
 		 */
 		private var m_scale : Number;
 
+		/**
+		 * 地图id 
+		 */
+		private var m_mapId : String;
+		private var _onConfigComplete : Function;
+		private var _onProgress : Function;
+		private var _mapBlocks : Array;
+		private var _maxMultiDistance : int;
+		
 		public function SMapObject(min_scale : Number)
 		{
 			m_scale = min_scale;
@@ -163,26 +164,21 @@ package hy.rpg.map
 			}
 			else
 			{
-				_container = new SRenderContainer();
-				SRenderContainer(_container).mouseChildren = false;
+				m_container = new SRenderContainer();
+				SRenderContainer(m_container).mouseChildren = false;
 			}
 			m_camera = SCameraObject.getInstance();
-			_tiles = new Dictionary();
-			_blackTitles = new Dictionary();
+			m_tiles = new Dictionary();
+			m_blackTitles = new Dictionary();
 			super();
 		}
 
 		override public function registerd(priority : int = 0) : void
 		{
 			super.registerd(priority);
-			addContainer(_container);
+			addContainer(m_container);
 			removeRender(m_render);
 		}
-		private var _mapId : String;
-		private var _onConfigComplete : Function;
-		private var _onProgress : Function;
-		private var _mapBlocks : Array;
-		private var _maxMultiDistance : int;
 
 		/**
 		 * 初始化地图
@@ -194,10 +190,10 @@ package hy.rpg.map
 		public function load(mapId : String, onComplete : Function = null, onProgress : Function = null) : void
 		{
 			clear();
-			_mapId = mapId;
+			m_mapId = mapId;
 			_onConfigComplete = onComplete;
 			_onProgress = onProgress;
-			SReferenceManager.getInstance().createResource(_mapId).addNotifyCompleted(onConfigComplete).addNotifyProgress(onProgress).load();
+			SReferenceManager.getInstance().createResource(m_mapId).addNotifyCompleted(onConfigComplete).addNotifyProgress(onProgress).load();
 		}
 
 		private function onConfigComplete(res : SResource) : void
@@ -205,9 +201,9 @@ package hy.rpg.map
 			var bytes : ByteArray = res.getBinary();
 			bytes.position = 0;
 			setConfig(XML(bytes.readUTFBytes(bytes.bytesAvailable)));
-			if (_config.grid.@url)
+			if (m_config.grid.@url)
 			{
-				SReferenceManager.getInstance().createResource(_config.grid.@url, _config.grid.@version).addNotifyCompleted(onBlockComplete).addNotifyProgress(_onProgress).addNotifyIOError(onBlockError).load();
+				SReferenceManager.getInstance().createResource(m_config.grid.@url, m_config.grid.@version).addNotifyCompleted(onBlockComplete).addNotifyProgress(_onProgress).addNotifyIOError(onBlockError).load();
 			}
 			else
 			{
@@ -271,7 +267,7 @@ package hy.rpg.map
 
 		public function setConfig(xml : XML) : void
 		{
-			_config = xml;
+			m_config = xml;
 			parseMapData();
 		}
 
@@ -281,33 +277,32 @@ package hy.rpg.map
 		 */
 		protected function parseMapData() : void
 		{
-			_fileVersions = new Dictionary();
-			for each (var tileXML : XML in _config.tile)
+			m_fileVersions = new Dictionary();
+			for each (var tileXML : XML in m_config.tile)
 			{
-				_fileVersions[String(tileXML.@id)] = {url: String(tileXML.@url), version: String(tileXML.@version)};
+				m_fileVersions[String(tileXML.@id)] = {url: String(tileXML.@url), version: String(tileXML.@version)};
 			}
 
 			// 从XML文件中获取地图基本信息
-			_mapWidth = _config.@width;
-			_mapHeight = _config.@height;
+			m_mapWidth = m_config.@width;
+			m_mapHeight = m_config.@height;
 
 			//设置镜头的基本信息
 			m_camera.setScreenSize(Config.screenWidth, Config.screenHeight);
-			m_camera.setSceneSize(_mapWidth, _mapHeight);
+			m_camera.setSceneSize(m_mapWidth, m_mapHeight);
 			m_camera.updateRectangle(200, 200);
 
-			_tileWidth = Config.TILE_WIDTH;
-			_tileHeight = Config.TILE_HEIGHT;
-			_blackBitmapData = new BitmapData(_tileWidth, _tileHeight, _transparent, 0);
+			m_tileWidth = Config.TILE_WIDTH;
+			m_tileHeight = Config.TILE_HEIGHT;
+			m_blackBitmapData = new BitmapData(m_tileWidth, m_tileHeight, false, 0);
 
 			setViewSize(Config.screenWidth, Config.screenHeight);
 
-			_mapTotalX = Math.ceil(_mapWidth / _tileWidth);
-			_mapTotalY = Math.ceil(_mapHeight / _tileHeight);
+			m_mapCols = Math.ceil(m_mapWidth / m_tileWidth);
+			m_mapRows = Math.ceil(m_mapHeight / m_tileHeight);
 
-			_mapName = _config.@name;
-			loadSmallMap(_config.sm.@url, String(_config.sm.@version));
-			loadPreviewMap(_config.bm.@url);
+			loadSmallMap(m_config.sm.@url, String(m_config.sm.@version));
+			loadPreviewMap(m_config.bm.@url);
 		}
 
 		/**
@@ -319,9 +314,9 @@ package hy.rpg.map
 		{
 			if (!url)
 				return;
-			_smallMapParser = new SMapResourceParser(url, version);
-			_smallMapParser.onComplete(onSmallMapParserComplete);
-			_smallMapParser.load();
+			m_smallMapParser = new SMapResourceParser(url, version);
+			m_smallMapParser.onComplete(onSmallMapParserComplete);
+			m_smallMapParser.load();
 		}
 
 		/**
@@ -333,17 +328,14 @@ package hy.rpg.map
 		{
 			if (!url)
 				return;
-			_smallPreviewerMapParser = SReferenceManager.getInstance().createImageParser(url, SLoadPriorityType.MAP);
-			_smallPreviewerMapParser.load();
+			m_smallPreviewerMapParser = SReferenceManager.getInstance().createImageParser(url, SLoadPriorityType.MAP);
+			m_smallPreviewerMapParser.load();
 		}
 
 		private function onSmallMapParserComplete(res : SMapResourceParser) : void
 		{
-			_smallMapBitmapData = res.bitmapData;
-			_lastStartTileX = -1;
-			_lastStartTileY = -1;
-			_lastViewX = -1;
-			_lastViewY = -1;
+			m_smallMapBitmapData = res.bitmapData;
+			resetMapBuffer();
 		}
 
 		/**
@@ -354,34 +346,28 @@ package hy.rpg.map
 		 */
 		public function setViewSize(viewWidth : int, viewHeight : int) : void
 		{
-			_viewWidth = viewWidth;
-			_viewHeight = viewHeight;
+			m_viewWidth = viewWidth;
+			m_viewHeight = viewHeight;
 
-			updateBufferSize();
-			updateCamera(m_camera.sceneX, m_camera.sceneY);
+			m_bufferCols = Math.ceil(m_viewWidth / m_tileWidth);
+			m_bufferRows = Math.ceil(m_viewHeight / m_tileHeight);
+			
+			resetMapBuffer();
 		}
 
-		private function updateBufferSize() : void
+		private function resetMapBuffer():void
 		{
-			_bufferCols = Math.ceil(_viewWidth / _tileWidth);
-			_bufferRows = Math.ceil(_viewHeight / _tileHeight);
-
-			if (_bufferCols > 0 && _bufferRows > 0)
-			{
-				clearAllBuffer();
-
-				_lastStartTileX = -1;
-				_lastStartTileY = -1;
-				_lastViewX = -1;
-				_lastViewY = -1;
-			}
+			m_lastStartTileCol = -1;
+			m_lastStartTileRow = -1;
+			m_lastViewX = -1;
+			m_lastViewY = -1;
 		}
-
+		
 		protected function onTileResourceParserComplete(res : SMapResourceParser) : void
 		{
 			var tileId : String = res.id.split("/").pop().split(".").shift();
 			var loadTilePos : Point = decoderTileId(tileId);
-			var blackBmd : IBitmap = _blackTitles[tileId];
+			var blackBmd : IBitmap = m_blackTitles[tileId];
 			blackBmd && blackBmd.removeChild();
 			if (res.bitmap)
 			{
@@ -399,16 +385,16 @@ package hy.rpg.map
 		 */
 		protected function clearTile(tileX : int, tileY : int) : void
 		{
-			if (tileX < 0 || tileY < 0 || tileX > _mapTotalX || tileY > _mapTotalY)
+			if (tileX < 0 || tileY < 0 || tileX > m_mapCols || tileY > m_mapRows)
 			{
 				SDebug.warning(this, "地图删除区域不在范围内！");
 				return;
 			}
 			var tileId : String = encoderTileId(tileX, tileY);
-			var tile : SMapTile = _tiles[tileId];
+			var tile : SMapTile = m_tiles[tileId];
 			if (!tile)
 				return;
-			delete _tiles[tileId];
+			delete m_tiles[tileId];
 			tile.destroy();
 		}
 
@@ -432,30 +418,30 @@ package hy.rpg.map
 		 */
 		protected function decoderTileId(tileId : String) : Point
 		{
-			_loadTilePos.x = SCommonUtil.getXFromInt(parseInt(tileId, 36)) - 1;
-			_loadTilePos.y = SCommonUtil.getYFromInt(parseInt(tileId, 36)) - 1;
-			return _loadTilePos;
+			m_loadTilePos.x = SCommonUtil.getXFromInt(parseInt(tileId, 36)) - 1;
+			m_loadTilePos.y = SCommonUtil.getYFromInt(parseInt(tileId, 36)) - 1;
+			return m_loadTilePos;
 		}
 
 		protected function createMapTile(tileX : int, tileY : int) : Boolean
 		{
-			var startX : int = _startTileX - _pretreatmentNum;
-			var endX : int = _startTileX + _bufferCols + _pretreatmentNum;
-			var startY : int = _startTileY - _pretreatmentNum;
-			var endY : int = _startTileY + _bufferRows + _pretreatmentNum;
+			var startX : int = m_startTileCol - m_pretreatmentNum;
+			var endX : int = m_startTileCol + m_bufferCols + m_pretreatmentNum;
+			var startY : int = m_startTileRow - m_pretreatmentNum;
+			var endY : int = m_startTileRow + m_bufferRows + m_pretreatmentNum;
 
-			if (startX >= -_pretreatmentNum && endX >= -_pretreatmentNum && tileX >= startX && tileX <= endX && startY >= -_pretreatmentNum && endY >= -_pretreatmentNum && tileY >= startY && tileY <= endY)
+			if (startX >= -m_pretreatmentNum && endX >= -m_pretreatmentNum && tileX >= startX && tileX <= endX && startY >= -m_pretreatmentNum && endY >= -m_pretreatmentNum && tileY >= startY && tileY <= endY)
 			{
 				var tileId : String = encoderTileId(tileX, tileY);
-				var tile : SMapTile = _tiles[tileId];
+				var tile : SMapTile = m_tiles[tileId];
 				if (!tile)
 				{
 					var resId : String = encoderTileId(tileX, tileY);
-					var data : Object = _fileVersions[resId];
+					var data : Object = m_fileVersions[resId];
 					if (data)
 					{
-						tile = new SMapTile(SMapResourceParser, _mapName + tileId, data.url, SLoadPriorityType.MAP, data.version);
-						_tiles[tileId] = tile;
+						tile = new SMapTile(SMapResourceParser, m_mapId + tileId, data.url, SLoadPriorityType.MAP, data.version);
+						m_tiles[tileId] = tile;
 					}
 				}
 				else if (tile.isLoaded)
@@ -497,10 +483,10 @@ package hy.rpg.map
 		protected function drawTileBitmapData(tileX : int, tileY : int) : void
 		{
 			var tileId : String = encoderTileId(tileX, tileY);
-			var tile : SMapTile = _tiles[tileId];
+			var tile : SMapTile = m_tiles[tileId];
 			if (!tile || !tile.isLoaded)
 			{
-				var blackBmd : IBitmap = _blackTitles[tileId];
+				var blackBmd : IBitmap = m_blackTitles[tileId];
 				if (blackBmd == null)
 				{
 					createMosaicTile(tileX, tileY);
@@ -510,8 +496,8 @@ package hy.rpg.map
 						//blackBmd.blendMode = BlendMode.NONE;
 					}
 					else
-						blackBmd = new SRenderBitmap(_blackBitmapData.clone());
-					_blackTitles[tileId] = blackBmd;
+						blackBmd = new SRenderBitmap(m_blackBitmapData.clone());
+					m_blackTitles[tileId] = blackBmd;
 				}
 				drawTile(blackBmd, tileX, tileY);
 				createTileResourceParser(tileX, tileY);
@@ -524,15 +510,15 @@ package hy.rpg.map
 
 		private function createTileResourceParser(tileX : int, tileY : int) : void
 		{
-			var startX : int = _startTileX - _pretreatmentNum;
-			var endX : int = _startTileX + _bufferCols + _pretreatmentNum;
-			var startY : int = _startTileY - _pretreatmentNum;
-			var endY : int = _startTileY + _bufferRows + _pretreatmentNum;
+			var startX : int = m_startTileCol - m_pretreatmentNum;
+			var endX : int = m_startTileCol + m_bufferCols + m_pretreatmentNum;
+			var startY : int = m_startTileRow - m_pretreatmentNum;
+			var endY : int = m_startTileRow + m_bufferRows + m_pretreatmentNum;
 
-			if (startX >= -_pretreatmentNum && endX >= -_pretreatmentNum && tileX >= startX && tileX <= endX && startY >= -_pretreatmentNum && endY >= -_pretreatmentNum && tileY >= startY && tileY <= endY)
+			if (startX >= -m_pretreatmentNum && endX >= -m_pretreatmentNum && tileX >= startX && tileX <= endX && startY >= -m_pretreatmentNum && endY >= -m_pretreatmentNum && tileY >= startY && tileY <= endY)
 			{
 				var tileId : String = encoderTileId(tileX, tileY);
-				var tile : SMapTile = _tiles[tileId];
+				var tile : SMapTile = m_tiles[tileId];
 				if (tile)
 				{
 					tile.onComplete(onTileResourceParserComplete);
@@ -553,24 +539,24 @@ package hy.rpg.map
 		 */
 		private function createMosaicTile(tileX : int, tileY : int) : void
 		{
-			if (!_smallMapBitmapData)
+			if (!m_smallMapBitmapData)
 				return;
-			var tx : Number = (tileX * _tileWidth) * m_scale;
-			var ty : Number = (tileY * _tileHeight) * m_scale;
+			var tx : Number = (tileX * m_tileWidth) * m_scale;
+			var ty : Number = (tileY * m_tileHeight) * m_scale;
 			var scale : Number = m_scale * 100;
-			_mosaicMatrix.identity();
-			_mosaicMatrix.translate(-tx, -ty);
-			_mosaicMatrix.scale(scale, scale);
-			_blackBitmapData.draw(_smallMapBitmapData, _mosaicMatrix);
+			m_mosaicMatrix.identity();
+			m_mosaicMatrix.translate(-tx, -ty);
+			m_mosaicMatrix.scale(scale, scale);
+			m_blackBitmapData.draw(m_smallMapBitmapData, m_mosaicMatrix);
 		}
 
 		private function drawTile(bitmap : IBitmap, tileX : int, tileY : int) : void
 		{
 			if (bitmap)
 			{
-				bitmap.x = tileX * _tileWidth;
-				bitmap.y = tileY * _tileHeight;
-				_container.addGameChild(bitmap);
+				bitmap.x = tileX * m_tileWidth;
+				bitmap.y = tileY * m_tileHeight;
+				m_container.addGameChild(bitmap);
 			}
 		}
 
@@ -581,7 +567,7 @@ package hy.rpg.map
 		protected function refreshBuffer() : void
 		{
 			//如果是滚动刷新缓冲区
-			if (_lastStartTileX == -1 && _lastStartTileY == -1) //填充全部
+			if (m_lastStartTileCol == -1 && m_lastStartTileRow == -1) //填充全部
 			{
 				clearAllBuffer();
 			}
@@ -590,14 +576,14 @@ package hy.rpg.map
 			var totalTileNum : int = 0;
 			var colmnsCount : int;
 			//将缓冲区对应的地图区块读入缓冲区中
-			for (var rowCount : int = 0; rowCount < _bufferRows; rowCount++)
+			for (var rowCount : int = 0; rowCount < m_bufferRows; rowCount++)
 			{
-				for (colmnsCount = 0; colmnsCount < _bufferCols; colmnsCount++)
+				for (colmnsCount = 0; colmnsCount < m_bufferCols; colmnsCount++)
 				{
 					tileNeedFefresh = checkIsNeedFefreshBuffer(rowCount, colmnsCount);
 					if (tileNeedFefresh)
 					{
-						copyTileBitmapData(colmnsCount + _startTileX, rowCount + _startTileY);
+						copyTileBitmapData(colmnsCount + m_startTileCol, rowCount + m_startTileRow);
 						continue;
 					}
 					clearBuffer(colmnsCount, rowCount);
@@ -613,36 +599,36 @@ package hy.rpg.map
 		public function checkIsNeedFefreshBuffer(rowCount : int, colmnsCount : int) : Boolean
 		{
 			//如果是第一次构建缓冲区
-			if ((_lastStartTileX == -1 && _lastStartTileY == -1))
+			if ((m_lastStartTileCol == -1 && m_lastStartTileRow == -1))
 			{
 				return true;
 			}
 			//如果是滚动刷新缓冲区
-			if (_startTileX - _lastStartTileX > 0)
+			if (m_startTileCol - m_lastStartTileCol > 0)
 			{
-				if (colmnsCount + (_startTileX - _lastStartTileX) >= _bufferCols)
+				if (colmnsCount + (m_startTileCol - m_lastStartTileCol) >= m_bufferCols)
 				{
 					return true;
 				}
 			}
-			else if (_startTileX - _lastStartTileX < 0)
+			else if (m_startTileCol - m_lastStartTileCol < 0)
 			{
-				if (colmnsCount < _lastStartTileX - _startTileX)
+				if (colmnsCount < m_lastStartTileCol - m_startTileCol)
 				{
 					return true;
 				}
 			}
 
-			if (_startTileY - _lastStartTileY > 0)
+			if (m_startTileRow - m_lastStartTileRow > 0)
 			{
-				if (rowCount + (_startTileY - _lastStartTileY) >= _bufferRows)
+				if (rowCount + (m_startTileRow - m_lastStartTileRow) >= m_bufferRows)
 				{
 					return true;
 				}
 			}
-			else if (_startTileY - _lastStartTileY < 0)
+			else if (m_startTileRow - m_lastStartTileRow < 0)
 			{
-				if (rowCount < _lastStartTileY - _startTileY)
+				if (rowCount < m_lastStartTileRow - m_startTileRow)
 				{
 					return true;
 				}
@@ -654,68 +640,68 @@ package hy.rpg.map
 		{
 			//清除不在缓冲区中的地图区块位图
 			//清除缓冲区上方一排
-			if (rowCount == 0 && _startTileY > 0)
+			if (rowCount == 0 && m_startTileRow > 0)
 			{
-				clearTile(colmnsCount + _startTileX, rowCount + _startTileY - _pretreatmentNum);
-				if (_startTileX > 0 && colmnsCount == 0)
+				clearTile(colmnsCount + m_startTileCol, rowCount + m_startTileRow - m_pretreatmentNum);
+				if (m_startTileCol > 0 && colmnsCount == 0)
 				{
-					clearTile(colmnsCount + _startTileX - _pretreatmentNum, rowCount + _startTileY - _pretreatmentNum);
+					clearTile(colmnsCount + m_startTileCol - m_pretreatmentNum, rowCount + m_startTileRow - m_pretreatmentNum);
 				}
-				if (_startTileX < _mapTotalX - _bufferCols && colmnsCount == _bufferCols - _pretreatmentNum)
+				if (m_startTileCol < m_mapCols - m_bufferCols && colmnsCount == m_bufferCols - m_pretreatmentNum)
 				{
-					clearTile(colmnsCount + _startTileX + _pretreatmentNum, rowCount + _startTileY - _pretreatmentNum);
+					clearTile(colmnsCount + m_startTileCol + m_pretreatmentNum, rowCount + m_startTileRow - m_pretreatmentNum);
 				}
 			}
 			//清除缓冲区下方一排
-			if (rowCount == _bufferRows - _pretreatmentNum && _startTileY < _mapTotalY - _bufferRows)
+			if (rowCount == m_bufferRows - m_pretreatmentNum && m_startTileRow < m_mapRows - m_bufferRows)
 			{
-				clearTile(colmnsCount + _startTileX, rowCount + _startTileY + _pretreatmentNum);
-				if (_startTileX > 0 && colmnsCount == 0)
+				clearTile(colmnsCount + m_startTileCol, rowCount + m_startTileRow + m_pretreatmentNum);
+				if (m_startTileCol > 0 && colmnsCount == 0)
 				{
-					clearTile(colmnsCount + _startTileX - _pretreatmentNum, rowCount + _startTileY + _pretreatmentNum);
+					clearTile(colmnsCount + m_startTileCol - m_pretreatmentNum, rowCount + m_startTileRow + m_pretreatmentNum);
 				}
-				if (_startTileX < _mapTotalX - _bufferCols && colmnsCount == _bufferCols - _pretreatmentNum)
+				if (m_startTileCol < m_mapCols - m_bufferCols && colmnsCount == m_bufferCols - m_pretreatmentNum)
 				{
-					clearTile(colmnsCount + _startTileX + _pretreatmentNum, rowCount + _startTileY - _pretreatmentNum);
+					clearTile(colmnsCount + m_startTileCol + m_pretreatmentNum, rowCount + m_startTileRow - m_pretreatmentNum);
 				}
 			}
 			//清除缓冲区左方一排
-			if (colmnsCount == 0 && _startTileX > 0)
+			if (colmnsCount == 0 && m_startTileCol > 0)
 			{
-				clearTile(colmnsCount + _startTileX - _pretreatmentNum, rowCount + _startTileY);
+				clearTile(colmnsCount + m_startTileCol - m_pretreatmentNum, rowCount + m_startTileRow);
 			}
 			//清除缓冲区右方一排
-			if (colmnsCount == _bufferCols - _pretreatmentNum && _startTileX < _mapTotalX - _bufferCols)
+			if (colmnsCount == m_bufferCols - m_pretreatmentNum && m_startTileCol < m_mapCols - m_bufferCols)
 			{
-				clearTile(colmnsCount + _startTileX + _pretreatmentNum, rowCount + _startTileY);
+				clearTile(colmnsCount + m_startTileCol + m_pretreatmentNum, rowCount + m_startTileRow);
 			}
 		}
 
 
 		private function clearAllTiles() : void
 		{
-			for (var tileId : String in _tiles.dic)
+			for (var tileId : String in m_tiles.dic)
 			{
-				var tile : SMapTile = _tiles.getValue(tileId);
+				var tile : SMapTile = m_tiles.getValue(tileId);
 				if (tile)
 				{
 					tile.destroy();
-					_tiles.deleteValue(tileId);
+					m_tiles.deleteValue(tileId);
 				}
 			}
 
-			for each (var bit : IBitmap in _blackTitles)
+			for each (var bit : IBitmap in m_blackTitles)
 			{
 				bit.dispose();
 			}
-			_blackTitles = new Dictionary();
+			m_blackTitles = new Dictionary();
 		}
 
 		private function clearAllBuffer() : void
 		{
-			for (var i : int = _container.numChildren - 1; i >= 0; i--)
+			for (var i : int = m_container.numChildren - 1; i >= 0; i--)
 			{
-				_container.removeGameChildAt(i);
+				m_container.removeGameChildAt(i);
 			}
 		}
 
@@ -728,37 +714,37 @@ package hy.rpg.map
 		public function updateCamera(viewX : int, viewY : int) : void
 		{
 			var isRefreshScreen : Boolean = true; //是否需要刷新屏幕
-			if (!_smallMapBitmapData)
+			if (!m_smallMapBitmapData)
 				return;
-			if (viewX == _lastViewX && viewY == _lastViewY)
+			if (viewX == m_lastViewX && viewY == m_lastViewY)
 			{
 				isRefreshScreen = false;
 				return;
 			}
 
-			_lastViewX = viewX;
-			_lastViewY = viewY;
+			m_lastViewX = viewX;
+			m_lastViewY = viewY;
 
 			if (isRefreshScreen)
 			{
 				// 计算出缓冲区开始的区块索引
-				_startTileX = int(viewX / _tileWidth);
-				_startTileY = int(viewY / _tileHeight);
+				m_startTileCol = int(viewX / m_tileWidth);
+				m_startTileRow = int(viewY / m_tileHeight);
 
 				var isRefreshBuffer : Boolean = true; //是否需要刷新缓存
-				if (_startTileX == _lastStartTileX && _startTileY == _lastStartTileY)
+				if (m_startTileCol == m_lastStartTileCol && m_startTileRow == m_lastStartTileRow)
 					isRefreshBuffer = false;
 
-				_container.x = -viewX;
-				_container.y = -viewY;
+				m_container.x = -viewX;
+				m_container.y = -viewY;
 				// 加载地图区块到缓冲区中
 				if (isRefreshBuffer)
 				{
 					refreshBuffer();
 				}
 
-				_lastStartTileX = _startTileX;
-				_lastStartTileY = _startTileY;
+				m_lastStartTileCol = m_startTileCol;
+				m_lastStartTileRow = m_startTileRow;
 			}
 		}
 
@@ -767,31 +753,26 @@ package hy.rpg.map
 			clearAllBuffer();
 			clearAllTiles();
 
-			if (_smallMapParser)
+			m_smallMapParser = null;
+
+			if (m_smallPreviewerMapParser)
 			{
-				_smallMapParser.release();
-				_smallMapParser = null;
+				m_smallPreviewerMapParser.release();
+				m_smallPreviewerMapParser = null;
 			}
 
-			if (_smallPreviewerMapParser)
+			if (m_smallMapBitmapData)
 			{
-				_smallPreviewerMapParser.release();
-				_smallPreviewerMapParser = null;
+				m_smallMapBitmapData.dispose();
+				m_smallMapBitmapData = null;
 			}
 
-			if (_smallMapBitmapData)
-			{
-				_smallMapBitmapData.dispose();
-				_smallMapBitmapData = null;
-			}
-
-			_transparent = false;
-			_lastStartTileX = -1;
-			_lastStartTileY = -1;
-			_lastViewX = -1;
-			_lastViewY = -1;
-			_config = null;
-			_fileVersions = null;
+			m_lastStartTileCol = -1;
+			m_lastStartTileRow = -1;
+			m_lastViewX = -1;
+			m_lastViewY = -1;
+			m_config = null;
+			m_fileVersions = null;
 		}
 
 		override public function destroy() : void
@@ -800,16 +781,16 @@ package hy.rpg.map
 				return;
 
 			clear();
-			if (_container)
+			if (m_container)
 			{
 				clearAllBuffer();
-				_container = null;
+				m_container = null;
 			}
 
-			if (_blackBitmapData)
+			if (m_blackBitmapData)
 			{
-				_blackBitmapData.dispose();
-				_blackBitmapData = null;
+				m_blackBitmapData.dispose();
+				m_blackBitmapData = null;
 			}
 
 			super.destroy();
