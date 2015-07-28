@@ -19,7 +19,7 @@ package hy.rpg.parser
 		protected var m_resource : SResource;
 
 		private var m_ioErrorFuns : Vector.<Function>;
-		private var m_completeFuns :  Vector.<Function>;
+		private var m_completeFuns : Vector.<Function>;
 
 		/**
 		 * 创建一个资源解析器
@@ -37,53 +37,53 @@ package hy.rpg.parser
 		}
 
 		/**
-		 * 开始加载 
-		 * 
+		 * 开始加载
+		 *
 		 */
 		public function load() : void
 		{
-			if(m_resource)
+			if (m_resource)
 				return;
-			
-			m_resource = SReferenceManager.getInstance().createResource(m_id,m_version);
-			
+
+			m_resource = SReferenceManager.getInstance().createResource(m_id, m_version);
+
 			if (m_resource.isLoaded)
 			{
 				onResourceLoaded(m_resource);
 			}
-			else if(!m_resource.isLoading)
+			else if (!m_resource.isLoading)
 			{
 				m_resource.addNotifyCompleted(onResourceLoaded).addNotifyIOError(onResourceIOError).priority(m_priority).load();
 			}
 		}
 
 		/**
-		 * 加载完成 
+		 * 加载完成
 		 * @param res
-		 * 
+		 *
 		 */
 		private function onResourceLoaded(res : SResource) : void
 		{
 			if (m_resource)
 			{
-				parse(m_resource.data);
+				parse(m_resource.getBinary());
 			}
 		}
 
 		/**
-		 * 加载失败 
+		 * 加载失败
 		 * @param res
-		 * 
+		 *
 		 */
 		private function onResourceIOError(res : SResource) : void
 		{
 			invokeNotifyByArray(m_ioErrorFuns);
 		}
-		
+
 		public function onIOError(fun : Function) : SResourceParser
 		{
 			if (!m_ioErrorFuns)
-				m_ioErrorFuns =  new Vector.<Function>();
+				m_ioErrorFuns = new Vector.<Function>();
 			if (m_ioErrorFuns && m_ioErrorFuns.indexOf(fun) == -1)
 				m_ioErrorFuns.push(fun);
 			return this;
@@ -92,16 +92,16 @@ package hy.rpg.parser
 		public function onComplete(fun : Function) : SResourceParser
 		{
 			if (!m_completeFuns)
-				m_completeFuns =new Vector.<Function>();
+				m_completeFuns = new Vector.<Function>();
 			if (m_completeFuns && m_completeFuns.indexOf(fun) == -1)
 				m_completeFuns.push(fun);
 			return this;
 		}
-		
+
 		/**
-		 * 加载完成后解析数据 
+		 * 加载完成后解析数据
 		 * @param bytes
-		 * 
+		 *
 		 */
 		protected function parse(bytes : ByteArray) : void
 		{
@@ -109,12 +109,12 @@ package hy.rpg.parser
 
 
 		/**
-		 * 解析完成后 
-		 * 
+		 * 解析完成后
+		 *
 		 */
 		protected function parseCompleted() : void
 		{
-			onResourceIOError(null);
+			invokeNotifyByArray(m_completeFuns);
 		}
 
 		private function cleanNotify() : void
@@ -143,46 +143,46 @@ package hy.rpg.parser
 		}
 
 		/**
-		 * 加载id 
-		 * @return 
-		 * 
+		 * 加载id
+		 * @return
+		 *
 		 */
 		public function get id() : String
 		{
 			return m_id;
 		}
-		
+
 		public function get version() : String
 		{
 			return m_version;
 		}
-		
+
 		public function get priority() : int
 		{
 			return m_priority;
 		}
 
 		/**
-		 * 加载完成 
-		 * @return 
-		 * 
+		 * 加载完成
+		 * @return
+		 *
 		 */
 		public function get isLoaded() : Boolean
 		{
-			if(m_resource)
+			if (m_resource)
 				return m_resource.isLoaded;
 			return false;
 		}
 
 
 		/**
-		 * 正在加载 
-		 * @return 
-		 * 
+		 * 正在加载
+		 * @return
+		 *
 		 */
 		public function get isLoading() : Boolean
 		{
-			if(m_resource)
+			if (m_resource)
 				return m_resource.isLoading;
 			return false;
 		}

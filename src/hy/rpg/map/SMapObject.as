@@ -3,20 +3,23 @@ package hy.rpg.map
 	import flash.display.BitmapData;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
+	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
-
+	
 	import hy.game.cfg.Config;
 	import hy.game.core.GameObject;
-	import hy.game.core.SCamera;
+	import hy.game.core.SCameraObject;
 	import hy.game.core.interfaces.IBitmap;
 	import hy.game.core.interfaces.IContainer;
 	import hy.game.manager.SReferenceManager;
 	import hy.game.render.SRenderBitmap;
 	import hy.game.render.SRenderContainer;
+	import hy.game.resources.SResource;
 	import hy.game.utils.SDebug;
 	import hy.rpg.enmu.SLoadPriorityType;
 	import hy.rpg.parser.SImageResourceParser;
 	import hy.rpg.parser.SMapResourceParser;
+	import hy.rpg.seek.SRoadSeeker;
 	import hy.rpg.utils.SCommonUtil;
 
 	/**
@@ -144,7 +147,7 @@ package hy.rpg.map
 		/**
 		 * 摄像头
 		 */
-		private var m_camera : SCamera;
+		private var m_camera : SCameraObject;
 		/**
 		 * 小地图缩放
 		 */
@@ -163,12 +166,108 @@ package hy.rpg.map
 				_container = new SRenderContainer();
 				SRenderContainer(_container).mouseChildren = false;
 			}
-			m_camera = SCamera.getInstance();
+			m_camera = SCameraObject.getInstance();
 			_tiles = new Dictionary();
 			_blackTitles = new Dictionary();
 			super();
 		}
 
+		override public function registerd(priority : int = 0) : void
+		{
+			super.registerd(priority);
+			addContainer(_container);
+			removeRender(m_render);
+		}
+		private var _mapId : String;
+		private var _onConfigComplete : Function;
+		private var _onProgress : Function;
+		private var _mapBlocks : Array;
+		private var _maxMultiDistance : int;
+
+		/**
+		 * 初始化地图
+		 * @param id
+		 * @param onComplete
+		 * @param inited
+		 *
+		 */
+		public function load(mapId : String, onComplete : Function = null, onProgress : Function = null) : void
+		{
+			clear();
+			_mapId = mapId;
+			_onConfigComplete = onComplete;
+			_onProgress = onProgress;
+			SReferenceManager.getInstance().createResource(_mapId).addNotifyCompleted(onConfigComplete).addNotifyProgress(onProgress).load();
+		}
+
+		private function onConfigComplete(res : SResource) : void
+		{
+			var bytes : ByteArray = res.getBinary();
+			bytes.position = 0;
+			setConfig(XML(bytes.readUTFBytes(bytes.bytesAvailable)));
+			if (_config.grid.@url)
+			{
+				SReferenceManager.getInstance().createResource(_config.grid.@url, _config.grid.@version).addNotifyCompleted(onBlockComplete).addNotifyProgress(_onProgress).addNotifyIOError(onBlockError).load();
+			}
+			else
+			{
+				updateBlocks();
+				if (_onConfigComplete != null)
+					_onConfigComplete();
+				_onConfigComplete = null;
+			}
+		}
+
+		private function onBlockComplete(res : SResource) : void
+		{
+			var bytes : ByteArray = res.getBinary();
+			bytes.position = 0;
+			var mapBlocks : Array = bytes.readObject() as Array;
+			if (!mapBlocks || mapBlocks.length == 0 || mapBlocks[0].length == 0)
+			{
+				SDebug.error(this, "地图数据出现mapBlocks=" + mapBlocks ? mapBlocks.toString() : 'null');
+			}
+			updateBlocks(mapBlocks);
+
+			if (_onConfigComplete != null)
+				_onConfigComplete();
+			_onProgress = null;
+			_onConfigComplete = null;
+		}
+
+		private function onBlockError(res : SResource) : void
+		{
+			updateBlocks();
+			if (_onConfigComplete != null)
+				_onConfigComplete();
+			_onConfigComplete = null;
+		}
+
+		public function updateBlocks(mapBlocks : Array = null) : void
+		{
+			if (mapBlocks)
+			{
+				_mapBlocks = mapBlocks;
+				if (_maxMultiDistance > 1)
+				{
+					var multiBlocks : Array = [];
+					var blockColumsLen : int = _mapBlocks.length;
+					var multiColumsLen : int = blockColumsLen * _maxMultiDistance;
+					var blockRowsLen : int = _mapBlocks[0].length;
+					for (var i : int = 0; i < multiColumsLen; i++)
+					{
+						var data : Array = [];
+						multiBlocks.push(data);
+						for (var j : int = 0; j < blockRowsLen; j++)
+						{
+							data.push(_mapBlocks[i % blockColumsLen][j]);
+						}
+					}
+					_mapBlocks = multiBlocks;
+				}
+				SRoadSeeker.getInstance().init(_mapBlocks);
+			}
+		}
 
 		public function setConfig(xml : XML) : void
 		{
@@ -197,10 +296,11 @@ package hy.rpg.map
 			m_camera.setSceneSize(_mapWidth, _mapHeight);
 			m_camera.updateRectangle(200, 200);
 
-			setViewSize(Config.screenWidth, Config.screenHeight);
-
 			_tileWidth = Config.TILE_WIDTH;
 			_tileHeight = Config.TILE_HEIGHT;
+			_blackBitmapData = new BitmapData(_tileWidth, _tileHeight, _transparent, 0);
+
+			setViewSize(Config.screenWidth, Config.screenHeight);
 
 			_mapTotalX = Math.ceil(_mapWidth / _tileWidth);
 			_mapTotalY = Math.ceil(_mapHeight / _tileHeight);
@@ -208,12 +308,6 @@ package hy.rpg.map
 			_mapName = _config.@name;
 			loadSmallMap(_config.sm.@url, String(_config.sm.@version));
 			loadPreviewMap(_config.bm.@url);
-		}
-
-		protected function initMapData() : void
-		{
-			_blackBitmapData = new BitmapData(_tileWidth, _tileHeight, _transparent, 0);
-			updateBufferSize();
 		}
 
 		/**
@@ -250,7 +344,6 @@ package hy.rpg.map
 			_lastStartTileY = -1;
 			_lastViewX = -1;
 			_lastViewY = -1;
-			refreshBuffer();
 		}
 
 		/**
@@ -265,7 +358,7 @@ package hy.rpg.map
 			_viewHeight = viewHeight;
 
 			updateBufferSize();
-			updateCamera();
+			updateCamera(m_camera.sceneX, m_camera.sceneY);
 		}
 
 		private function updateBufferSize() : void
@@ -275,7 +368,7 @@ package hy.rpg.map
 
 			if (_bufferCols > 0 && _bufferRows > 0)
 			{
-				clearBuffer();
+				clearAllBuffer();
 
 				_lastStartTileX = -1;
 				_lastStartTileY = -1;
@@ -286,13 +379,13 @@ package hy.rpg.map
 
 		protected function onTileResourceParserComplete(res : SMapResourceParser) : void
 		{
-			var loadTilePos : Point = decoderTileId(res.id);
-			var blackBmd : IBitmap = _blackTitles[res.id];
+			var tileId : String = res.id.split("/").pop().split(".").shift();
+			var loadTilePos : Point = decoderTileId(tileId);
+			var blackBmd : IBitmap = _blackTitles[tileId];
 			blackBmd && blackBmd.removeChild();
-			var bd : IBitmap = res.bitmap;
-			if (bd)
+			if (res.bitmap)
 			{
-				drawTile(bd, loadTilePos.x, loadTilePos.y);
+				drawTile(res.bitmap, loadTilePos.x, loadTilePos.y);
 				return;
 			}
 			SDebug.warning(this, "地图块数据为空！");
@@ -361,9 +454,7 @@ package hy.rpg.map
 					var data : Object = _fileVersions[resId];
 					if (data)
 					{
-						var tileUrl : String = data.url;
-						var version : String = data.version;
-						tile = new SMapTile(SMapResourceParser, _mapName + tileId, resId, tileUrl, SLoadPriorityType.MAP, version);
+						tile = new SMapTile(SMapResourceParser, _mapName + tileId, data.url, SLoadPriorityType.MAP, data.version);
 						_tiles[tileId] = tile;
 					}
 				}
@@ -397,9 +488,7 @@ package hy.rpg.map
 		 */
 		protected function copyTileBitmapData(tileX : int, tileY : int) : void
 		{
-			var created : Boolean = createMapTile(tileX, tileY);
-
-			if (created)
+			if (createMapTile(tileX, tileY))
 			{
 				drawTileBitmapData(tileX, tileY);
 			}
@@ -486,14 +575,161 @@ package hy.rpg.map
 		}
 
 		/**
-		 * 设置焦点
-		 * @param tx
-		 * @param ty
+		 * 刷新缓冲区
 		 *
 		 */
-		public function focus(viewX : Number, viewY : Number) : void
+		protected function refreshBuffer() : void
+		{
+			//如果是滚动刷新缓冲区
+			if (_lastStartTileX == -1 && _lastStartTileY == -1) //填充全部
+			{
+				clearAllBuffer();
+			}
+
+			var tileNeedFefresh : Boolean = false;
+			var totalTileNum : int = 0;
+			var colmnsCount : int;
+			//将缓冲区对应的地图区块读入缓冲区中
+			for (var rowCount : int = 0; rowCount < _bufferRows; rowCount++)
+			{
+				for (colmnsCount = 0; colmnsCount < _bufferCols; colmnsCount++)
+				{
+					tileNeedFefresh = checkIsNeedFefreshBuffer(rowCount, colmnsCount);
+					if (tileNeedFefresh)
+					{
+						copyTileBitmapData(colmnsCount + _startTileX, rowCount + _startTileY);
+						continue;
+					}
+					clearBuffer(colmnsCount, rowCount);
+				}
+			}
+		}
+
+		/**
+		 *检测是否需要刷新缓冲区域
+		 * @return
+		 *
+		 */
+		public function checkIsNeedFefreshBuffer(rowCount : int, colmnsCount : int) : Boolean
+		{
+			//如果是第一次构建缓冲区
+			if ((_lastStartTileX == -1 && _lastStartTileY == -1))
+			{
+				return true;
+			}
+			//如果是滚动刷新缓冲区
+			if (_startTileX - _lastStartTileX > 0)
+			{
+				if (colmnsCount + (_startTileX - _lastStartTileX) >= _bufferCols)
+				{
+					return true;
+				}
+			}
+			else if (_startTileX - _lastStartTileX < 0)
+			{
+				if (colmnsCount < _lastStartTileX - _startTileX)
+				{
+					return true;
+				}
+			}
+
+			if (_startTileY - _lastStartTileY > 0)
+			{
+				if (rowCount + (_startTileY - _lastStartTileY) >= _bufferRows)
+				{
+					return true;
+				}
+			}
+			else if (_startTileY - _lastStartTileY < 0)
+			{
+				if (rowCount < _lastStartTileY - _startTileY)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
+		private function clearBuffer(rowCount : int, colmnsCount : int) : void
+		{
+			//清除不在缓冲区中的地图区块位图
+			//清除缓冲区上方一排
+			if (rowCount == 0 && _startTileY > 0)
+			{
+				clearTile(colmnsCount + _startTileX, rowCount + _startTileY - _pretreatmentNum);
+				if (_startTileX > 0 && colmnsCount == 0)
+				{
+					clearTile(colmnsCount + _startTileX - _pretreatmentNum, rowCount + _startTileY - _pretreatmentNum);
+				}
+				if (_startTileX < _mapTotalX - _bufferCols && colmnsCount == _bufferCols - _pretreatmentNum)
+				{
+					clearTile(colmnsCount + _startTileX + _pretreatmentNum, rowCount + _startTileY - _pretreatmentNum);
+				}
+			}
+			//清除缓冲区下方一排
+			if (rowCount == _bufferRows - _pretreatmentNum && _startTileY < _mapTotalY - _bufferRows)
+			{
+				clearTile(colmnsCount + _startTileX, rowCount + _startTileY + _pretreatmentNum);
+				if (_startTileX > 0 && colmnsCount == 0)
+				{
+					clearTile(colmnsCount + _startTileX - _pretreatmentNum, rowCount + _startTileY + _pretreatmentNum);
+				}
+				if (_startTileX < _mapTotalX - _bufferCols && colmnsCount == _bufferCols - _pretreatmentNum)
+				{
+					clearTile(colmnsCount + _startTileX + _pretreatmentNum, rowCount + _startTileY - _pretreatmentNum);
+				}
+			}
+			//清除缓冲区左方一排
+			if (colmnsCount == 0 && _startTileX > 0)
+			{
+				clearTile(colmnsCount + _startTileX - _pretreatmentNum, rowCount + _startTileY);
+			}
+			//清除缓冲区右方一排
+			if (colmnsCount == _bufferCols - _pretreatmentNum && _startTileX < _mapTotalX - _bufferCols)
+			{
+				clearTile(colmnsCount + _startTileX + _pretreatmentNum, rowCount + _startTileY);
+			}
+		}
+
+
+		private function clearAllTiles() : void
+		{
+			for (var tileId : String in _tiles.dic)
+			{
+				var tile : SMapTile = _tiles.getValue(tileId);
+				if (tile)
+				{
+					tile.destroy();
+					_tiles.deleteValue(tileId);
+				}
+			}
+
+			for each (var bit : IBitmap in _blackTitles)
+			{
+				bit.dispose();
+			}
+			_blackTitles = new Dictionary();
+		}
+
+		private function clearAllBuffer() : void
+		{
+			for (var i : int = _container.numChildren - 1; i >= 0; i--)
+			{
+				_container.removeGameChildAt(i);
+			}
+		}
+
+
+		override public function update() : void
+		{
+			updateCamera(m_camera.sceneX, m_camera.sceneY);
+		}
+
+		public function updateCamera(viewX : int, viewY : int) : void
 		{
 			var isRefreshScreen : Boolean = true; //是否需要刷新屏幕
+			if (!_smallMapBitmapData)
+				return;
 			if (viewX == _lastViewX && viewY == _lastViewY)
 			{
 				isRefreshScreen = false;
@@ -526,464 +762,9 @@ package hy.rpg.map
 			}
 		}
 
-		/**
-		 * 刷新缓冲区
-		 *
-		 */
-		protected function refreshBuffer() : void
-		{
-			//如果是滚动刷新缓冲区
-			if (_lastStartTileX == -1 && _lastStartTileY == -1) //填充全部
-			{
-				clearBuffer();
-			}
-
-			//将缓冲区对应的地图区块读入缓冲区中 
-			clearPeripheral();
-			fillInternal();
-		}
-
-		private function fillReject(centerX : Number, centerY : Number, x : int, y : int) : Boolean
-		{
-			var colmnsCount : int = centerX + x;
-			var rowCount : int = centerY + y;
-
-			var startRow : int;
-			var endRow : int;
-			var startColmns : int;
-			var endColmns : int;
-
-			startRow = -_pretreatmentNum + _startTileY;
-			if (startRow < 0)
-				startRow = 0;
-			endRow = _bufferRows + _pretreatmentNum + _startTileY;
-			if (endRow > _mapTotalY)
-				endRow = _mapTotalY;
-
-			startColmns = -_pretreatmentNum + _startTileX;
-			if (startColmns < 0)
-				startColmns = 0;
-			endColmns = _bufferCols + _pretreatmentNum + _startTileX;
-			if (endColmns > _mapTotalX)
-				endColmns = _mapTotalX;
-
-			if (colmnsCount >= startColmns && colmnsCount < endColmns && rowCount >= startRow && rowCount < endRow)
-				return false;
-			return true;
-		}
-
-		private function fillProcess(centerX : Number, centerY : Number, x : int, y : int) : void
-		{
-			var colmnsCount : int = centerX + x;
-			var rowCount : int = centerY + y;
-			copyTileBitmapData(colmnsCount, rowCount);
-		}
-
-		/**
-		 * 填充内部
-		 * @param colmnsCount
-		 * @param rowCount
-		 *
-		 */
-		private function fillInternal() : void
-		{
-			var startRow : int;
-			var endRow : int;
-			var startColmns : int;
-			var endColmns : int;
-			var rowCount : int;
-			var colmnsCount : int;
-			if (_lastStartTileX == -1 && _lastStartTileY == -1) //填充全部
-			{
-				startRow = -_pretreatmentNum + _startTileY;
-				if (startRow < 0)
-					startRow = 0;
-				endRow = _bufferRows + _pretreatmentNum + _startTileY;
-				if (endRow > _mapTotalY)
-					endRow = _mapTotalY;
-
-				startColmns = -_pretreatmentNum + _startTileX;
-				if (startColmns < 0)
-					startColmns = 0;
-				endColmns = _bufferCols + _pretreatmentNum + _startTileX;
-				if (endColmns > _mapTotalX)
-					endColmns = _mapTotalX;
-
-				var gridColumns : int = endColmns - startColmns;
-				if (gridColumns < 0)
-					gridColumns = 0;
-				var gridRows : int = endRow - startRow;
-				if (gridRows < 0)
-					gridRows = 0;
-				var r : int = gridColumns > gridRows ? gridColumns : gridRows;
-				var halfR : Number = r / 2;
-				var centerX : Number = startColmns + gridColumns / 2;
-				var centerY : Number = startRow + gridRows / 2;
-
-					//	SArrayUtil.getRectangularSpiralArray(centerX, centerY, halfR, fillReject, fillProcess);
-			}
-			else //填充局部
-			{
-				var tileXDelta : int = _startTileX - _lastStartTileX;
-				var tileYDelta : int = _startTileY - _lastStartTileY;
-
-				if (tileYDelta > 0) //下边新增
-				{
-					startRow = (_bufferRows - tileYDelta) + _pretreatmentNum + _startTileY;
-
-					if (startRow < _startTileY - _pretreatmentNum)
-						startRow = _startTileY - _pretreatmentNum;
-					else if (startRow > _startTileY + _bufferRows + _pretreatmentNum)
-						startRow = _startTileY + _bufferRows + _pretreatmentNum;
-					if (startRow < 0)
-						startRow = 0;
-					else if (startRow > _mapTotalY)
-						startRow = _mapTotalY;
-
-					endRow = _bufferRows + _pretreatmentNum + _startTileY;
-					if (endRow > _mapTotalY)
-						endRow = _mapTotalY;
-
-					startColmns = -_pretreatmentNum + _startTileX;
-					if (startColmns < 0)
-						startColmns = 0;
-					endColmns = _bufferCols + _pretreatmentNum + _startTileX;
-					if (endColmns > _mapTotalX)
-						endColmns = _mapTotalX;
-
-					for (rowCount = startRow; rowCount < endRow; rowCount++) //从上到下 
-					{
-						for (colmnsCount = endColmns - 1; colmnsCount >= startColmns; colmnsCount--) //顺时针则从右到左 
-						{
-							copyTileBitmapData(colmnsCount, rowCount);
-						}
-					}
-				}
-				else if (tileYDelta < 0) //上边新增
-				{
-					tileYDelta = -tileYDelta;
-
-					startRow = -_pretreatmentNum + _startTileY;
-					if (startRow < 0)
-						startRow = 0;
-					endRow = tileYDelta - _pretreatmentNum + _startTileY;
-
-					if (endRow < _startTileY - _pretreatmentNum)
-						endRow = _startTileY - _pretreatmentNum;
-					else if (endRow > _startTileY + _bufferRows + _pretreatmentNum)
-						endRow = _startTileY + _bufferRows + _pretreatmentNum;
-					if (endRow < 0)
-						endRow = 0;
-					else if (endRow > _mapTotalY)
-						endRow = _mapTotalY;
-
-					startColmns = -_pretreatmentNum + _startTileX;
-					if (startColmns < 0)
-						startColmns = 0;
-					endColmns = _bufferCols + _pretreatmentNum + _startTileX;
-					if (endColmns > _mapTotalX)
-						endColmns = _mapTotalX;
-
-					for (rowCount = endRow - 1; rowCount >= startRow; rowCount--) //从下到上
-					{
-						for (colmnsCount = startColmns; colmnsCount < endColmns; colmnsCount++) //顺时针则从左到右
-						{
-							copyTileBitmapData(colmnsCount, rowCount);
-						}
-					}
-				}
-
-				if (tileXDelta > 0) //右边新增
-				{
-					startRow = -_pretreatmentNum + _startTileY;
-					if (startRow < 0)
-						startRow = 0;
-					endRow = _bufferRows + _pretreatmentNum + _startTileY;
-					if (endRow > _mapTotalY)
-						endRow = _mapTotalY;
-
-					startColmns = (_bufferCols - tileXDelta) + _pretreatmentNum + _startTileX;
-
-					if (startColmns < _startTileX - _pretreatmentNum)
-						startColmns = _startTileX - _pretreatmentNum;
-					else if (startColmns > _startTileX + _bufferCols + _pretreatmentNum)
-						startColmns = _startTileX + _bufferCols + _pretreatmentNum;
-					if (startColmns < 0)
-						startColmns = 0;
-					else if (startColmns > _mapTotalX)
-						startColmns = _mapTotalX;
-
-					endColmns = _bufferCols + _pretreatmentNum + _startTileX;
-					if (endColmns > _mapTotalX)
-						endColmns = _mapTotalX;
-
-					for (rowCount = startRow; rowCount < endRow; rowCount++) //顺时针则从上到下
-					{
-						for (colmnsCount = startColmns; colmnsCount < endColmns; colmnsCount++) //从左到右
-						{
-							copyTileBitmapData(colmnsCount, rowCount);
-						}
-					}
-				}
-				else if (tileXDelta < 0) //左边新增
-				{
-					tileXDelta = -tileXDelta;
-
-					startRow = -_pretreatmentNum + _startTileY;
-					if (startRow < 0)
-						startRow = 0;
-					endRow = _bufferRows + _pretreatmentNum + _startTileY;
-					if (endRow > _mapTotalY)
-						endRow = _mapTotalY;
-
-					startColmns = -_pretreatmentNum + _startTileX;
-					if (startColmns < 0)
-						startColmns = 0;
-					endColmns = tileXDelta - _pretreatmentNum + _startTileX;
-
-					if (endColmns < _startTileX - _pretreatmentNum)
-						endColmns = _startTileX - _pretreatmentNum;
-					else if (endColmns > _startTileX + _bufferCols + _pretreatmentNum)
-						endColmns = _startTileX + _bufferCols + _pretreatmentNum;
-					if (endColmns < 0)
-						endColmns = 0;
-					else if (endColmns > _mapTotalX)
-						endColmns = _mapTotalX;
-
-					for (rowCount = endRow - 1; rowCount >= startRow; rowCount--) //顺时针则从下到上
-					{
-						for (colmnsCount = endColmns - 1; colmnsCount >= startColmns; colmnsCount--) //从右到左
-						{
-							copyTileBitmapData(colmnsCount, rowCount);
-						}
-					}
-				}
-			}
-		}
-
-		/**
-		 * 清除不在缓冲区中的地图区块位图（外围）
-		 * @param rowCount
-		 * @param colmnsCount
-		 *
-		 */
-		private function clearPeripheral() : void
-		{
-			var startRow : int;
-			var endRow : int;
-			var startColmns : int;
-			var endColmns : int;
-			var rowCount : int;
-			var colmnsCount : int;
-			if (_lastStartTileX == -1 && _lastStartTileY == -1) //清除全部
-			{
-				//上方
-				startRow = 0;
-				endRow = _startTileY - _pretreatmentNum;
-
-				startColmns = 0;
-				endColmns = _mapTotalX;
-
-				for (rowCount = startRow; rowCount < endRow; rowCount++)
-				{
-					for (colmnsCount = startColmns; colmnsCount < endColmns; colmnsCount++)
-					{
-						clearTile(colmnsCount, rowCount);
-					}
-				}
-
-				//下方
-				startRow = _bufferRows + _pretreatmentNum + _startTileY;
-				endRow = _mapTotalY;
-
-				startColmns = 0;
-				endColmns = _mapTotalX;
-
-				for (rowCount = startRow; rowCount < endRow; rowCount++)
-				{
-					for (colmnsCount = startColmns; colmnsCount < endColmns; colmnsCount++)
-					{
-						clearTile(colmnsCount, rowCount);
-					}
-				}
-
-				//左方
-				startRow = 0;
-				endRow = _mapTotalY;
-
-				startColmns = 0;
-				endColmns = _startTileX - _pretreatmentNum;
-
-				for (rowCount = startRow; rowCount < endRow; rowCount++)
-				{
-					for (colmnsCount = startColmns; colmnsCount < endColmns; colmnsCount++)
-					{
-						clearTile(colmnsCount, rowCount);
-					}
-				}
-
-				//右方
-				startRow = 0;
-				endRow = _mapTotalY;
-
-				startColmns = _bufferCols + _pretreatmentNum + _startTileX;
-				endColmns = _mapTotalX;
-
-				for (rowCount = startRow; rowCount < endRow; rowCount++)
-				{
-					for (colmnsCount = startColmns; colmnsCount < endColmns; colmnsCount++)
-					{
-						clearTile(colmnsCount, rowCount);
-					}
-				}
-				return;
-			}
-			//清除局部
-
-			var tileXDelta : int = _startTileX - _lastStartTileX;
-			var tileYDelta : int = _startTileY - _lastStartTileY;
-
-			if (tileYDelta < 0) //清除缓冲区下方几排
-			{
-				startRow = _bufferRows + _pretreatmentNum + _startTileY;
-				endRow = _bufferRows + _pretreatmentNum + _startTileY - tileYDelta;
-
-				if (tileXDelta < 0) //右方
-				{
-					startColmns = _startTileX - _pretreatmentNum;
-					endColmns = _bufferCols + _startTileX + _pretreatmentNum - tileXDelta;
-				}
-				else //左方
-				{
-					startColmns = _startTileX - _pretreatmentNum - tileXDelta;
-					endColmns = _bufferCols + _startTileX + _pretreatmentNum;
-				}
-
-				for (rowCount = startRow; rowCount < endRow; rowCount++)
-				{
-					for (colmnsCount = startColmns; colmnsCount < endColmns; colmnsCount++)
-					{
-						clearTile(colmnsCount, rowCount);
-					}
-				}
-			}
-			else if (tileYDelta > 0) //清除缓冲区上方几排
-			{
-				startRow = _startTileY - _pretreatmentNum - tileYDelta;
-				endRow = _startTileY - _pretreatmentNum;
-
-				if (tileXDelta < 0) //右方
-				{
-					startColmns = _startTileX - _pretreatmentNum;
-					endColmns = _bufferCols + _startTileX + _pretreatmentNum - tileXDelta;
-				}
-				else //左方
-				{
-					startColmns = _startTileX - _pretreatmentNum - tileXDelta;
-					endColmns = _bufferCols + _startTileX + _pretreatmentNum;
-				}
-
-				for (rowCount = startRow; rowCount < endRow; rowCount++)
-				{
-					for (colmnsCount = startColmns; colmnsCount < endColmns; colmnsCount++)
-					{
-						clearTile(colmnsCount, rowCount);
-					}
-				}
-			}
-
-			if (tileXDelta < 0) //清除缓冲区右方几排
-			{
-				if (tileYDelta < 0) //下方
-				{
-					startRow = _startTileY - _pretreatmentNum;
-					endRow = _bufferRows + _startTileY + _pretreatmentNum - tileYDelta;
-				}
-				else //上方
-				{
-					startRow = _startTileY - _pretreatmentNum - tileYDelta;
-					endRow = _bufferRows + _startTileY + _pretreatmentNum;
-				}
-
-				startColmns = _bufferCols + _pretreatmentNum + _startTileX;
-				endColmns = _bufferCols + _pretreatmentNum + _startTileX - tileXDelta;
-
-				for (rowCount = startRow; rowCount < endRow; rowCount++)
-				{
-					for (colmnsCount = startColmns; colmnsCount < endColmns; colmnsCount++)
-					{
-						clearTile(colmnsCount, rowCount);
-					}
-				}
-			}
-			else if (tileXDelta > 0) //清除缓冲区左方几排
-			{
-				if (tileYDelta < 0) //下方
-				{
-					startRow = _startTileY - _pretreatmentNum;
-					endRow = _bufferRows + _startTileY + _pretreatmentNum - tileYDelta;
-				}
-				else //上方
-				{
-					startRow = _startTileY - _pretreatmentNum - tileYDelta;
-					endRow = _bufferRows + _startTileY + _pretreatmentNum;
-				}
-
-				startColmns = _startTileX - _pretreatmentNum - tileXDelta;
-				endColmns = _startTileX - _pretreatmentNum;
-
-				for (rowCount = startRow; rowCount < endRow; rowCount++)
-				{
-					for (colmnsCount = startColmns; colmnsCount < endColmns; colmnsCount++)
-					{
-						clearTile(colmnsCount, rowCount);
-					}
-				}
-			}
-		}
-
-		private function clearAllTiles() : void
-		{
-			for (var tileId : String in _tiles.dic)
-			{
-				var tile : SMapTile = _tiles.getValue(tileId);
-				if (tile)
-				{
-					tile.removeOnComplete(onTileResourceParserComplete);
-					tile.destroy();
-					_tiles.deleteValue(tileId);
-				}
-			}
-
-			for each (var bit : IBitmap in _blackTitles)
-			{
-				bit.dispose();
-			}
-			_blackTitles = new Dictionary();
-		}
-
-		private function clearBuffer() : void
-		{
-			for (var i : int = _container.numChildren - 1; i >= 0; i--)
-			{
-				_container.removeGameChildAt(i);
-			}
-		}
-
-
-		override public function update() : void
-		{
-			updateCamera();
-		}
-
-		public function updateCamera() : void
-		{
-			//focus(SSceneRenderManagaer.getInstance().viewX, SSceneRenderManagaer.getInstance().viewY);
-		}
-
 		public function clear() : void
 		{
-			clearBuffer();
+			clearAllBuffer();
 			clearAllTiles();
 
 			if (_smallMapParser)
@@ -1021,7 +802,7 @@ package hy.rpg.map
 			clear();
 			if (_container)
 			{
-				clearBuffer();
+				clearAllBuffer();
 				_container = null;
 			}
 

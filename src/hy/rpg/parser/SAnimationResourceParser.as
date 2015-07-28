@@ -2,9 +2,10 @@ package hy.rpg.parser
 {
 	import flash.geom.Point;
 	
-	import hy.game.core.interfaces.IBitmap;
+	import hy.game.avatar.SAnimationDescription;
+	import hy.game.core.interfaces.IBitmapData;
 	import hy.game.manager.SReferenceManager;
-	import hy.game.render.SGameRender;
+	import hy.game.render.SRenderBitmapData;
 	import hy.rpg.enmu.SLoadPriorityType;
 
 
@@ -72,14 +73,14 @@ package hy.rpg.parser
 		 * @return
 		 *
 		 */
-		override public function getBitmapDataByFrame(frame : int) : SGameRender
+		override public function getBitmapDataByFrame(frame : int) : SRenderBitmapData
 		{
 			if (_decoder)
 				return _decoder.getResult(frame - 1, cur_dir);
 			return null;
 		}
 
-		public function getBitmapDataByDir(frame : int, dir : String = null) : IBitmap
+		public function getBitmapDataByDir(frame : int, dir : String = null) : IBitmapData
 		{
 			if (dir == null)
 				dir = cur_dir;

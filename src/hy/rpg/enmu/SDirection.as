@@ -1,4 +1,4 @@
-package  hy.rpg.enmu
+package hy.rpg.enmu
 {
 	import hy.game.utils.SDebug;
 	import hy.rpg.utils.SCommonUtil;
@@ -453,8 +453,7 @@ package  hy.rpg.enmu
 			var index : int = DIRECTION_TYPE_MAP.indexOf(type);
 			if (index != -1)
 				return DIRECTION_NAME_MAP[index];
-			if (SDebug.OPEN_WARNING_TRACE)
-				SDebug.warningPrint(type, "没有方向为%s的方向名称！", type);
+			SDebug.warning(type, "没有方向为%s的方向名称！", type);
 			return null;
 		}
 
@@ -463,8 +462,7 @@ package  hy.rpg.enmu
 			var index : int = DIRECTION_NAME_MAP.indexOf(name.toLowerCase());
 			if (index != -1)
 				return DIRECTION_TYPE_MAP[index];
-			if (SDebug.OPEN_WARNING_TRACE)
-				SDebug.warningPrint(name, "没有方向名称为%s的方向！", name);
+			SDebug.warning(name, "没有方向名称为%s的方向！", name);
 			return 0;
 		}
 

@@ -14,7 +14,7 @@ package hy.rpg.pak
 	import flash.system.LoaderContext;
 	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
-	
+
 	import hy.game.render.SRenderBitmapData;
 
 	/**
@@ -25,12 +25,13 @@ package hy.rpg.pak
 	{
 		private static var pakDecoders : Dictionary = new Dictionary();
 		private static var context : LoaderContext = new LoaderContext();
+
 		public static function getPakDecoder(id : String) : SPakDecoder
 		{
 			return pakDecoders[id];
 		}
 
-		public var id :String;
+		public var id : String;
 		/**
 		 * 源数据
 		 */
@@ -77,12 +78,16 @@ package hy.rpg.pak
 		public var img_bytes : Array;
 		private var img_index : int;
 
-		public function SPakDecoder(id:String,data : ByteArray)
+		public function SPakDecoder(id : String, data : ByteArray)
 		{
 			this.id = id;
 			pakDecoders[id] = this;
-				bytes = new ByteArray();
+			bytes = new ByteArray();
+			if (data)
+			{
+				data.position = 0;
 				data.readBytes(bytes, 0, data.length);
+			}
 		}
 
 		public function decode() : void
@@ -140,7 +145,7 @@ package hy.rpg.pak
 			load_index = 0;
 			loader_list = [];
 			var loader : Loader;
-		
+
 			for each (var data : ByteArray in loadDataList)
 			{
 				loader = new Loader();

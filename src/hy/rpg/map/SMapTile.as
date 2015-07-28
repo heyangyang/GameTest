@@ -2,6 +2,7 @@ package hy.rpg.map
 {
 	import hy.game.manager.SReferenceManager;
 	import hy.rpg.parser.SMapResourceParser;
+	import hy.rpg.parser.SResourceParser;
 
 	/**
 	 *
@@ -22,17 +23,15 @@ package hy.rpg.map
 	{
 		protected var _isDisposed : Boolean;
 		protected var _id : String;
-		protected var _tileId : String;
 		protected var _resId : String;
 		protected var _priority : int;
 		protected var _version : String;
 		protected var _parser : SMapResourceParser;
 
-		public function SMapTile(parserClass : Class, id : String, tileId : String, resId : String, priority : int, version : String = null)
+		public function SMapTile(parserClass : Class, id : String, resId : String, priority : int, version : String = null)
 		{
 			_isDisposed = false;
 			_id = id;
-			_tileId = tileId;
 			_resId = resId;
 			_priority = priority;
 			_version = version;
@@ -62,17 +61,10 @@ package hy.rpg.map
 			return false;
 		}
 
-		public function onComplete(fun : Function) : SSunnyResourceParser
+		public function onComplete(fun : Function) : SResourceParser
 		{
 			if (_parser)
 				return _parser.onComplete(fun);
-			return null;
-		}
-
-		public function removeOnComplete(fun : Function) : SSunnyResourceParser
-		{
-			if (_parser)
-				return _parser.removeOnComplete(fun);
 			return null;
 		}
 
