@@ -15,7 +15,6 @@ package hy.rpg.map
 	import hy.game.render.SRenderBitmap;
 	import hy.game.render.SRenderContainer;
 	import hy.game.resources.SResource;
-	import hy.game.utils.SDebug;
 	import hy.rpg.enmu.SLoadPriorityType;
 	import hy.rpg.parser.SImageResourceParser;
 	import hy.rpg.parser.SMapResourceParser;
@@ -29,7 +28,7 @@ package hy.rpg.map
 	public class SMapObject extends GameObject
 	{
 		/**
-		 * 地图宽高 
+		 * 地图宽高
 		 */
 		protected var m_mapWidth : int;
 		protected var m_mapHeight : int;
@@ -41,7 +40,7 @@ package hy.rpg.map
 		protected var m_mapRows : int;
 
 		/**
-		 * 每个格子的宽高 
+		 * 每个格子的宽高
 		 */
 		protected var m_tileWidth : int;
 		protected var m_tileHeight : int;
@@ -75,9 +74,9 @@ package hy.rpg.map
 		 * 地图配置文件
 		 */
 		protected var m_config : XML;
-		
+
 		/**
-		 * 地址版本信息 
+		 * 地址版本信息
 		 */
 		private var m_fileVersions : Dictionary;
 
@@ -97,7 +96,7 @@ package hy.rpg.map
 		 */
 		protected var m_tiles : Dictionary;
 		/**
-		 * 保存未加载马赛克 
+		 * 保存未加载马赛克
 		 */
 		private var m_blackTitles : Dictionary;
 
@@ -146,21 +145,26 @@ package hy.rpg.map
 		private var m_scale : Number;
 
 		/**
-		 * 地图id 
+		 * 地图id
 		 */
 		private var m_mapId : String;
-		private var _onConfigComplete : Function;
-		private var _onProgress : Function;
-		private var _mapBlocks : Array;
-		private var _maxMultiDistance : int;
-		
+		/**
+		 * 配置文件加载完毕
+		 */
+		private var m_onConfigComplete : Function;
+		/**
+		 * 进度条
+		 */
+		private var m_onProgress : Function;
+		private var m_maxMultiDistance : int;
+
 		public function SMapObject(min_scale : Number)
 		{
 			m_scale = min_scale;
 
 			if (Config.supportDirectX)
 			{
-				//_container = new SDirectContainer();
+//				_container = new SDirectContainer();
 			}
 			else
 			{
@@ -189,86 +193,32 @@ package hy.rpg.map
 		 */
 		public function load(mapId : String, onComplete : Function = null, onProgress : Function = null) : void
 		{
+			if (m_mapId == mapId)
+				return;
 			clear();
 			m_mapId = mapId;
-			_onConfigComplete = onComplete;
-			_onProgress = onProgress;
+			m_onConfigComplete = onComplete;
+			m_onProgress = onProgress;
 			SReferenceManager.getInstance().createResource(m_mapId).addNotifyCompleted(onConfigComplete).addNotifyProgress(onProgress).load();
 		}
 
+		/**
+		 * 加载配置完成
+		 * @param res
+		 *
+		 */
 		private function onConfigComplete(res : SResource) : void
 		{
 			var bytes : ByteArray = res.getBinary();
-			bytes.position = 0;
-			setConfig(XML(bytes.readUTFBytes(bytes.bytesAvailable)));
-			if (m_config.grid.@url)
-			{
-				SReferenceManager.getInstance().createResource(m_config.grid.@url, m_config.grid.@version).addNotifyCompleted(onBlockComplete).addNotifyProgress(_onProgress).addNotifyIOError(onBlockError).load();
-			}
-			else
-			{
-				updateBlocks();
-				if (_onConfigComplete != null)
-					_onConfigComplete();
-				_onConfigComplete = null;
-			}
-		}
-
-		private function onBlockComplete(res : SResource) : void
-		{
-			var bytes : ByteArray = res.getBinary();
-			bytes.position = 0;
-			var mapBlocks : Array = bytes.readObject() as Array;
-			if (!mapBlocks || mapBlocks.length == 0 || mapBlocks[0].length == 0)
-			{
-				SDebug.error(this, "地图数据出现mapBlocks=" + mapBlocks ? mapBlocks.toString() : 'null');
-			}
-			updateBlocks(mapBlocks);
-
-			if (_onConfigComplete != null)
-				_onConfigComplete();
-			_onProgress = null;
-			_onConfigComplete = null;
-		}
-
-		private function onBlockError(res : SResource) : void
-		{
-			updateBlocks();
-			if (_onConfigComplete != null)
-				_onConfigComplete();
-			_onConfigComplete = null;
-		}
-
-		public function updateBlocks(mapBlocks : Array = null) : void
-		{
-			if (mapBlocks)
-			{
-				_mapBlocks = mapBlocks;
-				if (_maxMultiDistance > 1)
-				{
-					var multiBlocks : Array = [];
-					var blockColumsLen : int = _mapBlocks.length;
-					var multiColumsLen : int = blockColumsLen * _maxMultiDistance;
-					var blockRowsLen : int = _mapBlocks[0].length;
-					for (var i : int = 0; i < multiColumsLen; i++)
-					{
-						var data : Array = [];
-						multiBlocks.push(data);
-						for (var j : int = 0; j < blockRowsLen; j++)
-						{
-							data.push(_mapBlocks[i % blockColumsLen][j]);
-						}
-					}
-					_mapBlocks = multiBlocks;
-				}
-				SRoadSeeker.getInstance().init(_mapBlocks);
-			}
-		}
-
-		public function setConfig(xml : XML) : void
-		{
-			m_config = xml;
+			m_config = new XML(bytes.readUTFBytes(bytes.bytesAvailable));
+			bytes.clear();
 			parseMapData();
+			if (!m_config.grid.@url)
+			{
+				warning("not find map block: " + m_mapId);
+				return;
+			}
+			SReferenceManager.getInstance().createResource(m_config.grid.@url, m_config.grid.@version).addNotifyCompleted(onBlockComplete).addNotifyProgress(m_onProgress).load();
 		}
 
 		/**
@@ -282,6 +232,12 @@ package hy.rpg.map
 			{
 				m_fileVersions[String(tileXML.@id)] = {url: String(tileXML.@url), version: String(tileXML.@version)};
 			}
+
+			Config.BIG_MAP_SCALE = m_config.bm.@scale;
+
+			m_maxMultiDistance = int(m_config.@multiDistance);
+			if (m_maxMultiDistance < 1)
+				m_maxMultiDistance = 1;
 
 			// 从XML文件中获取地图基本信息
 			m_mapWidth = m_config.@width;
@@ -303,6 +259,52 @@ package hy.rpg.map
 
 			loadSmallMap(m_config.sm.@url, String(m_config.sm.@version));
 			loadPreviewMap(m_config.bm.@url);
+		}
+
+		/**
+		 * 加载阻挡块完毕
+		 * @param res
+		 *
+		 */
+		private function onBlockComplete(res : SResource) : void
+		{
+			var bytes : ByteArray = res.getBinary();
+			var mapBlocks : Array = bytes.readObject() as Array;
+			bytes.clear();
+			if (!mapBlocks || mapBlocks.length == 0 || mapBlocks[0].length == 0)
+			{
+				error(this, "地图数据出现mapBlocks=" + mapBlocks ? mapBlocks.toString() : 'null');
+			}
+			updateBlocks(mapBlocks);
+			m_onConfigComplete != null && m_onConfigComplete();
+			m_onConfigComplete = null;
+			m_onProgress = null;
+		}
+
+		private function updateBlocks(mapBlocks : Array = null) : void
+		{
+			if (!mapBlocks)
+				return;
+			if (m_maxMultiDistance > 1)
+			{
+				var multiBlocks : Array = [];
+				var blockColumsLen : int = mapBlocks.length;
+				var multiColumsLen : int = blockColumsLen * m_maxMultiDistance;
+				var blockRowsLen : int = mapBlocks[0].length;
+				var data : Array;
+				var j : int;
+				for (var i : int = 0; i < multiColumsLen; i++)
+				{
+					data = [];
+					multiBlocks.push(data);
+					for (j = 0; j < blockRowsLen; j++)
+					{
+						data.push(mapBlocks[i % blockColumsLen][j]);
+					}
+				}
+				mapBlocks = multiBlocks;
+			}
+			SRoadSeeker.getInstance().init(mapBlocks);
 		}
 
 		/**
@@ -328,6 +330,7 @@ package hy.rpg.map
 		{
 			if (!url)
 				return;
+			m_smallPreviewerMapParser && m_smallPreviewerMapParser.release();
 			m_smallPreviewerMapParser = SReferenceManager.getInstance().createImageParser(url, SLoadPriorityType.MAP);
 			m_smallPreviewerMapParser.load();
 		}
@@ -349,20 +352,20 @@ package hy.rpg.map
 			m_viewWidth = viewWidth;
 			m_viewHeight = viewHeight;
 
-			m_bufferCols = Math.ceil(m_viewWidth / m_tileWidth);
-			m_bufferRows = Math.ceil(m_viewHeight / m_tileHeight);
-			
+			m_bufferCols = Math.ceil(m_viewWidth / m_tileWidth) + m_pretreatmentNum;
+			m_bufferRows = Math.ceil(m_viewHeight / m_tileHeight) + m_pretreatmentNum;
+
 			resetMapBuffer();
 		}
 
-		private function resetMapBuffer():void
+		private function resetMapBuffer() : void
 		{
 			m_lastStartTileCol = -1;
 			m_lastStartTileRow = -1;
 			m_lastViewX = -1;
 			m_lastViewY = -1;
 		}
-		
+
 		protected function onTileResourceParserComplete(res : SMapResourceParser) : void
 		{
 			var tileId : String = res.id.split("/").pop().split(".").shift();
@@ -371,10 +374,10 @@ package hy.rpg.map
 			blackBmd && blackBmd.removeChild();
 			if (res.bitmap)
 			{
-				drawTile(res.bitmap, loadTilePos.x, loadTilePos.y);
+				addChildTile(res.bitmap, loadTilePos.x, loadTilePos.y);
 				return;
 			}
-			SDebug.warning(this, "地图块数据为空！");
+			warning(this, "地图块数据为空！");
 		}
 
 		/**
@@ -387,7 +390,7 @@ package hy.rpg.map
 		{
 			if (tileX < 0 || tileY < 0 || tileX > m_mapCols || tileY > m_mapRows)
 			{
-				SDebug.warning(this, "地图删除区域不在范围内！");
+				warning(this, "地图删除区域不在范围内！");
 				return;
 			}
 			var tileId : String = encoderTileId(tileX, tileY);
@@ -407,7 +410,7 @@ package hy.rpg.map
 		 */
 		protected function encoderTileId(tileX : int, tileY : int) : String
 		{
-			return SCommonUtil.xyToInt(tileX + 1, tileY + 1).toString(36);
+			return SCommonUtil.xyToInt(tileX + m_pretreatmentNum, tileY + m_pretreatmentNum).toString(36);
 		}
 
 		/**
@@ -418,12 +421,19 @@ package hy.rpg.map
 		 */
 		protected function decoderTileId(tileId : String) : Point
 		{
-			m_loadTilePos.x = SCommonUtil.getXFromInt(parseInt(tileId, 36)) - 1;
-			m_loadTilePos.y = SCommonUtil.getYFromInt(parseInt(tileId, 36)) - 1;
+			m_loadTilePos.x = SCommonUtil.getXFromInt(parseInt(tileId, 36)) - m_pretreatmentNum;
+			m_loadTilePos.y = SCommonUtil.getYFromInt(parseInt(tileId, 36)) - m_pretreatmentNum;
 			return m_loadTilePos;
 		}
 
-		protected function createMapTile(tileX : int, tileY : int) : Boolean
+		/**
+		 * 获取指定x,y索引处的地图区块位图
+		 * @param tileX
+		 * @param tileY
+		 * @return
+		 *
+		 */
+		protected function copyTileBitmapData(tileX : int, tileY : int) : void
 		{
 			var startX : int = m_startTileCol - m_pretreatmentNum;
 			var endX : int = m_startTileCol + m_bufferCols + m_pretreatmentNum;
@@ -436,99 +446,41 @@ package hy.rpg.map
 				var tile : SMapTile = m_tiles[tileId];
 				if (!tile)
 				{
-					var resId : String = encoderTileId(tileX, tileY);
-					var data : Object = m_fileVersions[resId];
+					var data : Object = m_fileVersions[tileId];
 					if (data)
 					{
 						tile = new SMapTile(SMapResourceParser, m_mapId + tileId, data.url, SLoadPriorityType.MAP, data.version);
+						tile.onComplete(onTileResourceParserComplete);
+						tile.load();
 						m_tiles[tileId] = tile;
 					}
+
+					var blackBmd : IBitmap = m_blackTitles[tileId];
+					if (blackBmd == null)
+					{
+						createMosaicTile(tileX, tileY);
+						if (Config.supportDirectX)
+						{
+							//blackBmd = new SDirectBitmap(SDirectBitmapData.fromDirectBitmapData(_blackBitmapData));
+							//blackBmd.blendMode = BlendMode.NONE;
+						}
+						else
+							blackBmd = new SRenderBitmap(m_blackBitmapData.clone());
+						m_blackTitles[tileId] = blackBmd;
+					}
+					addChildTile(blackBmd, tileX, tileY);
+					return;
 				}
-				else if (tile.isLoaded)
+				if (tile.isLoaded)
 				{
 					onTileResourceParserComplete(tile.parser);
+					return;
 				}
-				else if (tile.isLoading)
-				{
 
-				}
-				else
-				{
-					SDebug.warning(this, "null tile");
-				}
-				return true;
+				if (tile.isLoading)
+					return;
 			}
-			else
-			{
-				SDebug.warning(this, "地图创建区域不在范围内！");
-			}
-			return false;
-		}
-
-		/**
-		 * 获取指定x,y索引处的地图区块位图
-		 * @param tileX
-		 * @param tileY
-		 * @return
-		 *
-		 */
-		protected function copyTileBitmapData(tileX : int, tileY : int) : void
-		{
-			if (createMapTile(tileX, tileY))
-			{
-				drawTileBitmapData(tileX, tileY);
-			}
-		}
-
-		protected function drawTileBitmapData(tileX : int, tileY : int) : void
-		{
-			var tileId : String = encoderTileId(tileX, tileY);
-			var tile : SMapTile = m_tiles[tileId];
-			if (!tile || !tile.isLoaded)
-			{
-				var blackBmd : IBitmap = m_blackTitles[tileId];
-				if (blackBmd == null)
-				{
-					createMosaicTile(tileX, tileY);
-					if (Config.supportDirectX)
-					{
-						//blackBmd = new SDirectBitmap(SDirectBitmapData.fromDirectBitmapData(_blackBitmapData));
-						//blackBmd.blendMode = BlendMode.NONE;
-					}
-					else
-						blackBmd = new SRenderBitmap(m_blackBitmapData.clone());
-					m_blackTitles[tileId] = blackBmd;
-				}
-				drawTile(blackBmd, tileX, tileY);
-				createTileResourceParser(tileX, tileY);
-			}
-			else if (tile.isLoaded)
-			{
-				onTileResourceParserComplete(tile.parser);
-			}
-		}
-
-		private function createTileResourceParser(tileX : int, tileY : int) : void
-		{
-			var startX : int = m_startTileCol - m_pretreatmentNum;
-			var endX : int = m_startTileCol + m_bufferCols + m_pretreatmentNum;
-			var startY : int = m_startTileRow - m_pretreatmentNum;
-			var endY : int = m_startTileRow + m_bufferRows + m_pretreatmentNum;
-
-			if (startX >= -m_pretreatmentNum && endX >= -m_pretreatmentNum && tileX >= startX && tileX <= endX && startY >= -m_pretreatmentNum && endY >= -m_pretreatmentNum && tileY >= startY && tileY <= endY)
-			{
-				var tileId : String = encoderTileId(tileX, tileY);
-				var tile : SMapTile = m_tiles[tileId];
-				if (tile)
-				{
-					tile.onComplete(onTileResourceParserComplete);
-					tile.load();
-				}
-			}
-			else
-			{
-				SDebug.warning(this, "地图加载区域不在范围内！");
-			}
+			warning(this, "地图创建区域不在范围内！");
 		}
 
 		/**
@@ -550,14 +502,20 @@ package hy.rpg.map
 			m_blackBitmapData.draw(m_smallMapBitmapData, m_mosaicMatrix);
 		}
 
-		private function drawTile(bitmap : IBitmap, tileX : int, tileY : int) : void
+		/**
+		 * 把地图块放入到容器
+		 * @param bitmap
+		 * @param tileX
+		 * @param tileY
+		 *
+		 */
+		private function addChildTile(bitmap : IBitmap, tileX : int, tileY : int) : void
 		{
-			if (bitmap)
-			{
-				bitmap.x = tileX * m_tileWidth;
-				bitmap.y = tileY * m_tileHeight;
-				m_container.addGameChild(bitmap);
-			}
+			if (!bitmap)
+				return;
+			bitmap.x = tileX * m_tileWidth;
+			bitmap.y = tileY * m_tileHeight;
+			m_container.addGameChild(bitmap);
 		}
 
 		/**
@@ -699,6 +657,8 @@ package hy.rpg.map
 
 		private function clearAllBuffer() : void
 		{
+			if (!m_container)
+				return;
 			for (var i : int = m_container.numChildren - 1; i >= 0; i--)
 			{
 				m_container.removeGameChildAt(i);
@@ -767,10 +727,7 @@ package hy.rpg.map
 				m_smallMapBitmapData = null;
 			}
 
-			m_lastStartTileCol = -1;
-			m_lastStartTileRow = -1;
-			m_lastViewX = -1;
-			m_lastViewY = -1;
+			resetMapBuffer();
 			m_config = null;
 			m_fileVersions = null;
 		}
@@ -781,11 +738,10 @@ package hy.rpg.map
 				return;
 
 			clear();
-			if (m_container)
-			{
-				clearAllBuffer();
-				m_container = null;
-			}
+			m_container = null;
+
+			m_onConfigComplete = null;
+			m_onProgress = null;
 
 			if (m_blackBitmapData)
 			{
