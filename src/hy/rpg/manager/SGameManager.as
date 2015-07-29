@@ -1,6 +1,7 @@
 package hy.rpg.manager
 {
 	import hy.game.cfg.Config;
+	import hy.game.components.SAvatarComponent;
 	import hy.game.core.SCameraObject;
 	import hy.game.enum.PriorityType;
 	import hy.game.manager.SBaseManager;
@@ -58,12 +59,17 @@ package hy.rpg.manager
 		 *  创建玩家自己的角色
 		 *
 		 */
-		public function createMyselfHeroObject(id : String) : void
+		public function createMyselfHeroObject(id : String) : SRoleObject
 		{
 			var heroObject : SRoleObject = new SRoleObject();
 			SLayerManager.getInstance().addObjectByType(SLayerManager.LAYER_GAME, heroObject);
 			heroObject.registerd();
 			SCameraObject.getInstance().setGameFocus(heroObject);
+
+			var avatarComponet : SAvatarComponent = new SAvatarComponent();
+			heroObject.addComponent(avatarComponet);
+			avatarComponet.setAvatarId(id);
+			return heroObject;
 		}
 	}
 }

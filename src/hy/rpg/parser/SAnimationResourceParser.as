@@ -2,7 +2,7 @@ package hy.rpg.parser
 {
 	import flash.geom.Point;
 	
-	import hy.game.avatar.SAnimationDescription;
+	import hy.game.animation.SAnimationDescription;
 	import hy.game.core.interfaces.IBitmapData;
 	import hy.game.manager.SReferenceManager;
 	import hy.game.render.SRenderBitmapData;
