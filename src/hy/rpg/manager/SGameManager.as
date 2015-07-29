@@ -6,8 +6,11 @@ package hy.rpg.manager
 	import hy.game.enum.PriorityType;
 	import hy.game.manager.SBaseManager;
 	import hy.game.manager.SLayerManager;
+	import hy.rpg.components.SNameComponent;
+	import hy.rpg.components.SRoleComponentData;
 	import hy.rpg.map.SMapObject;
 	import hy.rpg.object.SRoleObject;
+	import hy.rpg.utils.SCommonUtil;
 
 	/**
 	 * 游戏管理器
@@ -62,13 +65,26 @@ package hy.rpg.manager
 		public function createMyselfHeroObject(id : String) : SRoleObject
 		{
 			var heroObject : SRoleObject = new SRoleObject();
+			
+			heroObject.transform.x = SCommonUtil.getPixelXByGrid(45);
+			heroObject.transform.y = SCommonUtil.getPixelYByGrid(20);
+			
+			//数据组件
+			var roleComponentData:SRoleComponentData=new SRoleComponentData();
+			roleComponentData.name="无法无天";
+			heroObject.addComponent(roleComponentData);
+			//avatar组件
+			var avatarComponet : SAvatarComponent = new SAvatarComponent();
+			avatarComponet.setAvatarId(id);
+			heroObject.addComponent(avatarComponet);
+			
+			//名字组件
+			var nameComponent:SNameComponent=new SNameComponent();
+			heroObject.addComponent(nameComponent);
+			//为镜头添加焦点对象
 			SLayerManager.getInstance().addObjectByType(SLayerManager.LAYER_GAME, heroObject);
 			heroObject.registerd();
 			SCameraObject.getInstance().setGameFocus(heroObject);
-
-			var avatarComponet : SAvatarComponent = new SAvatarComponent();
-			heroObject.addComponent(avatarComponet);
-			avatarComponet.setAvatarId(id);
 			return heroObject;
 		}
 	}

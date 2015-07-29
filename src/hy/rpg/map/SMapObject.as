@@ -668,7 +668,7 @@ package hy.rpg.map
 
 		override public function update() : void
 		{
-			updateCamera(m_camera.sceneX, m_camera.sceneY);
+			updateCamera(SCameraObject.sceneX, SCameraObject.sceneY);
 		}
 
 		public function updateCamera(viewX : int, viewY : int) : void

@@ -2,8 +2,8 @@ package
 {
 	import flash.display.Sprite;
 	import flash.events.Event;
-
-	import hy.game.SGame;
+	
+	import hy.game.GameFrameStart;
 	import hy.rpg.manager.SGameManager;
 	import hy.rpg.object.SRoleObject;
 
@@ -16,12 +16,10 @@ package
 
 		private function init(evt : Event = null) : void
 		{
-			new SGame(stage);
+			new GameFrameStart(stage,new GameStarter());
 			SGameManager.getInstance().createCameraObject();
 			SGameManager.getInstance().createMapObject("wuxingwuzu");
 			var heroObject : SRoleObject = SGameManager.getInstance().createMyselfHeroObject("SHHeroAsura");
-			heroObject.transform.x = stage.stageWidth * .5;
-			heroObject.transform.y = stage.stageHeight * .5;
 		}
 	}
 }
