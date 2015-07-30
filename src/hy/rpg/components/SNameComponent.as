@@ -2,6 +2,7 @@ package hy.rpg.components
 {
 	import hy.game.components.SRenderComponent;
 	import hy.game.manager.SReferenceManager;
+	import hy.rpg.enmu.SRenderLayerType;
 	import hy.rpg.render.SNameParser;
 
 	/**
@@ -23,8 +24,10 @@ package hy.rpg.components
 		override public function notifyAdded() : void
 		{
 			super.notifyAdded();
+			m_render.layer=SRenderLayerType.NAME;
 			m_roleData = m_owner.getComponentByType(SRoleComponentData) as SRoleComponentData;
 			m_offsetY = 20;
+			m_oldHeight=-1;
 			updateRender();
 		}
 

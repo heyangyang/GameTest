@@ -1,6 +1,7 @@
 package hy.rpg.components
 {
 	import hy.game.components.SRenderComponent;
+	import hy.rpg.enmu.SRenderLayerType;
 	import hy.rpg.utils.SHpBarUtils;
 
 	/**
@@ -24,6 +25,8 @@ package hy.rpg.components
 			super.notifyAdded();
 			m_roleData = m_owner.getComponentByType(SRoleComponentData) as SRoleComponentData;
 			m_render.x = -30;
+			m_render.layer=SRenderLayerType.HP;
+			m_oldHeight=m_lastHp=-1;
 		}
 
 		override public function update() : void

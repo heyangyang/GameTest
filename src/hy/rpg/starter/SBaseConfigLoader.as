@@ -1,15 +1,13 @@
 package hy.rpg.starter
 {
-	import flash.display.BitmapData;
 	import flash.system.System;
 	import flash.utils.ByteArray;
-
+	
 	import hy.game.cfg.Config;
 	import hy.game.manager.SReferenceManager;
 	import hy.game.manager.SVersionManager;
 	import hy.game.resources.SPreLoad;
 	import hy.game.resources.SResource;
-	import hy.game.resources.SResourceMagnger;
 	import hy.game.starter.SStartNode;
 
 	/**

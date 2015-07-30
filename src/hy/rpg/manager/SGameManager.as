@@ -1,7 +1,9 @@
 package hy.rpg.manager
 {
 	import hy.game.cfg.Config;
+	import hy.game.components.SAnimationComponent;
 	import hy.game.components.SAvatarComponent;
+	import hy.game.core.GameObject;
 	import hy.game.core.SCameraObject;
 	import hy.game.enum.PriorityType;
 	import hy.game.manager.SBaseManager;
@@ -10,6 +12,7 @@ package hy.rpg.manager
 	import hy.rpg.components.SNameComponent;
 	import hy.rpg.components.SRoleComponentData;
 	import hy.rpg.components.SShodowComponent;
+	import hy.rpg.enmu.SDirection;
 	import hy.rpg.map.SMapObject;
 	import hy.rpg.object.SRoleObject;
 	import hy.rpg.utils.SCommonUtil;
@@ -70,6 +73,7 @@ package hy.rpg.manager
 
 			heroObject.transform.x = SCommonUtil.getPixelXByGrid(45);
 			heroObject.transform.y = SCommonUtil.getPixelYByGrid(20);
+			heroObject.transform.dir=SDirection.SOUTH;
 
 			//数据组件
 			var roleComponentData : SRoleComponentData = new SRoleComponentData();
@@ -86,11 +90,22 @@ package hy.rpg.manager
 			var shodowComponent : SShodowComponent = new SShodowComponent();
 			heroObject.addComponent(shodowComponent);
 			heroObject.addComponent(new SHpComponent());
+			addTargetEffect(heroObject,"feetAura",0);
 			//为镜头添加焦点对象
 			SLayerManager.getInstance().addObjectByType(SLayerManager.LAYER_GAME, heroObject);
 			heroObject.registerd();
 			SCameraObject.getInstance().setGameFocus(heroObject);
 			return heroObject;
+		}
+		
+		public function addTargetEffect(gameObject:GameObject,id:String,loops:int,offsetX:int=0,offsetY:int=0):SAnimationComponent
+		{
+			var animaitonCom:SAnimationComponent=new SAnimationComponent(id);
+			animaitonCom.setEffectId(id);
+			animaitonCom.setLoops(loops);
+			animaitonCom.setOffsetXY(offsetX,offsetY);
+			gameObject.addComponent(animaitonCom);
+			return animaitonCom;
 		}
 	}
 }
