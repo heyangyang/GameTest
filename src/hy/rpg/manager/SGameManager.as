@@ -6,8 +6,10 @@ package hy.rpg.manager
 	import hy.game.enum.PriorityType;
 	import hy.game.manager.SBaseManager;
 	import hy.game.manager.SLayerManager;
+	import hy.rpg.components.SHpComponent;
 	import hy.rpg.components.SNameComponent;
 	import hy.rpg.components.SRoleComponentData;
+	import hy.rpg.components.SShodowComponent;
 	import hy.rpg.map.SMapObject;
 	import hy.rpg.object.SRoleObject;
 	import hy.rpg.utils.SCommonUtil;
@@ -50,12 +52,12 @@ package hy.rpg.manager
 		 * @param id
 		 *
 		 */
-		public function createMapObject(id : String) : void
+		public function createMapObject() : SMapObject
 		{
 			var map : SMapObject = new SMapObject(Config.SMALL_MAP_SCALE);
 			SLayerManager.getInstance().addObjectByType(SLayerManager.LAYER_MAP, map);
 			map.registerd();
-			map.load("scene/" + id + "/" + id + ".smc");
+			return map;
 		}
 
 		/**
@@ -65,22 +67,25 @@ package hy.rpg.manager
 		public function createMyselfHeroObject(id : String) : SRoleObject
 		{
 			var heroObject : SRoleObject = new SRoleObject();
-			
+
 			heroObject.transform.x = SCommonUtil.getPixelXByGrid(45);
 			heroObject.transform.y = SCommonUtil.getPixelYByGrid(20);
-			
+
 			//数据组件
-			var roleComponentData:SRoleComponentData=new SRoleComponentData();
-			roleComponentData.name="无法无天";
+			var roleComponentData : SRoleComponentData = new SRoleComponentData();
+			roleComponentData.name = "无法无天";
 			heroObject.addComponent(roleComponentData);
 			//avatar组件
 			var avatarComponet : SAvatarComponent = new SAvatarComponent();
 			avatarComponet.setAvatarId(id);
 			heroObject.addComponent(avatarComponet);
-			
 			//名字组件
-			var nameComponent:SNameComponent=new SNameComponent();
+			var nameComponent : SNameComponent = new SNameComponent();
 			heroObject.addComponent(nameComponent);
+			//shodow
+			var shodowComponent : SShodowComponent = new SShodowComponent();
+			heroObject.addComponent(shodowComponent);
+			heroObject.addComponent(new SHpComponent());
 			//为镜头添加焦点对象
 			SLayerManager.getInstance().addObjectByType(SLayerManager.LAYER_GAME, heroObject);
 			heroObject.registerd();

@@ -78,7 +78,7 @@ package hy.rpg.parser
 			super(id, version, priority);
 		}
 
-		override protected function parse(bytes : ByteArray) : void
+		override protected function startParseLoader(bytes : ByteArray) : void
 		{
 			if (!bytes)
 				return;

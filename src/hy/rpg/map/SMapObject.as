@@ -5,7 +5,7 @@ package hy.rpg.map
 	import flash.geom.Point;
 	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
-	
+
 	import hy.game.cfg.Config;
 	import hy.game.core.GameObject;
 	import hy.game.core.SCameraObject;
@@ -258,7 +258,7 @@ package hy.rpg.map
 			m_mapRows = Math.ceil(m_mapHeight / m_tileHeight);
 
 			loadSmallMap(m_config.sm.@url, String(m_config.sm.@version));
-			loadPreviewMap(m_config.bm.@url);
+			loadPreviewMap(m_config.bm.@url, m_config.bm.@version);
 		}
 
 		/**
@@ -326,12 +326,12 @@ package hy.rpg.map
 		 * @param url
 		 *
 		 */
-		private function loadPreviewMap(url : String) : void
+		private function loadPreviewMap(url : String, version : String) : void
 		{
 			if (!url)
 				return;
 			m_smallPreviewerMapParser && m_smallPreviewerMapParser.release();
-			m_smallPreviewerMapParser = SReferenceManager.getInstance().createImageParser(url, SLoadPriorityType.MAP);
+			m_smallPreviewerMapParser = SReferenceManager.getInstance().createImageParser(url, version, SLoadPriorityType.MAP);
 			m_smallPreviewerMapParser.load();
 		}
 

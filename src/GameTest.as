@@ -4,8 +4,6 @@ package
 	import flash.events.Event;
 	
 	import hy.game.GameFrameStart;
-	import hy.rpg.manager.SGameManager;
-	import hy.rpg.object.SRoleObject;
 
 	public class GameTest extends Sprite
 	{
@@ -17,9 +15,6 @@ package
 		private function init(evt : Event = null) : void
 		{
 			new GameFrameStart(stage,new GameStarter());
-			SGameManager.getInstance().createCameraObject();
-			SGameManager.getInstance().createMapObject("wuxingwuzu");
-			var heroObject : SRoleObject = SGameManager.getInstance().createMyselfHeroObject("SHHeroAsura");
 		}
 	}
 }

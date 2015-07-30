@@ -4,7 +4,7 @@ package hy.rpg.pak
 	import flash.geom.Point;
 	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
-	
+
 	import hy.game.core.SReference;
 	import hy.game.manager.SReferenceManager;
 	import hy.game.render.SRenderBitmap;
@@ -36,7 +36,7 @@ package hy.rpg.pak
 		private var notifyCompleteds : Array;
 		private var errorCompleteds : Array;
 		private var resource : SResource;
-		
+
 		public function SAnimationDecoder(id : String)
 		{
 			this.id = id;
@@ -52,19 +52,19 @@ package hy.rpg.pak
 		 */
 		public function loadResource(ver : String, priority : int) : void
 		{
-			if(resource)
-				return ;
-			resource = SReferenceManager.getInstance().createResource(id,ver);
-
-			if(resource.isLoading)
+			if (resource)
 				return;
-			
+			resource = SReferenceManager.getInstance().createResource(id, ver);
+
+			if (resource.isLoading)
+				return;
+
 			if (resource.isLoaded)
 			{
 				onResourceLoaded(resource);
 				return;
 			}
-			
+
 			resource.addNotifyCompleted(onResourceLoaded).addNotifyIOError(onResourceIOError).priority(priority).load();
 		}
 
@@ -86,7 +86,7 @@ package hy.rpg.pak
 		 */
 		private function onResourceLoaded(resource : SResource) : void
 		{
-			decode( resource.data);
+			decode(resource.data);
 			SReferenceManager.getInstance().clearResource(id);
 		}
 
@@ -143,7 +143,7 @@ package hy.rpg.pak
 		 */
 		private function createPakDecoder(bytes : ByteArray, dir : String = DEFAULT) : SPakDecoder
 		{
-			var pak : SPakDecoder = new SPakDecoder(id,bytes);
+			var pak : SPakDecoder = new SPakDecoder(id, bytes);
 			pak.onComplete(onParseCompleted).onIOError(onReload);
 			pak.decode();
 			pak.loadImages();
@@ -164,7 +164,7 @@ package hy.rpg.pak
 				return;
 			result_dic = new Dictionary();
 			var dir : String, i : int, len : int;
-			var bmd :  SRenderBitmapData;
+			var bmd : SRenderBitmapData;
 			for (dir in loader_dic)
 			{
 				decoder = loader_dic[dir];
@@ -242,7 +242,7 @@ package hy.rpg.pak
 			for (var i : int = 1; i < len; i++)
 			{
 				tmp_data = message[i];
-				decoder = new SPakDecoder(id,null);
+				decoder = new SPakDecoder(id, null);
 				result_dic[tmp_data[0]] = decoder;
 				decoder.width = tmp_data[2];
 				decoder.height = tmp_data[3];
@@ -314,7 +314,7 @@ package hy.rpg.pak
 
 		public function getOffest(index : uint = 0, dir : String = DEFAULT) : Point
 		{
-			if ( result_dic == null)
+			if (result_dic == null)
 				return null;
 			if (result_dic[dir] == null)
 			{
@@ -327,7 +327,7 @@ package hy.rpg.pak
 
 		public function getResult(index : uint = 0, dir : String = DEFAULT) : SRenderBitmapData
 		{
-			if ( result_dic == null)
+			if (result_dic == null)
 				return null;
 			if (result_dic[dir] == null)
 			{

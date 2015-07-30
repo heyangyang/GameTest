@@ -1,7 +1,7 @@
 package hy.rpg.parser
 {
 	import flash.utils.ByteArray;
-	
+
 	import hy.game.core.SReference;
 	import hy.game.manager.SReferenceManager;
 	import hy.game.resources.SResource;
@@ -16,7 +16,8 @@ package hy.rpg.parser
 		private var m_id : String;
 		private var m_version : String;
 		private var m_priority : int;
-		protected var m_resource : SResource;
+		private var m_isLoaded : Boolean;
+		private var m_isLoading : Boolean;
 
 		private var m_ioErrorFuns : Vector.<Function>;
 		private var m_completeFuns : Vector.<Function>;
@@ -42,10 +43,7 @@ package hy.rpg.parser
 		 */
 		public function load() : void
 		{
-			if (m_resource)
-				return;
-
-			m_resource = SReferenceManager.getInstance().createResource(m_id, m_version);
+			var m_resource : SResource = SReferenceManager.getInstance().createResource(m_id, m_version);
 
 			if (m_resource.isLoaded)
 			{
@@ -53,6 +51,8 @@ package hy.rpg.parser
 			}
 			else if (!m_resource.isLoading)
 			{
+				m_isLoading = true;
+				m_isLoaded = false;
 				m_resource.addNotifyCompleted(onResourceLoaded).addNotifyIOError(onResourceIOError).priority(m_priority).load();
 			}
 		}
@@ -64,10 +64,7 @@ package hy.rpg.parser
 		 */
 		private function onResourceLoaded(res : SResource) : void
 		{
-			if (m_resource)
-			{
-				parse(m_resource.getBinary());
-			}
+			startParseLoader(res.getBinary());
 		}
 
 		/**
@@ -77,6 +74,8 @@ package hy.rpg.parser
 		 */
 		private function onResourceIOError(res : SResource) : void
 		{
+			m_isLoading = false;
+			m_isLoaded = false;
 			invokeNotifyByArray(m_ioErrorFuns);
 		}
 
@@ -103,7 +102,7 @@ package hy.rpg.parser
 		 * @param bytes
 		 *
 		 */
-		protected function parse(bytes : ByteArray) : void
+		protected function startParseLoader(bytes : ByteArray) : void
 		{
 		}
 
@@ -114,6 +113,8 @@ package hy.rpg.parser
 		 */
 		protected function parseCompleted() : void
 		{
+			m_isLoading = false;
+			m_isLoaded = true;
 			invokeNotifyByArray(m_completeFuns);
 		}
 
@@ -169,9 +170,7 @@ package hy.rpg.parser
 		 */
 		public function get isLoaded() : Boolean
 		{
-			if (m_resource)
-				return m_resource.isLoaded;
-			return false;
+			return m_isLoaded;
 		}
 
 
@@ -182,18 +181,11 @@ package hy.rpg.parser
 		 */
 		public function get isLoading() : Boolean
 		{
-			if (m_resource)
-				return m_resource.isLoading;
-			return false;
+			return m_isLoading;
 		}
 
 		override protected function destroy() : void
 		{
-			if (m_resource)
-			{
-				m_resource.release();
-				m_resource = null;
-			}
 			cleanNotify();
 			super.destroy();
 		}
