@@ -1,10 +1,14 @@
 package
 {
+	import hy.game.core.STime;
+	import hy.game.manager.SReferenceManager;
+	import hy.game.monitor.SMonitor;
 	import hy.game.starter.SGameStartBase;
-	import hy.rpg.starter.SBaseConfigLoader;
-	import hy.rpg.starter.SEnterGameScene;
-	import hy.rpg.starter.SGameNodeType;
-	import hy.rpg.starter.SMapLoader;
+	import hy.rpg.starter.GameNodeEnmu;
+	import hy.rpg.starter.StarterBaseConfig;
+	import hy.rpg.starter.StarterEnterScene;
+	import hy.rpg.starter.StarterMapLoader;
+	import hy.rpg.starter.StarterShortcutKey;
 
 	/**
 	 * 启动器
@@ -20,15 +24,29 @@ package
 
 		override public function onStart() : void
 		{
-			addNode(SBaseConfigLoader);
-			addNode(SMapLoader);
-			addNode(SEnterGameScene);
+			addNodeByClass(StarterBaseConfig);
+			addNodeByClass(StarterMapLoader);
+			addNodeByClass(StarterEnterScene);
+			addNodeByClass(StarterShortcutKey);
 			onFirstStart();
 		}
 
+		/**
+		 * 游戏第一次运行
+		 *
+		 */
 		private function onFirstStart() : void
 		{
-			updateExcuteData([SGameNodeType.BASE_CONFIG, SGameNodeType.MAP_LOAD, SGameNodeType.ENTER_SCENE]);
+			var monitor : SMonitor = SMonitor.getInstance();
+			monitor.watchProperty(SReferenceManager.getInstance(), "total_reference", "total_reference", 0x00ff00);
+			monitor.watchProperty(SReferenceManager.getInstance(), "status", "status", 0x00ff00);
+			monitor.watchProperty(STime, "deltaTime", "deltaTime", 0x00ff00);
+			monitor.watchProperty(STime, "passedTime", "passedTime", 0x00ff00);
+
+			addNodeByType(GameNodeEnmu.base_config);
+			addNodeByType(GameNodeEnmu.map_load);
+			addNodeByType(GameNodeEnmu.shortkey);
+			addNodeByType(GameNodeEnmu.emter_scene);
 			run();
 		}
 	}

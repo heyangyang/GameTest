@@ -2,7 +2,7 @@
 {
 	import flash.geom.Point;
 	
-	import hy.rpg.utils.SCommonUtil;
+	import hy.rpg.utils.UtilsCommon;
 
 	/**
 	 * 一个路径搜索器
@@ -115,9 +115,9 @@
 						//						if (block == SRoadPointType.UNWALKABLE_VALUE)
 						//							_unwalks.push(SCommonUtil.xyToInt(i, j));
 						if (block == SRoadPointType.MASKABLE_VALUE || block == SRoadPointType.SAFE_MASKABLE_VALUE)
-							_masks.push(SCommonUtil.xyToInt(i, j));
+							_masks.push(UtilsCommon.xyToInt(i, j));
 						if (block == SRoadPointType.SAFE_VALUE || block == SRoadPointType.SAFE_MASKABLE_VALUE)
-							_safes.push(SCommonUtil.xyToInt(i, j));
+							_safes.push(UtilsCommon.xyToInt(i, j));
 					}
 				}
 			}
@@ -127,7 +127,7 @@
 		{
 			if (_masks)
 			{
-				var value : int = SCommonUtil.xyToInt(gridX, gridY);
+				var value : int = UtilsCommon.xyToInt(gridX, gridY);
 				return (_masks.indexOf(value) >= 0);
 			}
 			return false;
@@ -137,7 +137,7 @@
 		{
 			if (_safes)
 			{
-				var value : int = SCommonUtil.xyToInt(gridX, gridY);
+				var value : int = UtilsCommon.xyToInt(gridX, gridY);
 				return (_safes.indexOf(value) >= 0);
 			}
 			return false;
@@ -218,16 +218,16 @@
 		 */
 		public function getForwardPosition(x : int, y : int, angle : int, distance : int, acrossJumpable : Boolean = false) : Point
 		{
-			var dx : Number = SCommonUtil.cosd(angle) * distance;
-			var dy : Number = SCommonUtil.sind(angle) * distance;
+			var dx : Number = UtilsCommon.cosd(angle) * distance;
+			var dy : Number = UtilsCommon.sind(angle) * distance;
 			//强制矫正部分，不能让玩家跳出镜头之外
 			while((dx+x)<=0 || (dy + y) <= 0 || (dx + x) >= (SAStar.getInstance().mapBlockColums - 1) || (dy+y) >= (SAStar.getInstance().mapBlockRows - 1 ))
 			{
 				if(distance==0)
 					break;
 				distance -- ;
-				dx = SCommonUtil.cosd(angle) * distance;
-				dy = SCommonUtil.sind(angle) * distance;
+				dx = UtilsCommon.cosd(angle) * distance;
+				dy = UtilsCommon.sind(angle) * distance;
 			}
 			var point : Point = new Point(Math.round(dx + x), Math.round(dy + y));
 			var distanceGrid : int = 0;
@@ -235,18 +235,18 @@
 
 			if (acrossJumpable)
 			{
-				maxGrid = Math.round(SCommonUtil.getDistance(x, y, point.x, point.y));
+				maxGrid = Math.round(UtilsCommon.getDistance(x, y, point.x, point.y));
 				distanceGrid = maxGrid;
 				while (distanceGrid > 0 && point.x >= 0 && point.x < (SAStar.getInstance().mapBlockColums - 1) && point.y >= 0 && point.y < (SAStar.getInstance().mapBlockRows - 1 )) //走路方向的前N格是可跳跃区域
 				{
-					dx = SCommonUtil.cosd(angle) * distanceGrid;
-					dy = SCommonUtil.sind(angle) * distanceGrid;
+					dx = UtilsCommon.cosd(angle) * distanceGrid;
+					dy = UtilsCommon.sind(angle) * distanceGrid;
 					point.x = Math.round(dx + x);
 					point.y = Math.round(dy + y);
 					if (!SRoadSeeker.getInstance().isBlock(point.x, point.y))
 					{
-						dx = SCommonUtil.cosd(angle) * distanceGrid;
-						dy = SCommonUtil.sind(angle) * distanceGrid;
+						dx = UtilsCommon.cosd(angle) * distanceGrid;
+						dy = UtilsCommon.sind(angle) * distanceGrid;
 						point.x = Math.round(dx + x);
 						point.y = Math.round(dy + y);
 						break;
@@ -260,8 +260,8 @@
 					maxGrid = 100; //distance; //可跨越最大距离
 					while (maxGrid > 0 && point.x >= 0 && point.x < SAStar.getInstance().mapBlockColums && point.y >= 0 && point.y < SAStar.getInstance().mapBlockRows) //走路方向的前N格是可跳跃区域
 					{
-						dx = SCommonUtil.cosd(angle) * (distanceGrid + crossGrid);
-						dy = SCommonUtil.sind(angle) * (distanceGrid + crossGrid);
+						dx = UtilsCommon.cosd(angle) * (distanceGrid + crossGrid);
+						dy = UtilsCommon.sind(angle) * (distanceGrid + crossGrid);
 						point.x = Math.round(dx + x);
 						point.y = Math.round(dy + y);
 						if (!SRoadSeeker.getInstance().isJumpableBlock(point.x, point.y)) //已跨过
@@ -274,8 +274,8 @@
 					if (SRoadSeeker.getInstance().isBlock(point.x, point.y)) //无法跳跃跨过
 					{
 						distanceGrid--;
-						dx = SCommonUtil.cosd(angle) * distanceGrid;
-						dy = SCommonUtil.sind(angle) * distanceGrid;
+						dx = UtilsCommon.cosd(angle) * distanceGrid;
+						dy = UtilsCommon.sind(angle) * distanceGrid;
 						point.x = Math.round(dx + x);
 						point.y = Math.round(dy + y);
 					}
@@ -284,19 +284,19 @@
 			else
 			{
 				distanceGrid = 0;
-				maxGrid = Math.round(SCommonUtil.getDistance(x, y, point.x, point.y));
+				maxGrid = Math.round(UtilsCommon.getDistance(x, y, point.x, point.y));
 				while (maxGrid > 0 && point.x >= 0 && point.x < SAStar.getInstance().mapBlockColums && point.y >= 0 && point.y < SAStar.getInstance().mapBlockRows) //走路方向的前N格是可通行区域
 				{
 					distanceGrid++;
-					dx = SCommonUtil.cosd(angle) * distanceGrid;
-					dy = SCommonUtil.sind(angle) * distanceGrid;
+					dx = UtilsCommon.cosd(angle) * distanceGrid;
+					dy = UtilsCommon.sind(angle) * distanceGrid;
 					point.x = Math.round(dx + x);
 					point.y = Math.round(dy + y);
 					if (SRoadSeeker.getInstance().isBlock(point.x, point.y))
 					{
 						distanceGrid--;
-						dx = SCommonUtil.cosd(angle) * distanceGrid;
-						dy = SCommonUtil.sind(angle) * distanceGrid;
+						dx = UtilsCommon.cosd(angle) * distanceGrid;
+						dy = UtilsCommon.sind(angle) * distanceGrid;
 						point.x = Math.round(dx + x);
 						point.y = Math.round(dy + y);
 						break;

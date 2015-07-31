@@ -2,7 +2,7 @@
 {
 	import flash.geom.Rectangle;
 	
-	import hy.rpg.utils.SCommonUtil;
+	import hy.rpg.utils.UtilsCommon;
 
 	/**
 	 * A星寻路算法
@@ -659,8 +659,8 @@
 					{
 						if (closed.indexOf(toCheck[0] + "_" + toCheck[1]) == -1)
 						{
-							var start2endDst : int = SCommonUtil.getDistance(startIndexX, startIndexY, endIndexX, endIndexY);
-							var preDst : int = SCommonUtil.getDistance(toCheck[0], toCheck[1], endIndexX, endIndexY);
+							var start2endDst : int = UtilsCommon.getDistance(startIndexX, startIndexY, endIndexX, endIndexY);
+							var preDst : int = UtilsCommon.getDistance(toCheck[0], toCheck[1], endIndexX, endIndexY);
 							if (preDst < start2endDst)
 								break;
 						}
@@ -670,12 +670,12 @@
 				else if (avaliable == null && arounds.length == 0)
 				{
 					var allArounds : Array = getAllArounds(startIndexX, startIndexY);
-					start2endDst = SCommonUtil.getDistance(startIndexX, startIndexY, endIndexX, endIndexY);
+					start2endDst = UtilsCommon.getDistance(startIndexX, startIndexY, endIndexX, endIndexY);
 					for each (toCheck in allArounds)
 					{
 						if (closed.indexOf(toCheck[0] + "_" + toCheck[1]) == -1)
 						{
-							preDst = SCommonUtil.getDistance(toCheck[0], toCheck[1], endIndexX, endIndexY);
+							preDst = UtilsCommon.getDistance(toCheck[0], toCheck[1], endIndexX, endIndexY);
 							if (preDst < start2endDst)
 								break;
 						}

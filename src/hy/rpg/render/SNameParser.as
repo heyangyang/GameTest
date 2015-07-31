@@ -7,8 +7,8 @@ package hy.rpg.render
 	import hy.game.core.SReference;
 	import hy.game.core.interfaces.IBitmapData;
 	import hy.game.render.SRenderBitmapData;
-	import hy.rpg.utils.SFilterUtil;
-	import hy.rpg.utils.SUIStyle;
+	import hy.rpg.utils.UtilsFilter;
+	import hy.rpg.utils.UtilsUIStyle;
 
 	public class SNameParser extends SReference
 	{
@@ -38,8 +38,8 @@ package hy.rpg.render
 				textField.multiline = true;
 			}
 
-			textField.filters = SFilterUtil.blackFilters;
-			textField.defaultTextFormat = new TextFormat(SUIStyle.TEXT_FONT, nameTextFontSize, nameTextColor, null, null, null, null, null, "center");
+			textField.filters = UtilsFilter.blackFilters;
+			textField.defaultTextFormat = new TextFormat(UtilsUIStyle.TEXT_FONT, nameTextFontSize, nameTextColor, null, null, null, null, null, "center");
 			textField.htmlText = name;
 
 			textField.width = 200;
