@@ -9,6 +9,7 @@ package hy.rpg.state
 		public function StateAttack(gameObject:GameObject, stateMgr:StateComponent)
 		{
 			super(gameObject, stateMgr);
+			m_id = EnumState.ATTACK;
 		}
 	}
 }

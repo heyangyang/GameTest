@@ -6,18 +6,23 @@ package hy.rpg.manager
 	import hy.game.components.SAvatarComponent;
 	import hy.game.core.GameObject;
 	import hy.game.core.SCameraObject;
+	import hy.game.data.STransform;
 	import hy.game.enum.EnumPriority;
+	import hy.game.enum.EnumTags;
 	import hy.game.manager.SBaseManager;
 	import hy.game.manager.SLayerManager;
 	import hy.game.state.StateComponent;
 	import hy.rpg.components.ComponentHp;
+	import hy.rpg.components.ComponentMouse;
 	import hy.rpg.components.ComponentName;
 	import hy.rpg.components.ComponentShodow;
 	import hy.rpg.components.ComponentWeapon;
-	import hy.rpg.components.data.DataComponentRole;
+	import hy.rpg.components.data.DataComponent;
 	import hy.rpg.enum.EnumDirection;
 	import hy.rpg.map.MapObject;
 	import hy.rpg.object.ObjectRole;
+	import hy.rpg.state.StateStand;
+	import hy.rpg.state.StateWalk;
 	import hy.rpg.utils.UtilsCommon;
 
 	/**
@@ -73,11 +78,12 @@ package hy.rpg.manager
 		public function createMyselfHeroObject(id : String) : ObjectRole
 		{
 			var heroObject : ObjectRole = new ObjectRole();
+			heroObject.transform = new STransform();
 			heroObject.transform.x = UtilsCommon.getPixelXByGrid(45);
 			heroObject.transform.y = UtilsCommon.getPixelYByGrid(20);
 			heroObject.transform.dir = EnumDirection.SOUTH;
 			//数据组件
-			var roleComponentData : DataComponentRole = new DataComponentRole();
+			var roleComponentData : DataComponent = new DataComponent();
 			roleComponentData.name = "无法无天";
 			roleComponentData.avatarId = id;
 			roleComponentData.weaponId = "sw_1_0";
@@ -93,11 +99,41 @@ package hy.rpg.manager
 			heroObject.addComponent(new ComponentHp());
 			var stateComponent : StateComponent = new StateComponent();
 			heroObject.addComponent(stateComponent);
+			stateComponent.setStates([StateStand, StateWalk]);
+			heroObject.addComponent(new ComponentMouse());
 			addTargetEffect(heroObject, "expGuangHuan", 0);
-			//为镜头添加焦点对象
 			SLayerManager.getInstance().addObjectByType(SLayerManager.LAYER_GAME, heroObject);
 			heroObject.registerd();
+			//为镜头添加焦点对象
 			SCameraObject.getInstance().setGameFocus(heroObject);
+			heroObject.tag = EnumTags.PLAYER;
+			return heroObject;
+		}
+
+		/**
+		 *  创建玩家自己的角色
+		 *
+		 */
+		public function createHeroObject(data : DataComponent) : ObjectRole
+		{
+			var heroObject : ObjectRole = new ObjectRole();
+			heroObject.id = data.id;
+			heroObject.transform = data.transform;
+			heroObject.addComponent(data);
+			//avatar组件
+			heroObject.addComponent(new SAvatarComponent());
+			heroObject.addComponent(new ComponentWeapon());
+			//名字组件
+			heroObject.addComponent(new ComponentName());
+			//shodow
+			heroObject.addComponent(new ComponentShodow());
+			heroObject.addComponent(new ComponentHp());
+			var stateComponent : StateComponent = new StateComponent();
+			heroObject.addComponent(stateComponent);
+			stateComponent.setStates([StateStand, StateWalk]);
+			SLayerManager.getInstance().addObjectByType(SLayerManager.LAYER_GAME, heroObject);
+			heroObject.registerd();
+			heroObject.tag = EnumTags.PLAYER;
 			return heroObject;
 		}
 

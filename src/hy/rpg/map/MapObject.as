@@ -455,9 +455,8 @@ package hy.rpg.map
 					var data : Object = m_fileVersions[tileId];
 					if (data)
 					{
-						tile = new MapTile(ParserMapResource, m_mapId + tileId, data.url, EnumLoadPriority.MAP, data.version);
-						tile.onComplete(onTileResourceParserComplete);
-						tile.load();
+						tile = new MapTile(m_mapId + tileId, data.url, EnumLoadPriority.MAP, data.version);
+						tile.load(onTileResourceParserComplete);
 						m_tiles[tileId] = tile;
 					}
 

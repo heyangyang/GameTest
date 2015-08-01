@@ -1,7 +1,7 @@
 ﻿package hy.rpg.seek
 {
 	import flash.geom.Point;
-	
+
 	import hy.rpg.utils.UtilsCommon;
 
 	/**
@@ -28,36 +28,38 @@
 		 * 所有安全区域
 		 */
 		private var _safes : Array;
+		private var m_astar : SAStar;
 
 		public function SRoadSeeker()
 		{
 			_masks = [];
 			_safes = [];
+			m_astar = SAStar.getInstance();
 		}
 
 		public function isBlock(gridX : int, gridY : int) : Boolean
 		{
-			return SAStar.getInstance().isBlock(gridX, gridY);
+			return m_astar.isBlock(gridX, gridY);
 		}
 
 		public function isJumpableBlock(gridX : int, gridY : int) : Boolean
 		{
-			return SAStar.getInstance().isJumpableBlock(gridX, gridY);
+			return m_astar.isJumpableBlock(gridX, gridY);
 		}
 
 		public function findByAvaliabePoint(startIndexX : int, startIndexY : int, endIndexX : int, endIndexY : int) : Array
 		{
-			return SAStar.getInstance().findByAvaliabePoint(startIndexX, startIndexY, endIndexX, endIndexY);
+			return m_astar.findByAvaliabePoint(startIndexX, startIndexY, endIndexX, endIndexY);
 		}
 
 		public function find(startGridX : int, startGridY : int, endGridX : int, endGridY : int) : Array
 		{
-			return SAStar.getInstance().find(startGridX, startGridY, endGridX, endGridY);
+			return m_astar.find(startGridX, startGridY, endGridX, endGridY);
 		}
 
 		public function setBlockBorder(rowsTop : int, rowsBottom : int, columsTop : int, columsBottom : int) : void
 		{
-			SAStar.getInstance().setBlockBorder(rowsTop, rowsBottom, columsTop, columsBottom);
+			m_astar.setBlockBorder(rowsTop, rowsBottom, columsTop, columsBottom);
 
 			var async : Boolean = true;
 //			if (async && SShellVariables.isMultiThread)
@@ -79,7 +81,7 @@
 			{
 				initBlockAreas(_originalBlocks);
 				var blocks : Array = cloneBlocks(_originalBlocks);
-				SAStar.getInstance().init(blocks);
+				m_astar.init(blocks);
 
 //				var async : Boolean = true;
 //				if (async && SShellVariables.isMultiThread)
@@ -101,19 +103,17 @@
 		 */
 		private function initBlockAreas(mapBlocks : Array) : void
 		{
-			//_unwalks = new Array();
 			_masks.length = 0;
 			_safes.length = 0;
 
 			if (mapBlocks)
 			{
+				var block : int;
 				for (var i : int = 0; i < mapBlocks.length; i++)
 				{
 					for (var j : int = 0; j < mapBlocks[0].length; j++)
 					{
-						var block : int = mapBlocks[i][j];
-						//						if (block == SRoadPointType.UNWALKABLE_VALUE)
-						//							_unwalks.push(SCommonUtil.xyToInt(i, j));
+						block = mapBlocks[i][j];
 						if (block == SRoadPointType.MASKABLE_VALUE || block == SRoadPointType.SAFE_MASKABLE_VALUE)
 							_masks.push(UtilsCommon.xyToInt(i, j));
 						if (block == SRoadPointType.SAFE_VALUE || block == SRoadPointType.SAFE_MASKABLE_VALUE)
@@ -145,14 +145,14 @@
 
 		public function getAroundsNoneBlock(gridX : int, gridY : int) : Array
 		{
-			return SAStar.getInstance().getAroundsNoneBlock(gridX, gridY);
+			return m_astar.getAroundsNoneBlock(gridX, gridY);
 		}
 
 		public function addUnwalkBlock(gridX : int, gridY : int) : void
 		{
-			if (gridX >= 0 && gridX < SAStar.getInstance().mapBlockColums && gridY >= 0 && gridY < SAStar.getInstance().mapBlockRows)
+			if (gridX >= 0 && gridX < m_astar.mapBlockColums && gridY >= 0 && gridY < m_astar.mapBlockRows)
 			{
-				SAStar.getInstance().mapBlocks[gridX][gridY] = SRoadPointType.UNWALKABLE_VALUE;
+				m_astar.mapBlocks[gridX][gridY] = SRoadPointType.UNWALKABLE_VALUE;
 
 //				var async : Boolean = true;
 //				if (async && SShellVariables.isMultiThread)
@@ -173,7 +173,7 @@
 			if (_originalBlocks)
 			{
 				var blocks : Array = cloneBlocks(_originalBlocks);
-				SAStar.getInstance().init(blocks);
+				m_astar.init(blocks);
 
 //				var async : Boolean = true;
 //				if (async && SShellVariables.isMultiThread)
@@ -221,11 +221,11 @@
 			var dx : Number = UtilsCommon.cosd(angle) * distance;
 			var dy : Number = UtilsCommon.sind(angle) * distance;
 			//强制矫正部分，不能让玩家跳出镜头之外
-			while((dx+x)<=0 || (dy + y) <= 0 || (dx + x) >= (SAStar.getInstance().mapBlockColums - 1) || (dy+y) >= (SAStar.getInstance().mapBlockRows - 1 ))
+			while ((dx + x) <= 0 || (dy + y) <= 0 || (dx + x) >= (m_astar.mapBlockColums - 1) || (dy + y) >= (m_astar.mapBlockRows - 1))
 			{
-				if(distance==0)
+				if (distance == 0)
 					break;
-				distance -- ;
+				distance--;
 				dx = UtilsCommon.cosd(angle) * distance;
 				dy = UtilsCommon.sind(angle) * distance;
 			}
@@ -237,13 +237,13 @@
 			{
 				maxGrid = Math.round(UtilsCommon.getDistance(x, y, point.x, point.y));
 				distanceGrid = maxGrid;
-				while (distanceGrid > 0 && point.x >= 0 && point.x < (SAStar.getInstance().mapBlockColums - 1) && point.y >= 0 && point.y < (SAStar.getInstance().mapBlockRows - 1 )) //走路方向的前N格是可跳跃区域
+				while (distanceGrid > 0 && point.x >= 0 && point.x < (m_astar.mapBlockColums - 1) && point.y >= 0 && point.y < (m_astar.mapBlockRows - 1)) //走路方向的前N格是可跳跃区域
 				{
 					dx = UtilsCommon.cosd(angle) * distanceGrid;
 					dy = UtilsCommon.sind(angle) * distanceGrid;
 					point.x = Math.round(dx + x);
 					point.y = Math.round(dy + y);
-					if (!SRoadSeeker.getInstance().isBlock(point.x, point.y))
+					if (!isBlock(point.x, point.y))
 					{
 						dx = UtilsCommon.cosd(angle) * distanceGrid;
 						dy = UtilsCommon.sind(angle) * distanceGrid;
@@ -258,20 +258,20 @@
 					distanceGrid++;
 					var crossGrid : int = 0;
 					maxGrid = 100; //distance; //可跨越最大距离
-					while (maxGrid > 0 && point.x >= 0 && point.x < SAStar.getInstance().mapBlockColums && point.y >= 0 && point.y < SAStar.getInstance().mapBlockRows) //走路方向的前N格是可跳跃区域
+					while (maxGrid > 0 && point.x >= 0 && point.x < m_astar.mapBlockColums && point.y >= 0 && point.y < m_astar.mapBlockRows) //走路方向的前N格是可跳跃区域
 					{
 						dx = UtilsCommon.cosd(angle) * (distanceGrid + crossGrid);
 						dy = UtilsCommon.sind(angle) * (distanceGrid + crossGrid);
 						point.x = Math.round(dx + x);
 						point.y = Math.round(dy + y);
-						if (!SRoadSeeker.getInstance().isJumpableBlock(point.x, point.y)) //已跨过
+						if (!isJumpableBlock(point.x, point.y)) //已跨过
 						{
 							break;
 						}
 						crossGrid++;
 						maxGrid--;
 					}
-					if (SRoadSeeker.getInstance().isBlock(point.x, point.y)) //无法跳跃跨过
+					if (isBlock(point.x, point.y)) //无法跳跃跨过
 					{
 						distanceGrid--;
 						dx = UtilsCommon.cosd(angle) * distanceGrid;
@@ -285,14 +285,14 @@
 			{
 				distanceGrid = 0;
 				maxGrid = Math.round(UtilsCommon.getDistance(x, y, point.x, point.y));
-				while (maxGrid > 0 && point.x >= 0 && point.x < SAStar.getInstance().mapBlockColums && point.y >= 0 && point.y < SAStar.getInstance().mapBlockRows) //走路方向的前N格是可通行区域
+				while (maxGrid > 0 && point.x >= 0 && point.x < m_astar.mapBlockColums && point.y >= 0 && point.y < m_astar.mapBlockRows) //走路方向的前N格是可通行区域
 				{
 					distanceGrid++;
 					dx = UtilsCommon.cosd(angle) * distanceGrid;
 					dy = UtilsCommon.sind(angle) * distanceGrid;
 					point.x = Math.round(dx + x);
 					point.y = Math.round(dy + y);
-					if (SRoadSeeker.getInstance().isBlock(point.x, point.y))
+					if (isBlock(point.x, point.y))
 					{
 						distanceGrid--;
 						dx = UtilsCommon.cosd(angle) * distanceGrid;

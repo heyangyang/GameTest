@@ -6,43 +6,33 @@ package hy.rpg.map
 
 	/**
 	 *
-	 * <p>
-	 * SunnyGame的一个地图块
-	 * </p>
-	 * <p><strong><font color="#0000ff">Copyright © 2012 Sunny3D. All rights reserved.</font></strong><br>
-	 * <font color="#0000ff">www.sunny3d.com</font></p>
-	 * @langversion 3.0
-	 * @playerversion Flash 11.2
-	 * @playerversion AIR 3.2
-	 * @productversion Flex 4.5
-	 * @author <strong><font color="#0000ff">刘黎明</font></strong><br>
-	 * <font color="#0000ff">www.liuliming.org</font>
+	 * 地图块
 	 *
 	 */
 	public class MapTile
 	{
-		protected var _isDisposed : Boolean;
 		protected var _id : String;
 		protected var _resId : String;
 		protected var _priority : int;
 		protected var _version : String;
 		protected var _parser : ParserMapResource;
 
-		public function MapTile(parserClass : Class, id : String, resId : String, priority : int, version : String = null)
+		public function MapTile(id : String, resId : String, priority : int, version : String = null)
 		{
-			_isDisposed = false;
 			_id = id;
 			_resId = resId;
 			_priority = priority;
 			_version = version;
-			_parser = SReferenceManager.getInstance().createMapResourceParser(parserClass, _id, resId, priority, version);
 			super();
 		}
 
-		public function load() : void
+		public function load(onComplete : Function) : void
 		{
-			if (_parser && !_parser.isLoaded && !_parser.isLoading)
+			_parser && _parser.release();
+			_parser = SReferenceManager.getInstance().createMapResourceParser(ParserMapResource, _id, _resId, _priority, _version);
+			if (!_parser.isLoading)
 			{
+				_parser.onComplete(onComplete);
 				_parser.load();
 			}
 		}
@@ -61,13 +51,6 @@ package hy.rpg.map
 			return false;
 		}
 
-		public function onComplete(fun : Function) : ParserResource
-		{
-			if (_parser)
-				return _parser.onComplete(fun);
-			return null;
-		}
-
 		public function clearBitmap() : void
 		{
 			_parser && _parser.clearBitmap();
@@ -80,35 +63,12 @@ package hy.rpg.map
 
 		public function destroy() : void
 		{
-			if (_isDisposed)
-				return;
 			if (_parser)
 			{
 				_parser.clearBitmap();
 				_parser.release();
 				_parser = null;
 			}
-			_isDisposed = true;
-		}
-
-		public function get isDisposed() : Boolean
-		{
-			return _isDisposed;
-		}
-
-		public function get resId() : String
-		{
-			return _resId;
-		}
-
-		public function get priority() : int
-		{
-			return _priority;
-		}
-
-		public function get version() : String
-		{
-			return _version;
 		}
 	}
 }

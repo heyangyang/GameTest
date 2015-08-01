@@ -45,7 +45,11 @@ package hy.rpg.parser
 		{
 			var m_resource : SResource = SReferenceManager.getInstance().createResource(m_id, m_version);
 
-			if (m_resource.isLoaded)
+			if (m_isLoaded)
+			{
+				invokeNotifyByArray(m_completeFuns);
+			}
+			else if (m_resource.isLoaded)
 			{
 				onResourceLoaded(m_resource);
 			}
