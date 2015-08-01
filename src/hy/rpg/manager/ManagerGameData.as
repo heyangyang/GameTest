@@ -4,15 +4,15 @@ package hy.rpg.manager
 	import hy.game.manager.SBaseManager;
 	import hy.rpg.components.data.DataComponent;
 
-	public class ManagerObjectData extends SBaseManager
+	public class ManagerGameData extends SBaseManager
 	{
-		private static var instance : ManagerObjectData;
+		private static var instance : ManagerGameData;
 
-		public static function getInstance() : ManagerObjectData
+		public static function getInstance() : ManagerGameData
 		{
 			if (instance == null)
 			{
-				instance = new ManagerObjectData();
+				instance = new ManagerGameData();
 				instance.init();
 			}
 			return instance;
@@ -20,7 +20,7 @@ package hy.rpg.manager
 
 		private var m_heros : Vector.<DataComponent>;
 
-		public function ManagerObjectData()
+		public function ManagerGameData()
 		{
 			super();
 		}
@@ -30,6 +30,7 @@ package hy.rpg.manager
 			m_heros = new Vector.<DataComponent>();
 			var heroTypes : Array = ["SHHeroAsura", "SHHeroExtreme", "SHHeroGhostValley", "SHHeroMoYingMan", "SHHeroMoYingWoman", "SHHeroXuanMing", "SHHeroHiddenFaery"];
 			var heroWeapons : Array = ["sw_3_0", "sw_6_1", "sw_4_0", "sw_10_1", "sw_10_0", "sw_xuan", "sw_hidden"];
+			var heroWings : Array = ["SHHeroWing_D", "", "SHHeroWing_E", "SHHeroMoYingWing", "SHHeroMoYingWingWoman", "SHHeroWing_F", "SHHeroWing_G"];
 			var data : DataComponent;
 			var len : int = heroTypes.length - 1;
 			var index : int;
@@ -42,6 +43,7 @@ package hy.rpg.manager
 				data.name = heroTypes[index];
 				data.avatarId = data.name;
 				data.weaponId = heroWeapons[index];
+				data.wingId = heroWings[index];
 				data.speed = 0.2;
 				data.level = 100 * Math.random();
 				data.hp_max = 200 * data.level;

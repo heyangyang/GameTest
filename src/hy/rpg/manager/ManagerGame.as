@@ -75,20 +75,12 @@ package hy.rpg.manager
 		 *  创建玩家自己的角色
 		 *
 		 */
-		public function createMyselfHeroObject(id : String) : ObjectRole
+		public function createMyselfHeroObject(data : DataComponent) : ObjectRole
 		{
 			var heroObject : ObjectRole = new ObjectRole();
-			heroObject.transform = new STransform();
-			heroObject.transform.x = UtilsCommon.getPixelXByGrid(45);
-			heroObject.transform.y = UtilsCommon.getPixelYByGrid(20);
-			heroObject.transform.dir = EnumDirection.SOUTH;
-			//数据组件
-			var roleComponentData : DataComponent = new DataComponent();
-			roleComponentData.name = "无法无天";
-			roleComponentData.avatarId = id;
-			roleComponentData.weaponId = "sw_1_0";
-			roleComponentData.action = SActionType.IDLE;
-			heroObject.addComponent(roleComponentData);
+			heroObject.id = data.id;
+			heroObject.transform = data.transform;
+			heroObject.addComponent(data);
 			//avatar组件
 			heroObject.addComponent(new SAvatarComponent());
 			heroObject.addComponent(new ComponentWeapon());

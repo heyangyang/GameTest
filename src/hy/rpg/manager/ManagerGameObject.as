@@ -1,4 +1,4 @@
-package hy.rpg.update
+package hy.rpg.manager
 {
 	import flash.utils.Dictionary;
 
@@ -6,17 +6,15 @@ package hy.rpg.update
 	import hy.game.core.SCameraObject;
 	import hy.game.core.SUpdate;
 	import hy.rpg.components.data.DataComponent;
-	import hy.rpg.manager.ManagerGame;
-	import hy.rpg.manager.ManagerObjectData;
 
-	public class GameObjectManager extends SUpdate
+	public class ManagerGameObject extends SUpdate
 	{
-		private static var instance : GameObjectManager;
+		private static var instance : ManagerGameObject;
 
-		public static function getInstance() : GameObjectManager
+		public static function getInstance() : ManagerGameObject
 		{
 			if (instance == null)
-				instance = new GameObjectManager();
+				instance = new ManagerGameObject();
 			return instance;
 		}
 
@@ -24,14 +22,15 @@ package hy.rpg.update
 		private var lastSceneY : int;
 		private var game_list : Dictionary;
 		private var updateGame : GameObject;
-		private var dataMagr : ManagerObjectData;
+		private var dataMagr : ManagerGameData;
 		private var hasCreatedObject : Boolean;
+		public static var hero_count : int;
 
-		public function GameObjectManager()
+		public function ManagerGameObject()
 		{
 			super();
 			game_list = new Dictionary();
-			dataMagr = ManagerObjectData.getInstance();
+			dataMagr = ManagerGameData.getInstance();
 			frameRate = 10;
 			hasCreatedObject = false;
 		}
@@ -42,10 +41,14 @@ package hy.rpg.update
 				return;
 			lastSceneX = SCameraObject.sceneX;
 			lastSceneY = SCameraObject.sceneY;
+			hero_count = 0;
 			for each (updateGame in game_list)
 			{
 				if (SCameraObject.isInScreen(updateGame.transform))
-					continue
+				{
+					hero_count++;
+					continue;
+				}
 				delete game_list[updateGame.id];
 				updateGame.destroy();
 			}

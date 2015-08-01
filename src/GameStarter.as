@@ -9,6 +9,7 @@ package
 	import hy.rpg.starter.StarterEnterScene;
 	import hy.rpg.starter.StarterMapLoader;
 	import hy.rpg.starter.StarterShortcutKey;
+	import hy.rpg.manager.ManagerGameObject;
 
 	/**
 	 * 启动器
@@ -42,6 +43,7 @@ package
 			monitor.watchProperty(SReferenceManager.getInstance(), "status", "status", 0x00ff00);
 			monitor.watchProperty(STime, "deltaTime", "deltaTime", 0x00ff00);
 			monitor.watchProperty(STime, "passedTime", "passedTime", 0x00ff00);
+			monitor.watchProperty(ManagerGameObject, "hero_count", "hero_count", 0x00ff00);
 
 			addNodeByType(GameNodeEnmu.base_config);
 			addNodeByType(GameNodeEnmu.map_load);
