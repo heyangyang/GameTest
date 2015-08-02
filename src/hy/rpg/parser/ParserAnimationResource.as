@@ -5,7 +5,6 @@ package hy.rpg.parser
 	import hy.game.animation.SAnimationDescription;
 	import hy.game.core.interfaces.IBitmapData;
 	import hy.game.manager.SReferenceManager;
-	import hy.game.render.SRenderBitmapData;
 	import hy.rpg.enum.EnumLoadPriority;
 
 
@@ -16,12 +15,10 @@ package hy.rpg.parser
 	public class ParserAnimationResource extends ParserPakResource
 	{
 		protected var action_name : String;
-		private var cur_dir : String;
-
+		
 		public function ParserAnimationResource(desc : SAnimationDescription, priority : int = EnumLoadPriority.EFFECT)
 		{
 			super(desc.url, desc.version, priority);
-			cur_dir = desc.id.substring(desc.id.length - 1);
 		}
 
 		override protected function loadThreadResource() : void
@@ -67,32 +64,15 @@ package hy.rpg.parser
 			}
 		}
 
-		/**
-		 * 根据帧得到位图，帧指的是整个动画文件的帧序列号
-		 * @param frame
-		 * @return
-		 *
-		 */
-		override public function getBitmapDataByFrame(frame : int) : SRenderBitmapData
+		public function getBitmapDataByDir(frame : int, dir : String) : IBitmapData
 		{
-			if (_decoder)
-				return _decoder.getResult(frame - 1, cur_dir);
-			return null;
-		}
-
-		public function getBitmapDataByDir(frame : int, dir : String = null) : IBitmapData
-		{
-			if (dir == null)
-				dir = cur_dir;
 			if (_decoder)
 				return _decoder.getDirResult(action_name, frame - 1, dir);
 			return null;
 		}
 
-		override public function getOffset(index : int, dir : String = null) : Point
+		override public function getOffset(index : int, dir : String) : Point
 		{
-			if (dir == null)
-				dir = cur_dir;
 			if (_decoder)
 				return _decoder.getDirOffest(action_name, index, dir);
 			return null;

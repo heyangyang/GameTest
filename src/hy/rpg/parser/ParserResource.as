@@ -1,7 +1,7 @@
 package hy.rpg.parser
 {
 	import flash.utils.ByteArray;
-
+	
 	import hy.game.core.SReference;
 	import hy.game.manager.SReferenceManager;
 	import hy.game.resources.SResource;
@@ -22,6 +22,7 @@ package hy.rpg.parser
 		private var m_ioErrorFuns : Vector.<Function>;
 		private var m_completeFuns : Vector.<Function>;
 
+		public var cc:String;
 		/**
 		 * 创建一个资源解析器
 		 * @param id
@@ -51,7 +52,8 @@ package hy.rpg.parser
 			}
 			else if (m_resource.isLoaded)
 			{
-				onResourceLoaded(m_resource);
+				m_isLoading = true;
+				startParseLoader(null);
 			}
 			else if (!m_resource.isLoading)
 			{
@@ -62,7 +64,7 @@ package hy.rpg.parser
 		}
 
 		/**
-		 * 加载完成
+		 * 加载完成,开始解析
 		 * @param res
 		 *
 		 */

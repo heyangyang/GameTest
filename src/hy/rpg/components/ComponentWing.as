@@ -4,6 +4,7 @@ package hy.rpg.components
 	import hy.game.avatar.SAvatar;
 	import hy.game.components.SAvatarComponent;
 	import hy.game.core.STime;
+	import hy.rpg.enum.EnumDirection;
 	import hy.rpg.enum.EnumRenderLayer;
 
 	public class ComponentWing extends SAvatarComponent
@@ -17,7 +18,8 @@ package hy.rpg.components
 		{
 			super.notifyAdded();
 			m_render.layer = EnumRenderLayer.WING;
-			setAvatarId(m_data.weaponId);
+			setAvatarId(m_data.wingId);
+			registerd();
 		}
 
 		override public function update() : void
@@ -32,7 +34,8 @@ package hy.rpg.components
 			if (m_dir != m_transform.dir)
 			{
 				m_dir = m_transform.dir;
-				m_avatar.gotoDirection(m_dir);
+				tmp_frame = m_avatar.gotoDirection(m_dir);
+				m_render.layer = EnumDirection.isBackDirection(m_dir) ? -EnumRenderLayer.WING : EnumRenderLayer.WING;
 			}
 			else
 				tmp_frame = m_avatar.gotoNextFrame(STime.deltaTime);

@@ -16,6 +16,7 @@ package hy.rpg.components
 			super.notifyAdded();
 			m_render.layer = EnumRenderLayer.WEAPON;
 			setAvatarId(m_data.weaponId);
+			registerd();
 		}
 
 		override protected function onLoadAvatarComplete(avatar : SAvatar) : void

@@ -17,6 +17,7 @@ package hy.rpg.manager
 	import hy.rpg.components.ComponentName;
 	import hy.rpg.components.ComponentShodow;
 	import hy.rpg.components.ComponentWeapon;
+	import hy.rpg.components.ComponentWing;
 	import hy.rpg.components.data.DataComponent;
 	import hy.rpg.enum.EnumDirection;
 	import hy.rpg.map.MapObject;
@@ -84,6 +85,7 @@ package hy.rpg.manager
 			//avatar组件
 			heroObject.addComponent(new SAvatarComponent());
 			heroObject.addComponent(new ComponentWeapon());
+			heroObject.addComponent(new ComponentWing());
 			//名字组件
 			heroObject.addComponent(new ComponentName());
 			//shodow
@@ -115,6 +117,7 @@ package hy.rpg.manager
 			//avatar组件
 			heroObject.addComponent(new SAvatarComponent());
 			heroObject.addComponent(new ComponentWeapon());
+			heroObject.addComponent(new ComponentWing());
 			//名字组件
 			heroObject.addComponent(new ComponentName());
 			//shodow

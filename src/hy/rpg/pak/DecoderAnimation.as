@@ -98,6 +98,9 @@ package hy.rpg.pak
 		 */
 		public function decode(bytes : ByteArray, isClear : Boolean = true) : void
 		{
+			//正在解析中
+			if(loader_dic)
+				return;
 			bytes.position = 0
 			var head : String = bytes.readUTF();
 			var pak : DecoderPak;

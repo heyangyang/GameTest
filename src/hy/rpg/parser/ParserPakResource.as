@@ -2,7 +2,7 @@ package hy.rpg.parser
 {
 	import flash.geom.Point;
 	import flash.utils.ByteArray;
-	
+
 	import hy.game.manager.SReferenceManager;
 	import hy.game.render.SRenderBitmapData;
 	import hy.rpg.enum.EnumLoadPriority;
@@ -80,8 +80,6 @@ package hy.rpg.parser
 
 		override protected function startParseLoader(bytes : ByteArray) : void
 		{
-			if (!bytes)
-				return;
 			decoder = SReferenceManager.getInstance().createDirectAnimationDeocder(id);
 			_decoder.addNotify(onParseCompleted);
 			_decoder.decode(bytes, false);
@@ -168,7 +166,7 @@ package hy.rpg.parser
 			return null;
 		}
 
-		public function getOffset(index : int, dir : String = null) : Point
+		public function getOffset(index : int, dir : String) : Point
 		{
 			if (_decoder)
 				return _decoder.getOffest(index);

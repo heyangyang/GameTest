@@ -69,7 +69,7 @@ package hy.rpg.pak
 		/**
 		 * 是否加载完成
 		 */
-		private var isCompleted : Boolean;
+		public var isCompleted : Boolean;
 		private var _isDisposed : Boolean;
 
 		/**
