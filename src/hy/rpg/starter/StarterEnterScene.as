@@ -3,7 +3,7 @@ package hy.rpg.starter
 	import hy.game.monitor.SMonitor;
 	import hy.game.starter.SStartNode;
 	import hy.rpg.components.data.DataComponent;
-	import hy.rpg.manager.ManagerGame;
+	import hy.rpg.manager.ManagerGameCreate;
 	import hy.rpg.manager.ManagerGameData;
 	import hy.rpg.manager.ManagerGameObject;
 	import hy.rpg.utils.UtilsCommon;
@@ -34,7 +34,7 @@ package hy.rpg.starter
 			data.weaponId = "sw_6_1";
 			data.wingId = "SHHeroWing_G";
 			data.name = "无法无天";
-			ManagerGame.getInstance().createMyselfHeroObject(data);
+			ManagerGameCreate.getInstance().createMyselfHeroObject(data);
 			ManagerGameData.getInstance();
 			ManagerGameObject.getInstance().registerd();
 			SMonitor.getInstance().registerd();

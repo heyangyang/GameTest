@@ -2,6 +2,7 @@ package hy.rpg.components
 {
 	import hy.game.avatar.SAvatar;
 	import hy.game.components.SAvatarComponent;
+	import hy.rpg.enum.EnumLoadPriority;
 	import hy.rpg.enum.EnumRenderLayer;
 
 	public class ComponentWeapon extends SAvatarComponent
@@ -14,6 +15,7 @@ package hy.rpg.components
 		override public function notifyAdded() : void
 		{
 			super.notifyAdded();
+			m_lazyAvatar.priority = EnumLoadPriority.WEAPON;
 			m_render.layer = EnumRenderLayer.WEAPON;
 			setAvatarId(m_data.weaponId);
 			registerd();

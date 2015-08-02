@@ -39,7 +39,7 @@ package hy.rpg.state
 		{
 			if (m_seekRoad.isBlock(m_data.targetGridX, m_data.targetGridY))
 				return false;
-			m_paths = m_seekRoad.find(UtilsCommon.getGridXByPixel(m_transform.x), UtilsCommon.getGridXByPixel(m_transform.x), m_data.targetGridX, m_data.targetGridY);
+			m_paths = m_seekRoad.find(UtilsCommon.getGridXByPixel(m_transform.x), UtilsCommon.getGridXByPixel(m_transform.y), m_data.targetGridX, m_data.targetGridY);
 			if (!m_paths || m_paths.length == 0)
 				return false;
 			return true;

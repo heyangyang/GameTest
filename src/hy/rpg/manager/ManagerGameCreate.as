@@ -1,12 +1,10 @@
 package hy.rpg.manager
 {
-	import hy.game.avatar.SActionType;
 	import hy.game.cfg.Config;
 	import hy.game.components.SAnimationComponent;
 	import hy.game.components.SAvatarComponent;
 	import hy.game.core.GameObject;
 	import hy.game.core.SCameraObject;
-	import hy.game.data.STransform;
 	import hy.game.enum.EnumPriority;
 	import hy.game.enum.EnumTags;
 	import hy.game.manager.SBaseManager;
@@ -19,30 +17,28 @@ package hy.rpg.manager
 	import hy.rpg.components.ComponentWeapon;
 	import hy.rpg.components.ComponentWing;
 	import hy.rpg.components.data.DataComponent;
-	import hy.rpg.enum.EnumDirection;
 	import hy.rpg.map.MapObject;
 	import hy.rpg.object.ObjectRole;
 	import hy.rpg.state.StateStand;
 	import hy.rpg.state.StateWalk;
-	import hy.rpg.utils.UtilsCommon;
 
 	/**
 	 * 游戏管理器
 	 * @author hyy
 	 *
 	 */
-	public class ManagerGame extends SBaseManager
+	public class ManagerGameCreate extends SBaseManager
 	{
-		private static var instance : ManagerGame;
+		private static var instance : ManagerGameCreate;
 
-		public static function getInstance() : ManagerGame
+		public static function getInstance() : ManagerGameCreate
 		{
 			if (instance == null)
-				instance = new ManagerGame();
+				instance = new ManagerGameCreate();
 			return instance;
 		}
 
-		public function ManagerGame()
+		public function ManagerGameCreate()
 		{
 			if (instance)
 				error("instance != null");

@@ -1,7 +1,7 @@
 package hy.rpg.starter
 {
 	import hy.game.starter.SStartNode;
-	import hy.rpg.manager.ManagerGame;
+	import hy.rpg.manager.ManagerGameCreate;
 	import hy.rpg.map.MapObject;
 
 	/**
@@ -23,8 +23,8 @@ package hy.rpg.starter
 		 */
 		override public function onStart() : void
 		{
-			ManagerGame.getInstance().createCameraObject();
-			var mapObject : MapObject = ManagerGame.getInstance().createMapObject();
+			ManagerGameCreate.getInstance().createCameraObject();
+			var mapObject : MapObject = ManagerGameCreate.getInstance().createMapObject();
 			mapObject.load("wuxingwuzu", nextNode);
 		}
 

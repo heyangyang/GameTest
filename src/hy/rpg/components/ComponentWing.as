@@ -5,6 +5,7 @@ package hy.rpg.components
 	import hy.game.components.SAvatarComponent;
 	import hy.game.core.STime;
 	import hy.rpg.enum.EnumDirection;
+	import hy.rpg.enum.EnumLoadPriority;
 	import hy.rpg.enum.EnumRenderLayer;
 
 	public class ComponentWing extends SAvatarComponent
@@ -17,6 +18,7 @@ package hy.rpg.components
 		override public function notifyAdded() : void
 		{
 			super.notifyAdded();
+			m_lazyAvatar.priority = EnumLoadPriority.WING;
 			m_render.layer = EnumRenderLayer.WING;
 			setAvatarId(m_data.wingId);
 			registerd();
@@ -42,6 +44,7 @@ package hy.rpg.components
 			if (!tmp_frame || tmp_frame == m_frame || !tmp_frame.frameData)
 				return;
 			m_frame = tmp_frame;
+			m_transform.rectangle.contains(m_frame.rect);
 			if (needReversal != m_frame.needReversal)
 			{
 				needReversal = m_frame.needReversal;

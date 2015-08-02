@@ -7,6 +7,14 @@ package hy.rpg.manager
 	import hy.game.core.SUpdate;
 	import hy.rpg.components.data.DataComponent;
 
+	/**
+	 * 游戏对象管理
+	 * 移除可视范围外的对象
+	 * 创建可视范围内的对象
+	 * 镜头不移动的时候不会做任何操作
+	 * @author wait
+	 *
+	 */
 	public class ManagerGameObject extends SUpdate
 	{
 		private static var instance : ManagerGameObject;
@@ -23,6 +31,9 @@ package hy.rpg.manager
 		private var game_list : Dictionary;
 		private var updateGame : GameObject;
 		private var dataMagr : ManagerGameData;
+		/**
+		 * 是否还有没有创建完成的对象
+		 */
 		private var hasCreatedObject : Boolean;
 		public static var hero_count : int;
 
@@ -37,7 +48,7 @@ package hy.rpg.manager
 
 		override public function update() : void
 		{
-			if (!hasCreatedObject && SCameraObject.sceneX == lastSceneX && SCameraObject.sceneY == lastSceneY)
+			if (!hasCreatedObject && !dataMagr.isChange && SCameraObject.sceneX == lastSceneX && SCameraObject.sceneY == lastSceneY)
 				return;
 			lastSceneX = SCameraObject.sceneX;
 			lastSceneY = SCameraObject.sceneY;
@@ -59,7 +70,7 @@ package hy.rpg.manager
 					continue
 				if (game_list[data.id])
 					continue;
-				game_list[data.id] = ManagerGame.getInstance().createHeroObject(data);
+				game_list[data.id] = ManagerGameCreate.getInstance().createHeroObject(data);
 				hasCreatedObject = true;
 				return;
 			}

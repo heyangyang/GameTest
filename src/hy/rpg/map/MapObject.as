@@ -5,7 +5,7 @@ package hy.rpg.map
 	import flash.geom.Point;
 	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
-	
+
 	import hy.game.cfg.Config;
 	import hy.game.core.GameObject;
 	import hy.game.core.SCameraObject;
@@ -400,11 +400,11 @@ package hy.rpg.map
 				return;
 			}
 			var tileId : String = encoderTileId(tileX, tileY);
-			var tile : MapTile = m_tiles[tileId];
+			var tile : ParserMapResource = m_tiles[tileId];
 			if (!tile)
 				return;
 			delete m_tiles[tileId];
-			tile.destroy();
+			tile.release();
 		}
 
 		/**
@@ -449,15 +449,21 @@ package hy.rpg.map
 			if (startX >= -m_pretreatmentNum && endX >= -m_pretreatmentNum && tileX >= startX && tileX <= endX && startY >= -m_pretreatmentNum && endY >= -m_pretreatmentNum && tileY >= startY && tileY <= endY)
 			{
 				var tileId : String = encoderTileId(tileX, tileY);
-				var tile : MapTile = m_tiles[tileId];
+				var tile : ParserMapResource = m_tiles[tileId];
 				if (!tile)
 				{
 					var data : Object = m_fileVersions[tileId];
 					if (data)
 					{
-						tile = new MapTile(m_mapId + tileId, data.url, EnumLoadPriority.MAP, data.version);
-						tile.load(onTileResourceParserComplete);
+						tile = SReferenceManager.getInstance().createMapResourceParser(ParserMapResource, m_mapId + tileId, data.url, EnumLoadPriority.MAP, data.version);
+						tile.onComplete(onTileResourceParserComplete);
+						tile.load();
 						m_tiles[tileId] = tile;
+					}
+					else
+					{
+						warning(this, "m_fileVersions is null : " + tileId);
+						return;
 					}
 
 					var blackBmd : IBitmap = m_blackTitles[tileId];
@@ -473,12 +479,12 @@ package hy.rpg.map
 							blackBmd = new SRenderBitmap(m_blackBitmapData.clone());
 						m_blackTitles[tileId] = blackBmd;
 					}
-					addChildTile(blackBmd, tileX, tileY);
+					!tile.isLoaded && addChildTile(blackBmd, tileX, tileY);
 					return;
 				}
 				if (tile.isLoaded)
 				{
-					onTileResourceParserComplete(tile.parser);
+					onTileResourceParserComplete(tile);
 					return;
 				}
 
@@ -643,21 +649,24 @@ package hy.rpg.map
 
 		private function clearAllTiles() : void
 		{
+			var tile : ParserMapResource;
 			for (var tileId : String in m_tiles.dic)
 			{
-				var tile : MapTile = m_tiles.getValue(tileId);
+				tile = m_tiles[tileId];
 				if (tile)
 				{
-					tile.destroy();
-					m_tiles.deleteValue(tileId);
+					tile.release();
+					delete m_tiles[tileId];
 				}
 			}
 
-			for each (var bit : IBitmap in m_blackTitles)
+			var bit : IBitmap;
+			for (var key : String in m_blackTitles)
 			{
+				bit = m_blackTitles[key];
 				bit.dispose();
+				delete m_blackTitles[key];
 			}
-			m_blackTitles = new Dictionary();
 		}
 
 		private function clearAllBuffer() : void

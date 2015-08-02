@@ -4,6 +4,7 @@ package
 	import flash.events.Event;
 	
 	import hy.game.GameFrameStart;
+	
 
 	public class GameTest extends Sprite
 	{

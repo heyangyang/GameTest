@@ -3,7 +3,14 @@ package hy.rpg.manager
 	import hy.game.core.SCameraObject;
 	import hy.game.manager.SBaseManager;
 	import hy.rpg.components.data.DataComponent;
+	import hy.rpg.seek.SRoadSeeker;
+	import hy.rpg.utils.UtilsCommon;
 
+	/**
+	 * 游戏中所有对象数据的管理
+	 * @author wait
+	 *
+	 */
 	public class ManagerGameData extends SBaseManager
 	{
 		private static var instance : ManagerGameData;
@@ -19,6 +26,7 @@ package hy.rpg.manager
 		}
 
 		private var m_heros : Vector.<DataComponent>;
+		private var m_isChange : Boolean;
 
 		public function ManagerGameData()
 		{
@@ -36,8 +44,17 @@ package hy.rpg.manager
 			var index : int;
 			var sceneW : int = SCameraObject.getInstance().sceneW;
 			var sceneH : int = SCameraObject.getInstance().sceneH;
-			for (var i : int = 0; i < 500; i++)
+			var gridX : int;
+			var gridY : int;
+			var seekRoad : SRoadSeeker = SRoadSeeker.getInstance();
+			for (var i : int = 0; i < 400; )
 			{
+				gridX = UtilsCommon.getGridXByPixel(sceneW * Math.random());
+				gridY = UtilsCommon.getGridYByPixel(sceneH * Math.random());
+				if (seekRoad.isBlock(gridX, gridY))
+				{
+					continue;
+				}
 				data = new DataComponent();
 				index = len * Math.random();
 				data.name = heroTypes[index];
@@ -49,18 +66,24 @@ package hy.rpg.manager
 				data.hp_max = 200 * data.level;
 				data.hp_cur = data.hp_max * Math.random();
 				data.transform.dir = 7 * Math.random();
-				data.transform.x = sceneW * Math.random();
-				data.transform.y = sceneW * Math.random();
-				data.id = i;
+				data.transform.x = UtilsCommon.getPixelXByGrid(gridX);
+				data.transform.y = UtilsCommon.getPixelYByGrid(gridY);
+				data.id = i++;
 				m_heros.push(data);
 			}
 
 		}
 
-		public function get heros():Vector.<DataComponent>
+		public function get heros() : Vector.<DataComponent>
 		{
 			return m_heros;
 		}
+
+		public function get isChange() : Boolean
+		{
+			return m_isChange;
+		}
+
 
 	}
 }
