@@ -15,6 +15,7 @@ package hy.rpg.components.data
 		public var avatarId : String;
 		public var weaponId : String;
 		public var wingId : String;
+		public var mountId : String;
 		public var action : int;
 		public var targetX : int;
 		public var targetY : int;

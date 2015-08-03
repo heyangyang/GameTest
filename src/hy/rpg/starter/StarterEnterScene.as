@@ -33,6 +33,7 @@ package hy.rpg.starter
 			data.avatarId = "SHHeroXuanMing";
 			data.weaponId = "sw_6_1";
 			data.wingId = "SHHeroWing_G";
+			data.mountId = "SHMountQiongQi";
 			data.name = "无法无天";
 			ManagerGameCreate.getInstance().createMyselfHeroObject(data);
 			ManagerGameData.getInstance();

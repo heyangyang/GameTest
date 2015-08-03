@@ -35,7 +35,7 @@ package hy.rpg.components
 			if (m_data.updateName)
 				updateRender();
 			if (m_transform.isChangeFiled(STransform.C_XYZ) || m_transform.isChangeFiled(STransform.C_WH))
-				m_render.y = -m_transform.height - m_transform.z - m_offsetY;
+				m_render.y = -m_transform.height - m_offsetY - m_transform.z + m_transform.centerOffsetY;
 		}
 
 		private function updateRender() : void

@@ -11,6 +11,7 @@ package hy.rpg.manager
 	import hy.game.manager.SLayerManager;
 	import hy.game.state.StateComponent;
 	import hy.rpg.components.ComponentHp;
+	import hy.rpg.components.ComponentMount;
 	import hy.rpg.components.ComponentMouse;
 	import hy.rpg.components.ComponentName;
 	import hy.rpg.components.ComponentShodow;
@@ -82,6 +83,7 @@ package hy.rpg.manager
 			heroObject.addComponent(new SAvatarComponent());
 			heroObject.addComponent(new ComponentWeapon());
 			heroObject.addComponent(new ComponentWing());
+			heroObject.addComponent(new ComponentMount());
 			//名字组件
 			heroObject.addComponent(new ComponentName());
 			//shodow
@@ -114,6 +116,7 @@ package hy.rpg.manager
 			heroObject.addComponent(new SAvatarComponent());
 			heroObject.addComponent(new ComponentWeapon());
 			heroObject.addComponent(new ComponentWing());
+			heroObject.addComponent(new ComponentMount());
 			//名字组件
 			heroObject.addComponent(new ComponentName());
 			//shodow
