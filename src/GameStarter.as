@@ -39,7 +39,7 @@ package
 		private function onFirstStart() : void
 		{
 			var monitor : SMonitor = SMonitor.getInstance();
-			monitor.watchProperty(ManagerGameObject, "hero_count", "hero_count", 0xff0000);
+			monitor.watchProperty(ManagerGameObject, "objectNumChildren", "objectNum", 0xff0000);
 			monitor.watchProperty(SReferenceManager.getInstance(), "total_reference", "total_reference", 0x00ff00);
 			monitor.watchProperty(SReferenceManager.getInstance(), "status", "status", 0x00ff00);
 			monitor.watchProperty(STime, "deltaTime", "deltaTime", 0x00ff00);

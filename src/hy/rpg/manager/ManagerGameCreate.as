@@ -80,10 +80,14 @@ package hy.rpg.manager
 			heroObject.transform = data.transform;
 			heroObject.addComponent(data);
 			//avatar组件
-			heroObject.addComponent(new SAvatarComponent());
-			heroObject.addComponent(new ComponentWeapon());
-			heroObject.addComponent(new ComponentWing());
-			heroObject.addComponent(new ComponentMount());
+			if (data.avatarId)
+				heroObject.addComponent(new SAvatarComponent());
+			if (data.weaponId)
+				heroObject.addComponent(new ComponentWeapon());
+			if (data.wingId)
+				heroObject.addComponent(new ComponentWing());
+			if (data.mountId)
+				heroObject.addComponent(new ComponentMount());
 			//名字组件
 			heroObject.addComponent(new ComponentName());
 			//shodow
@@ -113,10 +117,14 @@ package hy.rpg.manager
 			heroObject.transform = data.transform;
 			heroObject.addComponent(data);
 			//avatar组件
-			heroObject.addComponent(new SAvatarComponent());
-			heroObject.addComponent(new ComponentWeapon());
-			heroObject.addComponent(new ComponentWing());
-			heroObject.addComponent(new ComponentMount());
+			if (data.avatarId)
+				heroObject.addComponent(new SAvatarComponent());
+			if (data.weaponId)
+				heroObject.addComponent(new ComponentWeapon());
+			if (data.wingId)
+				heroObject.addComponent(new ComponentWing());
+			if (data.mountId)
+				heroObject.addComponent(new ComponentMount());
 			//名字组件
 			heroObject.addComponent(new ComponentName());
 			//shodow

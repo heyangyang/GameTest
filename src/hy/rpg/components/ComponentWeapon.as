@@ -3,6 +3,7 @@ package hy.rpg.components
 	import hy.game.avatar.SActionType;
 	import hy.game.avatar.SAvatar;
 	import hy.game.components.SAvatarComponent;
+	import hy.game.enum.EnumPriority;
 	import hy.rpg.enum.EnumLoadPriority;
 	import hy.rpg.enum.EnumRenderLayer;
 
@@ -19,7 +20,7 @@ package hy.rpg.components
 			m_lazyAvatar.priority = EnumLoadPriority.WEAPON;
 			m_render.layer = EnumRenderLayer.WEAPON;
 			setAvatarId(m_data.weaponId);
-			registerd();
+			registerd(EnumPriority.PRIORITY_7);
 		}
 
 		override public function update() : void

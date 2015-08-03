@@ -396,7 +396,7 @@ package hy.rpg.map
 		{
 			if (tileX < 0 || tileY < 0 || tileX > m_mapCols || tileY > m_mapRows)
 			{
-				warning(this, "地图删除区域不在范围内！");
+				warning(this, "地图删除区域不在范围内！", tileX, tileY);
 				return;
 			}
 			var tileId : String = encoderTileId(tileX, tileY);

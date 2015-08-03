@@ -4,7 +4,6 @@ package hy.rpg.starter
 	import hy.game.starter.SStartNode;
 	import hy.rpg.components.data.DataComponent;
 	import hy.rpg.manager.ManagerGameCreate;
-	import hy.rpg.manager.ManagerGameData;
 	import hy.rpg.manager.ManagerGameObject;
 	import hy.rpg.utils.UtilsCommon;
 
@@ -36,7 +35,6 @@ package hy.rpg.starter
 			data.mountId = "SHMountQiongQi";
 			data.name = "无法无天";
 			ManagerGameCreate.getInstance().createMyselfHeroObject(data);
-			ManagerGameData.getInstance();
 			ManagerGameObject.getInstance().registerd();
 			SMonitor.getInstance().registerd();
 		}
