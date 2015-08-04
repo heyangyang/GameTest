@@ -59,7 +59,7 @@ package hy.rpg.parser
 			{
 				m_isLoading = true;
 				m_isLoaded = false;
-				m_resource.addNotifyCompleted(onResourceLoaded).addNotifyIOError(onResourceIOError).priority(m_priority).load();
+				m_resource.addNotifyCompleted(onResourceLoaded).addNotifyIOError(onResourceIOError).setPriority(m_priority).load();
 			}
 		}
 

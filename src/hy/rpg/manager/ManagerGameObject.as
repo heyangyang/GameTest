@@ -41,8 +41,16 @@ package hy.rpg.manager
 			return instance;
 		}
 
-		private var m_lastStageX : int = -1;
-		private var m_lastStageY : int = -1;
+		/**
+		 * 鼠标位置相对于屏幕
+		 */
+		private var m_lastScreenMouseX : int = -1;
+		private var m_lastScreenMouseY : int = -1;
+		/**
+		 * 鼠标位置相对于场景
+		 */
+		private var m_lastSceneMouseX : int = -1;
+		private var m_lastSceneMouseY : int = -1;
 		/**
 		 * 上一次场景的坐标X,Y
 		 */
@@ -91,7 +99,18 @@ package hy.rpg.manager
 			var gridX : int;
 			var gridY : int;
 			var seekRoad : SRoadSeeker = SRoadSeeker.getInstance();
-			for (var i : int = 0; i < 100; )
+			data = new DataComponent();
+			data.transform.x = UtilsCommon.getPixelXByGrid(45);
+			data.transform.y = UtilsCommon.getPixelYByGrid(20);
+			data.avatarId = "SHHeroXuanMing";
+			data.weaponId = "sw_6_1";
+			data.wingId = "SHHeroWing_G";
+			data.mountId = "SHMountQiongQi";
+			data.name = "无法无天";
+			data.isMe = true;
+			m_objectDatas.push(data);
+
+			for (var i : int = 0; i < 00; )
 			{
 				gridX = UtilsCommon.getGridXByPixel(sceneW * Math.random());
 				gridY = UtilsCommon.getGridYByPixel(sceneH * Math.random());
@@ -122,18 +141,21 @@ package hy.rpg.manager
 		override public function update() : void
 		{
 			createAndDisposeObject();
-			updateMouseOverObject();
 		}
 
 		private function updateMouseOverObject() : void
 		{
-			if (m_lastStageX == SMouseMangaer.stageX && m_lastStageY == SMouseMangaer.stageY)
+			if (m_lastScreenMouseX == SMouseMangaer.mouseX && m_lastScreenMouseY == SMouseMangaer.mouseY)
 				return;
-			m_lastStageX = SMouseMangaer.stageX;
-			m_lastStageY = SMouseMangaer.stageY;
+			m_lastScreenMouseX = SMouseMangaer.mouseX;
+			m_lastScreenMouseY = SMouseMangaer.mouseY;
+			m_lastSceneMouseX = m_lastSceneX + m_lastScreenMouseX;
+			m_lastSceneMouseY = m_lastSceneY + m_lastScreenMouseY;
 			for each (currUpdateGame in m_visaulObjects)
 			{
-
+				if (!currUpdateGame.transform.contains(m_lastSceneMouseX, m_lastSceneMouseY))
+					continue;
+				trace(111111111111111);
 			}
 		}
 
@@ -163,6 +185,12 @@ package hy.rpg.manager
 
 			for each (var data : DataComponent in m_objectDatas)
 			{
+				if (data.isMe)
+				{
+					if (m_visaulObjects[data.id] == null)
+						m_visaulObjects[data.id] = ManagerGameCreate.getInstance().createMyselfHeroObject(data);
+					continue;
+				}
 				if (!SCameraObject.isInScreen(data.transform))
 					continue
 				if (m_visaulObjects[data.id])

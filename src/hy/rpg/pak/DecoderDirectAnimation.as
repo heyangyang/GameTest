@@ -34,7 +34,7 @@ package hy.rpg.pak
 				return;
 			}
 
-			resource.addNotifyCompleted(onXtfLoaded).addNotifyIOError(onResourceIOError).priority(priority).load();
+			resource.addNotifyCompleted(onXtfLoaded).addNotifyIOError(onResourceIOError).setPriority(priority).load();
 		}
 
 		protected function onXtfLoaded(resource : SResource) : void

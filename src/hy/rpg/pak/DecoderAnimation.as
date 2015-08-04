@@ -65,7 +65,7 @@ package hy.rpg.pak
 				return;
 			}
 
-			resource.addNotifyCompleted(onResourceLoaded).addNotifyIOError(onResourceIOError).priority(priority).load();
+			resource.addNotifyCompleted(onResourceLoaded).addNotifyIOError(onResourceIOError).setPriority(priority).load();
 		}
 
 		/**

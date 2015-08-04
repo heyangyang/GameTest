@@ -5,8 +5,9 @@ package hy.rpg.map
 	import flash.geom.Point;
 	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
-
+	
 	import hy.game.cfg.Config;
+	import hy.game.core.GameDispatcher;
 	import hy.game.core.GameObject;
 	import hy.game.core.SCameraObject;
 	import hy.game.core.interfaces.IBitmap;
@@ -182,12 +183,19 @@ package hy.rpg.map
 			super.registerd(priority);
 			addContainer(m_container);
 			removeRender(m_render);
+			GameDispatcher.addEventListener(GameDispatcher.RESIZE, onResizeHandler);
 		}
 
 		override public function unRegisterd() : void
 		{
 			super.unRegisterd();
 			removeContainer(m_container);
+			GameDispatcher.removeEventListener(GameDispatcher.RESIZE, onResizeHandler);
+		}
+
+		private function onResizeHandler() : void
+		{
+			resizeScreen(Config.screenWidth, Config.screenHeight);
 		}
 
 		/**
@@ -248,23 +256,40 @@ package hy.rpg.map
 			// 从XML文件中获取地图基本信息
 			m_mapWidth = m_config.@width;
 			m_mapHeight = m_config.@height;
-
-			//设置镜头的基本信息
-			m_camera.setScreenSize(Config.screenWidth, Config.screenHeight);
 			m_camera.setSceneSize(m_mapWidth, m_mapHeight);
-			m_camera.updateRectangle(200, 200);
 
 			m_tileWidth = Config.TILE_WIDTH;
 			m_tileHeight = Config.TILE_HEIGHT;
 			m_blackBitmapData = new BitmapData(m_tileWidth, m_tileHeight, false, 0);
 
-			setViewSize(Config.screenWidth, Config.screenHeight);
-
 			m_mapCols = Math.ceil(m_mapWidth / m_tileWidth);
 			m_mapRows = Math.ceil(m_mapHeight / m_tileHeight);
 
+			resizeScreen(Config.screenWidth, Config.screenHeight);
+
 			loadSmallMap(m_config.sm.@url, String(m_config.sm.@version));
 			loadPreviewMap(m_config.bm.@url, m_config.bm.@version);
+		}
+
+		/**
+		 * 设置屏幕大小
+		 * @param w
+		 * @param h
+		 *
+		 */
+		public function resizeScreen(w : int, h : int) : void
+		{
+			//设置镜头的基本信息
+			m_camera.setScreenSize(w, h);
+			m_camera.updateRectangle(200, 200);
+
+			m_viewWidth = w;
+			m_viewHeight = h;
+
+			m_bufferCols = Math.ceil(m_viewWidth / m_tileWidth) + m_pretreatmentNum;
+			m_bufferRows = Math.ceil(m_viewHeight / m_tileHeight) + m_pretreatmentNum;
+
+			resetMapBuffer();
 		}
 
 		/**
@@ -344,23 +369,6 @@ package hy.rpg.map
 		private function onSmallMapParserComplete(res : ParserMapResource) : void
 		{
 			m_smallMapBitmapData = res.bitmapData;
-			resetMapBuffer();
-		}
-
-		/**
-		 * 屏幕大小 改变
-		 * @param w
-		 * @param h
-		 *
-		 */
-		public function setViewSize(viewWidth : int, viewHeight : int) : void
-		{
-			m_viewWidth = viewWidth;
-			m_viewHeight = viewHeight;
-
-			m_bufferCols = Math.ceil(m_viewWidth / m_tileWidth) + m_pretreatmentNum;
-			m_bufferRows = Math.ceil(m_viewHeight / m_tileHeight) + m_pretreatmentNum;
-
 			resetMapBuffer();
 		}
 

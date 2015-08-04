@@ -2,10 +2,7 @@ package hy.rpg.starter
 {
 	import hy.game.monitor.SMonitor;
 	import hy.game.starter.SStartNode;
-	import hy.rpg.components.data.DataComponent;
-	import hy.rpg.manager.ManagerGameCreate;
 	import hy.rpg.manager.ManagerGameObject;
-	import hy.rpg.utils.UtilsCommon;
 
 	/**
 	 * 转换场景
@@ -26,15 +23,6 @@ package hy.rpg.starter
 		 */
 		override public function onStart() : void
 		{
-			var data : DataComponent = new DataComponent();
-			data.transform.x = UtilsCommon.getPixelXByGrid(45);
-			data.transform.y = UtilsCommon.getPixelYByGrid(20);
-			data.avatarId = "SHHeroXuanMing";
-			data.weaponId = "sw_6_1";
-			data.wingId = "SHHeroWing_G";
-			data.mountId = "SHMountQiongQi";
-			data.name = "无法无天";
-			ManagerGameCreate.getInstance().createMyselfHeroObject(data);
 			ManagerGameObject.getInstance().registerd();
 			SMonitor.getInstance().registerd();
 		}

@@ -6,6 +6,7 @@ package hy.rpg.components.data
 	public class DataComponent extends SComponentData
 	{
 		public var id : int;
+		public var isMe : Boolean;
 		private var m_name : String;
 		private var m_updateName : Boolean;
 		public var speed : Number = 0.25;
