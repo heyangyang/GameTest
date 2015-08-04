@@ -23,11 +23,22 @@ package hy.rpg.components
 		{
 			super.notifyAdded();
 			m_lazyAvatar.priority = EnumLoadPriority.MOUNT;
-			setAvatarId(m_data.mountId);
-			m_useCenterOffsetY = false;
 			registerd(EnumPriority.PRIORITY_8);
+			m_useCenterOffsetY = false;
 		}
 
+		override public function notifyRemoved() : void
+		{
+			super.notifyRemoved();
+			if (m_data)
+				m_data.isRide = false;
+		}
+
+		override protected function onStart() : void
+		{
+			super.onStart();
+			setAvatarId(m_data.mountId);
+		}
 
 		/**
 		 * 转换动作的一些操作
@@ -38,7 +49,7 @@ package hy.rpg.components
 			m_render.layer = EnumDirection.isBackDirection(m_dir) ? EnumRenderLayer.MOUNT_BACK : EnumRenderLayer.MOUNT;
 			tmp_frame = m_avatar.gotoAnimation(m_action, 0, m_dir, 0, 0);
 		}
-		
+
 		override protected function onLoadAvatarComplete(avatar : SAvatar) : void
 		{
 			m_avatar = avatar;
@@ -46,13 +57,6 @@ package hy.rpg.components
 				return;
 			m_transform.centerOffsetY = -m_avatar.height;
 			m_data.isRide = true;
-		}
-
-		override public function destroy() : void
-		{
-			if (m_data)
-				m_data.isRide = false;
-			super.destroy();
 		}
 	}
 }

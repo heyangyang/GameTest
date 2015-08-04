@@ -28,6 +28,14 @@ package hy.rpg.map
 	 */
 	public class MapObject extends GameObject
 	{
+		private static var instance : MapObject;
+
+		public static function getInstance() : MapObject
+		{
+			if (!instance)
+				instance = new MapObject(Config.SMALL_MAP_SCALE);
+			return instance;
+		}
 		/**
 		 * 地图宽高
 		 */

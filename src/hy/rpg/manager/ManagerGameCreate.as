@@ -1,6 +1,5 @@
 package hy.rpg.manager
 {
-	import hy.game.cfg.Config;
 	import hy.game.components.SAnimationComponent;
 	import hy.game.components.SAvatarComponent;
 	import hy.game.core.GameObject;
@@ -63,7 +62,7 @@ package hy.rpg.manager
 		 */
 		public function createMapObject() : MapObject
 		{
-			var map : MapObject = new MapObject(Config.SMALL_MAP_SCALE);
+			var map : MapObject = MapObject.getInstance();
 			SLayerManager.getInstance().addObjectByType(SLayerManager.LAYER_MAP, map);
 			map.registerd();
 			return map;
@@ -97,7 +96,7 @@ package hy.rpg.manager
 			heroObject.addComponent(stateComponent);
 			stateComponent.setStates([StateStand, StateWalk]);
 			heroObject.addComponent(new ComponentMouse());
-			addTargetEffect(heroObject, "expGuangHuan", 0);
+			addTargetEffect(heroObject, "expGuangHuan", null, 0);
 			SLayerManager.getInstance().addObjectByType(SLayerManager.LAYER_GAME, heroObject);
 			heroObject.registerd();
 			//为镜头添加焦点对象
@@ -139,13 +138,25 @@ package hy.rpg.manager
 			return heroObject;
 		}
 
-		public function addTargetEffect(gameObject : GameObject, id : String, loops : int, offsetX : int = 0, offsetY : int = 0) : SAnimationComponent
+		public function addTargetEffect(gameObject : GameObject, id : String, typeId : String, loops : int, offsetX : int = 0, offsetY : int = 0) : SAnimationComponent
 		{
-			var animaitonCom : SAnimationComponent = new SAnimationComponent(id);
+			var animaitonCom : SAnimationComponent = new SAnimationComponent(typeId ? typeId : id);
 			animaitonCom.setEffectId(id);
 			animaitonCom.setLoops(loops);
 			animaitonCom.setOffsetXY(offsetX, offsetY);
+			animaitonCom.setPosition(0, 0);
 			gameObject.addComponent(animaitonCom);
+			return animaitonCom;
+		}
+
+		public function createSceneEffect(id : String, typeId : String, x : int, y : int, loops : int, offsetX : int = 0, offsetY : int = 0) : SAnimationComponent
+		{
+			var animaitonCom : SAnimationComponent = new SAnimationComponent(typeId ? typeId : id);
+			animaitonCom.setEffectId(id);
+			animaitonCom.setLoops(loops);
+			animaitonCom.setOffsetXY(offsetX, offsetY);
+			animaitonCom.setPosition(x, y);
+			MapObject.getInstance().addComponent(animaitonCom);
 			return animaitonCom;
 		}
 	}

@@ -8,6 +8,7 @@ package hy.rpg.components
 	import hy.game.core.STime;
 	import hy.game.state.StateComponent;
 	import hy.rpg.components.data.DataComponent;
+	import hy.rpg.manager.ManagerGameCreate;
 	import hy.rpg.state.EnumState;
 	import hy.rpg.utils.UtilsCommon;
 
@@ -19,20 +20,22 @@ package hy.rpg.components
 	 */
 	public class ComponentMouse extends FrameComponent
 	{
-		private var m_data : DataComponent;
-		private var m_state : StateComponent;
 		/**
 		 * 每次点击响应的间隔
 		 */
 		private const m_Interval : int = 100;
+
+		private var m_data : DataComponent;
+		private var m_state : StateComponent;
 		private var m_delay : int;
+		private var m_clickCount : int;
 
 		public function ComponentMouse(type : * = null)
 		{
 			super(type);
 		}
 
-		override public function notifyAdded() : void
+		override protected function onStart() : void
 		{
 			m_state = m_owner.getComponentByType(StateComponent) as StateComponent;
 			m_data = m_owner.getComponentByType(DataComponent) as DataComponent;
@@ -41,6 +44,8 @@ package hy.rpg.components
 
 		override public function notifyRemoved() : void
 		{
+			m_state = null;
+			m_data = null;
 			Config.stage.removeEventListener(MouseEvent.CLICK, onClick);
 		}
 
@@ -53,6 +58,7 @@ package hy.rpg.components
 			m_data.targetY = SCameraObject.sceneY + evt.stageY;
 			m_data.targetGridX = UtilsCommon.getGridXByPixel(m_data.targetX);
 			m_data.targetGridY = UtilsCommon.getGridYByPixel(m_data.targetY);
+			ManagerGameCreate.getInstance().createSceneEffect("feetAura", (m_clickCount++).toString(), m_data.targetX, m_data.targetY, 1);
 			m_state.changeStateById(EnumState.WALK);
 		}
 	}

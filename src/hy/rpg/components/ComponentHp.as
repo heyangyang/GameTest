@@ -21,13 +21,24 @@ package hy.rpg.components
 			super(type);
 		}
 
+		override protected function onStart() : void
+		{
+			super.onStart();
+			m_data = m_owner.getComponentByType(DataComponent) as DataComponent;
+		}
+
 		override public function notifyAdded() : void
 		{
 			super.notifyAdded();
-			m_data = m_owner.getComponentByType(DataComponent) as DataComponent;
 			m_render.x = -30;
 			m_render.layer = EnumRenderLayer.HP;
 			m_lastHp = -1;
+		}
+
+		override public function notifyRemoved() : void
+		{
+			super.notifyRemoved();
+			m_data = null;
 		}
 
 		override public function update() : void
@@ -41,12 +52,6 @@ package hy.rpg.components
 			{
 				m_render.y = -m_transform.height - m_offsetY - m_transform.z + m_transform.centerOffsetY;
 			}
-		}
-
-		override public function destroy() : void
-		{
-			super.destroy();
-			m_data = null;
 		}
 	}
 }

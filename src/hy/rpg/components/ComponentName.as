@@ -3,9 +3,9 @@ package hy.rpg.components
 	import hy.game.components.SRenderComponent;
 	import hy.game.data.STransform;
 	import hy.game.manager.SReferenceManager;
+	import hy.rpg.components.data.DataComponent;
 	import hy.rpg.enum.EnumRenderLayer;
 	import hy.rpg.render.SNameParser;
-	import hy.rpg.components.data.DataComponent;
 
 	/**
 	 * 名字组件
@@ -28,6 +28,13 @@ package hy.rpg.components
 			m_render.layer = EnumRenderLayer.NAME;
 			m_data = m_owner.getComponentByType(DataComponent) as DataComponent;
 			m_offsetY = 20;
+		}
+
+		override public function notifyRemoved() : void
+		{
+			super.notifyRemoved();
+			m_data = null;
+			parser = null;
 		}
 
 		override public function update() : void
@@ -56,14 +63,5 @@ package hy.rpg.components
 		{
 			m_offsetY = value;
 		}
-
-		override public function destroy() : void
-		{
-			super.destroy();
-			m_data = null;
-			parser = null;
-		}
-
-
 	}
 }

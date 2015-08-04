@@ -19,10 +19,14 @@ package hy.rpg.components
 		{
 			super.notifyAdded();
 			m_lazyAvatar.priority = EnumLoadPriority.WING;
-			setAvatarId(m_data.wingId);
 			registerd(EnumPriority.PRIORITY_7);
 		}
 
+		override protected function onStart() : void
+		{
+			super.onStart();
+			setAvatarId(m_data.wingId);
+		}
 		/**
 		 * 转换动作的一些操作
 		 *

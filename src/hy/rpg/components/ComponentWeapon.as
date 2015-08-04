@@ -19,10 +19,15 @@ package hy.rpg.components
 			super.notifyAdded();
 			m_lazyAvatar.priority = EnumLoadPriority.WEAPON;
 			m_render.layer = EnumRenderLayer.WEAPON;
-			setAvatarId(m_data.weaponId);
 			registerd(EnumPriority.PRIORITY_7);
 		}
 
+		override protected function onStart() : void
+		{
+			super.onStart();
+			setAvatarId(m_data.weaponId);
+		}
+		
 		override public function update() : void
 		{
 			if (m_data.isRide && m_data.action != SActionType.ATTACK)
