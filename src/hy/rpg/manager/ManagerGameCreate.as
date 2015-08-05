@@ -2,6 +2,7 @@ package hy.rpg.manager
 {
 	import hy.game.components.SAnimationComponent;
 	import hy.game.components.SAvatarComponent;
+	import hy.game.components.SMouseComponent;
 	import hy.game.core.GameObject;
 	import hy.game.core.SCameraObject;
 	import hy.game.enum.EnumPriority;
@@ -129,6 +130,7 @@ package hy.rpg.manager
 			//shodow
 			heroObject.addComponent(new ComponentShodow());
 			heroObject.addComponent(new ComponentHp());
+			heroObject.addComponent(new SMouseComponent());
 			var stateComponent : StateComponent = new StateComponent();
 			heroObject.addComponent(stateComponent);
 			stateComponent.setStates([StateStand, StateWalk]);

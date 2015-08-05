@@ -1,11 +1,10 @@
 package hy.rpg.manager
 {
 	import flash.utils.Dictionary;
-
+	
 	import hy.game.core.GameObject;
 	import hy.game.core.SCameraObject;
 	import hy.game.core.SUpdate;
-	import hy.game.manager.SMouseMangaer;
 	import hy.rpg.components.data.DataComponent;
 	import hy.rpg.seek.SRoadSeeker;
 	import hy.rpg.utils.UtilsCommon;
@@ -41,16 +40,6 @@ package hy.rpg.manager
 			return instance;
 		}
 
-		/**
-		 * 鼠标位置相对于屏幕
-		 */
-		private var m_lastScreenMouseX : int = -1;
-		private var m_lastScreenMouseY : int = -1;
-		/**
-		 * 鼠标位置相对于场景
-		 */
-		private var m_lastSceneMouseX : int = -1;
-		private var m_lastSceneMouseY : int = -1;
 		/**
 		 * 上一次场景的坐标X,Y
 		 */
@@ -110,7 +99,7 @@ package hy.rpg.manager
 			data.isMe = true;
 			m_objectDatas.push(data);
 
-			for (var i : int = 0; i < 00; )
+			for (var i : int = 0; i < 100; )
 			{
 				gridX = UtilsCommon.getGridXByPixel(sceneW * Math.random());
 				gridY = UtilsCommon.getGridYByPixel(sceneH * Math.random());
@@ -141,22 +130,6 @@ package hy.rpg.manager
 		override public function update() : void
 		{
 			createAndDisposeObject();
-		}
-
-		private function updateMouseOverObject() : void
-		{
-			if (m_lastScreenMouseX == SMouseMangaer.mouseX && m_lastScreenMouseY == SMouseMangaer.mouseY)
-				return;
-			m_lastScreenMouseX = SMouseMangaer.mouseX;
-			m_lastScreenMouseY = SMouseMangaer.mouseY;
-			m_lastSceneMouseX = m_lastSceneX + m_lastScreenMouseX;
-			m_lastSceneMouseY = m_lastSceneY + m_lastScreenMouseY;
-			for each (currUpdateGame in m_visaulObjects)
-			{
-				if (!currUpdateGame.transform.contains(m_lastSceneMouseX, m_lastSceneMouseY))
-					continue;
-				trace(111111111111111);
-			}
 		}
 
 		/**

@@ -16,17 +16,26 @@ package hy.rpg.components
 	{
 		private var m_data : DataComponent;
 		private var m_parser : SNameParser;
+		private var m_isMouseOver : Boolean;
+		private var isUpdatable : Boolean;
 
 		public function ComponentName(type : * = null)
 		{
 			super(type);
 		}
 
+		override protected function onStart() : void
+		{
+			super.onStart();
+			m_data = m_owner.getComponentByType(DataComponent) as DataComponent;
+			m_isMouseOver = m_data.isMe;
+			!m_isMouseOver && removeRender(m_render);
+		}
+
 		override public function notifyAdded() : void
 		{
 			super.notifyAdded();
 			m_render.layer = EnumRenderLayer.NAME;
-			m_data = m_owner.getComponentByType(DataComponent) as DataComponent;
 			m_offsetY = 20;
 		}
 
@@ -39,9 +48,16 @@ package hy.rpg.components
 
 		override public function update() : void
 		{
+			if (!m_data.isMe && m_isMouseOver != m_transform.isMouseOver)
+			{
+				isUpdatable = m_isMouseOver = m_transform.isMouseOver;
+				m_isMouseOver ? addRender(m_render) : removeRender(m_render);
+			}
+			if (!m_isMouseOver)
+				return;
 			if (m_data.updateName)
 				updateRender();
-			if (m_transform.isChangeFiled(STransform.C_XYZ) || m_transform.isChangeFiled(STransform.C_WH))
+			if (isUpdatable || m_transform.isChangeFiled(STransform.C_XYZ) || m_transform.isChangeFiled(STransform.C_WH))
 				m_render.y = -m_transform.height - m_offsetY - m_transform.z + m_transform.centerOffsetY;
 		}
 

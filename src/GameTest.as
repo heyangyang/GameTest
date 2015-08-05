@@ -4,7 +4,7 @@ package
 	import flash.events.Event;
 	
 	import hy.game.GameFrameStart;
-	
+
 
 	public class GameTest extends Sprite
 	{
@@ -16,6 +16,7 @@ package
 		private function init(evt : Event = null) : void
 		{
 			new GameFrameStart(stage,new GameStarter());
+
 		}
 	}
 }

@@ -23,7 +23,6 @@ package hy.rpg.components.data
 		public var targetGridX : int;
 		public var targetGridY : int;
 		public var isRide : Boolean;
-
 		public var transform : STransform;
 
 		public function DataComponent(type : * = null)
@@ -63,6 +62,15 @@ package hy.rpg.components.data
 		public function set updateName(value : Boolean) : void
 		{
 			m_updateName = value;
+		}
+		
+		/**
+		 * 暂时不要销毁 
+		 * 
+		 */
+		override public function destroy() : void
+		{
+			
 		}
 
 	}

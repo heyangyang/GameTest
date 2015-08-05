@@ -25,6 +25,7 @@ package hy.rpg.components
 			m_lazyAvatar.priority = EnumLoadPriority.MOUNT;
 			registerd(EnumPriority.PRIORITY_8);
 			m_useCenterOffsetY = false;
+			m_isUseFilters = false;
 		}
 
 		override public function notifyRemoved() : void

@@ -20,6 +20,7 @@ package hy.rpg.components
 			super.notifyAdded();
 			m_lazyAvatar.priority = EnumLoadPriority.WING;
 			registerd(EnumPriority.PRIORITY_7);
+			m_isUseFilters = false;
 		}
 
 		override protected function onStart() : void
