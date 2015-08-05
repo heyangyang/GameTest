@@ -2,7 +2,6 @@ package hy.rpg.components
 {
 	import hy.game.avatar.SAvatar;
 	import hy.game.components.SAvatarComponent;
-	import hy.game.enum.EnumPriority;
 	import hy.rpg.enum.EnumDirection;
 	import hy.rpg.enum.EnumLoadPriority;
 	import hy.rpg.enum.EnumRenderLayer;
@@ -23,7 +22,6 @@ package hy.rpg.components
 		{
 			super.notifyAdded();
 			m_lazyAvatar.priority = EnumLoadPriority.MOUNT;
-			registerd(EnumPriority.PRIORITY_8);
 			m_useCenterOffsetY = false;
 			m_isUseFilters = false;
 		}

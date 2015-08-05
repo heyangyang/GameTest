@@ -5,6 +5,7 @@ package hy.rpg.manager
 	import hy.game.components.SMouseComponent;
 	import hy.game.core.GameObject;
 	import hy.game.core.SCameraObject;
+	import hy.game.data.STransform;
 	import hy.game.enum.EnumPriority;
 	import hy.game.enum.EnumTags;
 	import hy.game.manager.SBaseManager;
@@ -64,6 +65,7 @@ package hy.rpg.manager
 		public function createMapObject() : MapObject
 		{
 			var map : MapObject = MapObject.getInstance();
+			map.transform = new STransform();
 			SLayerManager.getInstance().addObjectByType(SLayerManager.LAYER_MAP, map);
 			map.registerd();
 			return map;
@@ -81,23 +83,24 @@ package hy.rpg.manager
 			heroObject.addComponent(data);
 			//avatar组件
 			if (data.avatarId)
-				heroObject.addComponent(new SAvatarComponent());
+				heroObject.addComponent(new SAvatarComponent(), EnumPriority.PRIORITY_9);
 			if (data.weaponId)
-				heroObject.addComponent(new ComponentWeapon());
+				heroObject.addComponent(new ComponentWeapon(), EnumPriority.PRIORITY_7);
 			if (data.wingId)
-				heroObject.addComponent(new ComponentWing());
+				heroObject.addComponent(new ComponentWing(), EnumPriority.PRIORITY_7);
 			if (data.mountId)
-				heroObject.addComponent(new ComponentMount());
+				heroObject.addComponent(new ComponentMount(), EnumPriority.PRIORITY_8);
 			//名字组件
 			heroObject.addComponent(new ComponentName());
 			//shodow
 			heroObject.addComponent(new ComponentShodow());
 			heroObject.addComponent(new ComponentHp());
 			var stateComponent : StateComponent = new StateComponent();
-			heroObject.addComponent(stateComponent);
+			heroObject.addComponent(stateComponent, EnumPriority.PRIORITY_6);
 			stateComponent.setStates([StateStand, StateWalk]);
+			//鼠标组件
 			heroObject.addComponent(new ComponentMouse());
-			addTargetEffect(heroObject, "expGuangHuan", null, 0);
+			//addTargetEffect(heroObject, "expGuangHuan", null, 0);
 			SLayerManager.getInstance().addObjectByType(SLayerManager.LAYER_GAME, heroObject);
 			heroObject.registerd();
 			//为镜头添加焦点对象
@@ -118,13 +121,13 @@ package hy.rpg.manager
 			heroObject.addComponent(data);
 			//avatar组件
 			if (data.avatarId)
-				heroObject.addComponent(new SAvatarComponent());
+				heroObject.addComponent(new SAvatarComponent(), EnumPriority.PRIORITY_9);
 			if (data.weaponId)
-				heroObject.addComponent(new ComponentWeapon());
+				heroObject.addComponent(new ComponentWeapon(), EnumPriority.PRIORITY_7);
 			if (data.wingId)
-				heroObject.addComponent(new ComponentWing());
+				heroObject.addComponent(new ComponentWing(), EnumPriority.PRIORITY_7);
 			if (data.mountId)
-				heroObject.addComponent(new ComponentMount());
+				heroObject.addComponent(new ComponentMount(), EnumPriority.PRIORITY_8);
 			//名字组件
 			heroObject.addComponent(new ComponentName());
 			//shodow
@@ -132,7 +135,7 @@ package hy.rpg.manager
 			heroObject.addComponent(new ComponentHp());
 			heroObject.addComponent(new SMouseComponent());
 			var stateComponent : StateComponent = new StateComponent();
-			heroObject.addComponent(stateComponent);
+			heroObject.addComponent(stateComponent, EnumPriority.PRIORITY_6);
 			stateComponent.setStates([StateStand, StateWalk]);
 			SLayerManager.getInstance().addObjectByType(SLayerManager.LAYER_GAME, heroObject);
 			heroObject.registerd();

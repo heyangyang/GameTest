@@ -13,6 +13,7 @@ package hy.rpg.map
 	import hy.game.core.interfaces.IBitmap;
 	import hy.game.core.interfaces.IContainer;
 	import hy.game.manager.SReferenceManager;
+	import hy.game.render.SRender;
 	import hy.game.render.SRenderBitmap;
 	import hy.game.render.SRenderContainer;
 	import hy.game.resources.SResource;
@@ -189,8 +190,8 @@ package hy.rpg.map
 		override public function registerd(priority : int = 0) : void
 		{
 			super.registerd(priority);
-			addContainer(m_container);
 			removeRender(m_render);
+			addContainer(m_container);
 			GameDispatcher.addEventListener(GameDispatcher.RESIZE, onResizeHandler);
 		}
 
@@ -698,6 +699,7 @@ package hy.rpg.map
 
 		override public function update() : void
 		{
+			super.update();
 			updateCamera(SCameraObject.sceneX, SCameraObject.sceneY);
 		}
 
