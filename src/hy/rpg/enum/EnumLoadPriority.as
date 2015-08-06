@@ -18,8 +18,8 @@ package hy.rpg.enum
 		public static const MOUNT : int = 7;
 		public static const UI : int = 8;
 		public static const ROLE : int = 9;
-		public static const MAP : int = 10;
-		public static const ICON : int = 11;
+		public static const ICON : int = 10;
+		public static const MAP : int = 11;
 		public static const MAX : int = 12;
 	}
 }

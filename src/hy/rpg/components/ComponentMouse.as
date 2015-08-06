@@ -58,7 +58,7 @@ package hy.rpg.components
 			m_data.targetY = SCameraObject.sceneY + evt.stageY;
 			m_data.targetGridX = UtilsCommon.getGridXByPixel(m_data.targetX);
 			m_data.targetGridY = UtilsCommon.getGridYByPixel(m_data.targetY);
-			ManagerGameCreate.getInstance().createSceneEffect("feetAura", (m_clickCount++).toString(), m_data.targetX, m_data.targetY, 1);
+			ManagerGameCreate.getInstance().createSceneEffect("clickRoad", (m_clickCount++).toString(), m_data.targetX, m_data.targetY, 1);
 			m_state.changeStateById(EnumState.WALK);
 		}
 	}

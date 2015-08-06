@@ -1,11 +1,11 @@
 package hy.rpg.parser
 {
-	import flash.display.BitmapData;
-	
 	import hy.game.cfg.Config;
 	import hy.game.core.interfaces.IBitmap;
 	import hy.game.manager.SReferenceManager;
+	import hy.game.render.SRender;
 	import hy.game.render.SRenderBitmap;
+	import hy.game.render.SRenderBitmapData;
 	import hy.rpg.enum.EnumLoadPriority;
 
 	/**
@@ -26,6 +26,7 @@ package hy.rpg.parser
 	public class ParserMapResource extends ParserPakResource
 	{
 		private var _bitmap : SRenderBitmap;
+		private var _render : SRender;
 
 		public function ParserMapResource(id : String, version : String = null, priority : int = EnumLoadPriority.MAP)
 		{
@@ -43,11 +44,11 @@ package hy.rpg.parser
 			{
 				_decoder.isSend = true;
 				var send_arr : Array = [id, version, priority];
-				//SThreadEvent.dispatchEvent(SThreadEvent.LOAD_SEND, send_arr);
+					//SThreadEvent.dispatchEvent(SThreadEvent.LOAD_SEND, send_arr);
 			}
 		}
 
-		public function get bitmapData() : BitmapData
+		public function get bitmapData() : SRenderBitmapData
 		{
 			if (_decoder)
 				return _decoder.getResult();
@@ -66,6 +67,23 @@ package hy.rpg.parser
 			else
 				_bitmap = new SRenderBitmap(bitmapData);
 			return _bitmap;
+		}
+
+		public function get render() : SRender
+		{
+			if (_render)
+				return _render;
+			if (Config.supportDirectX)
+			{
+				//_bitmap = new SDirectBitmap(SDirectBitmapData.fromDirectBitmapData(bitmapData));
+				//SDirectBitmap(_bitmap).smoothing = TextureSmoothing.NONE;
+			}
+			else
+			{
+				_render = new SRender();
+				_render.bitmapData = bitmapData;
+			}
+			return _render;
 		}
 
 		public function clearBitmap() : void

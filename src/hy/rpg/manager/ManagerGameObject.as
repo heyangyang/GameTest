@@ -43,8 +43,8 @@ package hy.rpg.manager
 		/**
 		 * 上一次场景的坐标X,Y
 		 */
-		private var m_lastSceneX : int = -1;
-		private var m_lastSceneY : int = -1;
+		private var m_lastSceneX : int = -99;
+		private var m_lastSceneY : int = -99;
 		/**
 		 * 可视范围内的对象
 		 */

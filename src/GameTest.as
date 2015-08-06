@@ -16,7 +16,6 @@ package
 		private function init(evt : Event = null) : void
 		{
 			new GameFrameStart(stage,new GameStarter());
-
 		}
 	}
 }

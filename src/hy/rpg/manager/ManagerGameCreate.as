@@ -161,6 +161,7 @@ package hy.rpg.manager
 			animaitonCom.setLoops(loops);
 			animaitonCom.setOffsetXY(offsetX, offsetY);
 			animaitonCom.setPosition(x, y);
+			animaitonCom.setLayer(1);
 			MapObject.getInstance().addComponent(animaitonCom);
 			return animaitonCom;
 		}
