@@ -135,6 +135,7 @@ package hy.rpg.map
 		private var m_onProgress : Function;
 		private var m_isLoaded : Boolean;
 		private var m_maxMultiDistance : int;
+		private var m_index : int;
 
 		public function MapObject(min_scale : Number)
 		{
@@ -252,6 +253,10 @@ package hy.rpg.map
 			m_bufferCols = Math.ceil(m_viewWidth / m_tileWidth) + m_bufferNum;
 			m_bufferRows = Math.ceil(m_viewHeight / m_tileHeight) + m_bufferNum;
 
+			//计算出缓冲区的区块
+			m_bufferRect.width = m_bufferCols;
+			m_bufferRect.height = m_bufferRows;
+
 			resetMapBuffer();
 		}
 
@@ -324,74 +329,6 @@ package hy.rpg.map
 			m_lastViewY = -1;
 		}
 
-		protected function onTileResourceParserComplete(res : ParserMapResource) : void
-		{
-			var tileId : String = res.id.split("/").pop().split(".").shift();
-			var loadTilePos : Point = decoderTileId(tileId);
-			if (!m_bufferRect.containsByPoint(loadTilePos.x, loadTilePos.y))
-				return;
-			if (!res.render)
-			{
-				warning(this, "地图块数据为空！");
-				return;
-			}
-			res.render.x = loadTilePos.x * m_tileWidth;
-			res.render.y = loadTilePos.y * m_tileHeight;
-			addRender(res.render);
-			trace("add:", loadTilePos.x, loadTilePos.y);
-
-		}
-
-		/**
-		 * 把坐标加密成一串字符串
-		 * @param tileX
-		 * @param tileY
-		 * @return
-		 *
-		 */
-		protected function encoderTileId(tileX : int, tileY : int) : String
-		{
-			return UtilsCommon.xyToInt(tileX + m_bufferNum, tileY + m_bufferNum).toString(36);
-		}
-
-		/**
-		 * 解锁一个字符串成坐标
-		 * @param tileId
-		 * @return
-		 *
-		 */
-		protected function decoderTileId(tileId : String) : Point
-		{
-			m_loadTilePos.x = UtilsCommon.getXFromInt(parseInt(tileId, 36)) - m_bufferNum;
-			m_loadTilePos.y = UtilsCommon.getYFromInt(parseInt(tileId, 36)) - m_bufferNum;
-			return m_loadTilePos;
-		}
-
-		/**
-		 * 获取指定x,y索引处的地图区块位图
-		 * @param tileX
-		 * @param tileY
-		 * @return
-		 *
-		 */
-		protected function copyTileBitmapData(tileX : int, tileY : int) : void
-		{
-			var tileId : String = encoderTileId(tileX, tileY);
-			var tile : ParserMapResource = m_tiles[tileId];
-			if (tile)
-				return;
-			var data : Object = m_fileVersions[tileId];
-			if (!data)
-			{
-				warning(this, "m_fileVersions is null : " + tileId);
-				return;
-			}
-			tile = SReferenceManager.getInstance().createMapResourceParser(ParserMapResource, m_mapId + tileId, data.url, EnumLoadPriority.MAP, data.version);
-			tile.onComplete(onTileResourceParserComplete);
-			tile.load();
-			m_tiles[tileId] = tile;
-		}
-
 		override public function update() : void
 		{
 			super.update();
@@ -416,7 +353,7 @@ package hy.rpg.map
 			if (!m_isLoaded)
 				return;
 			//小于0表示镜头还没有初始化
-			if (viewX < 0 || viewY <= 0)
+			if (viewX < 0 || viewY < 0)
 				return;
 			//如果相等，表示镜头没有移动，则不需要更新
 			if (viewX == m_lastViewX && viewY == m_lastViewY)
@@ -426,9 +363,10 @@ package hy.rpg.map
 			m_lastViewY = viewY;
 
 			//计算出缓冲区开始的索引
-			m_bufferRect.x = int(viewX / m_tileWidth) - m_bufferNum;
-			m_bufferRect.y = int(viewY / m_tileHeight) - m_bufferNum;
-			//矫正起始坐标
+
+			m_bufferRect.x = Math.floor(viewX / m_tileWidth) - m_bufferNum;
+			m_bufferRect.y = Math.floor(viewY / m_tileHeight) - m_bufferNum;
+			//矫正起始坐
 			if (m_bufferRect.x < 0)
 				m_bufferRect.x = 0;
 			if (m_bufferRect.y < 0)
@@ -437,9 +375,6 @@ package hy.rpg.map
 				m_bufferRect.x = m_bufferCols - m_mapCols;
 			if (m_bufferRect.y + m_bufferRows > m_mapRows)
 				m_bufferRect.y = m_bufferRows - m_mapRows;
-			//计算出缓冲区的区块
-			m_bufferRect.width = m_bufferCols + m_bufferNum;
-			m_bufferRect.height = m_bufferRows + m_bufferNum;
 
 			//若果缓冲区域和上一次不一样
 			if (m_bufferRect.x != m_lastStartTileCol || m_bufferRect.y != m_lastStartTileRow)
@@ -470,10 +405,10 @@ package hy.rpg.map
 			var colmnsCount : int;
 			var titleX : int, titleY : int;
 			//将缓冲区对应的地图区块读入缓冲区中
-			for (var rowCount : int = -m_bufferNum; rowCount <= m_bufferRows; rowCount++)
+			for (var rowCount : int = -m_bufferNum; rowCount <= m_bufferRows + m_bufferNum; rowCount++)
 			{
 				titleY = m_bufferRect.y + rowCount;
-				for (colmnsCount = -m_bufferNum; colmnsCount <= m_bufferCols; colmnsCount++)
+				for (colmnsCount = -m_bufferNum; colmnsCount <= m_bufferCols + m_bufferNum; colmnsCount++)
 				{
 					titleX = m_bufferRect.x + colmnsCount;
 					if (m_bufferRect.containsByPoint(titleX, titleY))
@@ -484,6 +419,75 @@ package hy.rpg.map
 					clearTile(titleX, titleY);
 				}
 			}
+		}
+
+		/**
+		 * 获取指定x,y索引处的地图区块位图
+		 * @param tileX
+		 * @param tileY
+		 * @return
+		 *
+		 */
+		protected function copyTileBitmapData(tileX : int, tileY : int) : void
+		{
+			var tileId : String = encoderTileId(tileX, tileY);
+			var tile : ParserMapResource = m_tiles[tileId];
+			if (tile)
+				return;
+			var data : Object = m_fileVersions[tileId];
+			if (!data)
+			{
+				warning(this, "m_fileVersions is null : " + tileId);
+				return;
+			}
+			tile = SReferenceManager.getInstance().createMapResourceParser(ParserMapResource, m_mapId + tileId, data.url, EnumLoadPriority.MAP - m_index++, data.version);
+			tile.onComplete(onTileResourceParserComplete);
+			tile.load();
+			m_tiles[tileId] = tile;
+		}
+
+		protected function onTileResourceParserComplete(res : ParserMapResource) : void
+		{
+			var tileId : String = res.id.split("/").pop().split(".").shift();
+			decoderTileId(tileId);
+			if (!m_bufferRect.containsByPoint(m_loadTilePos.x, m_loadTilePos.y))
+			{
+				clearTile(m_loadTilePos.x, m_loadTilePos.y);
+				return;
+			}
+			if (!res.render)
+			{
+				warning(this, "地图块数据为空！");
+				return;
+			}
+			res.render.x = m_loadTilePos.x * m_tileWidth;
+			res.render.y = m_loadTilePos.y * m_tileHeight;
+			addRender(res.render);
+		}
+
+		/**
+		 * 把坐标加密成一串字符串
+		 * @param tileX
+		 * @param tileY
+		 * @return
+		 *
+		 */
+		protected function encoderTileId(tileX : int, tileY : int) : String
+		{
+			return UtilsCommon.xyToInt(tileX + m_bufferNum, tileY + m_bufferNum).toString(36);
+		}
+
+		/**
+		 * 解锁一个字符串成坐标
+		 * @param tileId
+		 * @return
+		 *
+		 */
+		protected function decoderTileId(tileId : String) : Point
+		{
+			m_loadTilePos.x = UtilsCommon.getXFromInt(parseInt(tileId, 36)) - m_bufferNum;
+			m_loadTilePos.y = UtilsCommon.getYFromInt(parseInt(tileId, 36)) - m_bufferNum;
+			return m_loadTilePos;
 		}
 
 		/**
@@ -507,9 +511,6 @@ package hy.rpg.map
 				return;
 			removeRender(tile.render);
 			tile.release();
-			var tileId : String = tile.id.split("/").pop().split(".").shift();
-			var loadTilePos : Point = decoderTileId(tileId);
-			trace("rem:", loadTilePos.x, loadTilePos.y);
 		}
 
 		private function clearAllTiles() : void

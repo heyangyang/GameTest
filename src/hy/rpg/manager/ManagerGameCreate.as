@@ -19,6 +19,7 @@ package hy.rpg.manager
 	import hy.rpg.components.ComponentWeapon;
 	import hy.rpg.components.ComponentWing;
 	import hy.rpg.components.data.DataComponent;
+	import hy.rpg.enum.EnumRenderLayer;
 	import hy.rpg.map.MapObject;
 	import hy.rpg.object.ObjectRole;
 	import hy.rpg.state.StateStand;
@@ -100,7 +101,7 @@ package hy.rpg.manager
 			stateComponent.setStates([StateStand, StateWalk]);
 			//鼠标组件
 			heroObject.addComponent(new ComponentMouse());
-			//addTargetEffect(heroObject, "expGuangHuan", null, 0);
+			addTargetEffect(heroObject, "expGuangHuan", null, 0, EnumRenderLayer.SHODOW_ANIMATION);
 			SLayerManager.getInstance().addObjectByType(SLayerManager.LAYER_GAME, heroObject);
 			heroObject.registerd();
 			//为镜头添加焦点对象
@@ -143,13 +144,14 @@ package hy.rpg.manager
 			return heroObject;
 		}
 
-		public function addTargetEffect(gameObject : GameObject, id : String, typeId : String, loops : int, offsetX : int = 0, offsetY : int = 0) : SAnimationComponent
+		public function addTargetEffect(gameObject : GameObject, id : String, typeId : String, loops : int, layer : int = 0, offsetX : int = 0, offsetY : int = 0) : SAnimationComponent
 		{
 			var animaitonCom : SAnimationComponent = new SAnimationComponent(typeId ? typeId : id);
 			animaitonCom.setEffectId(id);
 			animaitonCom.setLoops(loops);
 			animaitonCom.setOffsetXY(offsetX, offsetY);
 			animaitonCom.setPosition(0, 0);
+			animaitonCom.setLayer(layer);
 			gameObject.addComponent(animaitonCom);
 			return animaitonCom;
 		}

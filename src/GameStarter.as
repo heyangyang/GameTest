@@ -4,12 +4,13 @@ package
 	import hy.game.manager.SReferenceManager;
 	import hy.game.monitor.SMonitor;
 	import hy.game.starter.SGameStartBase;
+	import hy.rpg.manager.ManagerGameObject;
 	import hy.rpg.starter.GameNodeEnmu;
 	import hy.rpg.starter.StarterBaseConfig;
+	import hy.rpg.starter.StarterDefaultAvatarLoader;
 	import hy.rpg.starter.StarterEnterScene;
 	import hy.rpg.starter.StarterMapLoader;
 	import hy.rpg.starter.StarterShortcutKey;
-	import hy.rpg.manager.ManagerGameObject;
 
 	/**
 	 * 启动器
@@ -26,6 +27,7 @@ package
 		override public function onStart() : void
 		{
 			addNodeByClass(StarterBaseConfig);
+			addNodeByClass(StarterDefaultAvatarLoader);
 			addNodeByClass(StarterMapLoader);
 			addNodeByClass(StarterEnterScene);
 			addNodeByClass(StarterShortcutKey);
@@ -46,6 +48,7 @@ package
 			monitor.watchProperty(STime, "passedTime", "passedTime", 0x00ff00);
 
 			addNodeByType(GameNodeEnmu.base_config);
+			addNodeByType(GameNodeEnmu.model_load);
 			addNodeByType(GameNodeEnmu.map_load);
 			addNodeByType(GameNodeEnmu.shortkey);
 			addNodeByType(GameNodeEnmu.emter_scene);

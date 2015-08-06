@@ -3,6 +3,7 @@ package hy.rpg.enum
 
 	public class EnumRenderLayer
 	{
+		public static const SHODOW_ANIMATION : int = -10;
 		public static const SHODOW : int = -9;
 		public static const WEAPON : int = 1;
 		public static const MOUNT : int = -3;

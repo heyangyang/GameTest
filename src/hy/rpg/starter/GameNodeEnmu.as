@@ -7,5 +7,6 @@ package hy.rpg.starter
 		public static const shortkey : String = "shortkey";
 		public static const map_load : String = "map_load";
 		public static const emter_scene : String = "emter_scene";
+		public static const model_load : String = "model_load";
 	}
 }
