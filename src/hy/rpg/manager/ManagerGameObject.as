@@ -124,7 +124,7 @@ package hy.rpg.manager
 				data.hp_max = 200 * data.level;
 				data.hp_cur = data.hp_max * Math.random();
 				data.action = SActionType.IDLE;
-				data.transform.dir = 7 * Math.random();
+				data.transform.dir = 1 + int(6 * Math.random());
 				data.transform.x = UtilsCommon.getPixelXByGrid(gridX);
 				data.transform.y = UtilsCommon.getPixelYByGrid(gridY);
 				data.id = i++;

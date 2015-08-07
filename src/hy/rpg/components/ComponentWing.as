@@ -1,7 +1,6 @@
 package hy.rpg.components
 {
 	import hy.game.avatar.SActionType;
-	import hy.game.avatar.SAvatar;
 	import hy.game.components.SAvatarComponent;
 	import hy.rpg.enum.EnumDirection;
 	import hy.rpg.enum.EnumLoadPriority;
@@ -38,9 +37,8 @@ package hy.rpg.components
 			m_render.layer = EnumDirection.isBackDirection(m_dir) ? EnumRenderLayer.WING_BACK : EnumRenderLayer.WING;
 		}
 
-		override protected function onLoadAvatarComplete(avatar : SAvatar) : void
+		override protected function onLoadAvatarComplete() : void
 		{
-			m_avatar = avatar;
 			m_dir = m_action = -1;
 			tmp_frame = m_avatar.gotoAnimation(SActionType.IDLE, m_transform.dir, 0, 0);
 		}

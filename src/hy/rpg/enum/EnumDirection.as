@@ -613,29 +613,28 @@ package hy.rpg.enum
 		 */
 		public static function checkDirsDirMode(dirs : Array) : uint
 		{
-			if (dirs.length == 1)
+			switch (dirs.length)
 			{
-				if (dirs.indexOf(NORTH) != -1)
-					return DIR_MODE_NORTH;
-				else if (dirs.indexOf(SOUTH) != -1)
-					return DIR_MODE_SOUTH;
-				else
-					return DIR_MODE_HOR_ONE;
-			}
-			else if (dirs.length == 2)
-			{
-				if (dirs.indexOf(WEST_NORTH) != -1 || dirs.indexOf(WEST_SOUTH) != -1 || dirs.indexOf(EAST_NORTH) != -1 || dirs.indexOf(EAST_SOUTH) != -1)
-					return DIR_MODE_DIA_TWO;
-				else if (dirs.indexOf(NORTH) != -1 || dirs.indexOf(SOUTH) != -1)
-					return DIR_MODE_VER_ONE;
-			}
-			else if (dirs.length == 3)
-			{
-				return DIR_MODE_FIVE;
-			}
-			else if (dirs.length == 5)
-			{
-				return DIR_MODE_FIVE;
+				case 1:
+					if (dirs.indexOf(NORTH) != -1)
+						return DIR_MODE_NORTH;
+					else if (dirs.indexOf(SOUTH) != -1)
+						return DIR_MODE_SOUTH;
+					else
+						return DIR_MODE_HOR_ONE;
+					break;
+				case 2:
+					if (dirs.indexOf(WEST_NORTH) != -1 || dirs.indexOf(WEST_SOUTH) != -1 || dirs.indexOf(EAST_NORTH) != -1 || dirs.indexOf(EAST_SOUTH) != -1)
+						return DIR_MODE_DIA_TWO;
+					else if (dirs.indexOf(NORTH) != -1 || dirs.indexOf(SOUTH) != -1)
+						return DIR_MODE_VER_ONE;
+					break;
+				case 3:
+					return DIR_MODE_FIVE;
+					break;
+				case 5:
+					return DIR_MODE_FIVE;
+					break;
 			}
 			return 0;
 		}

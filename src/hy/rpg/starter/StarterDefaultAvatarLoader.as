@@ -13,6 +13,7 @@ package hy.rpg.starter
 	public class StarterDefaultAvatarLoader extends SStartNode
 	{
 		private var m_avatarResource : SAvatarResource;
+		private var m_avatar : SAvatar;
 
 		public function StarterDefaultAvatarLoader()
 		{
@@ -25,16 +26,32 @@ package hy.rpg.starter
 		 */
 		override public function onStart() : void
 		{
-			m_avatarResource = new SAvatarResource();
+			SAvatarComponent.default_avatar = m_avatar = new SAvatar();
+			m_avatarResource = new SAvatarResource(m_avatar);
 			m_avatarResource.setAvatarId("SHHDefault");
 			m_avatarResource.addNotifyCompleted(onLoadAvatarComplete);
 			m_avatarResource.loadResource();
 		}
 
-		private function onLoadAvatarComplete(avatar : SAvatar) : void
+		private function onLoadAvatarComplete() : void
 		{
-			SAvatarComponent.defaultAvatar = avatar;
-			avatar.animationsByParts.loaderAnimation(nextNode);
+			m_avatar.animationsByParts.loaderAnimation(onLoadAllAnimation);
+		}
+
+		/**
+		 * 所有动作加载完毕
+		 *
+		 */
+		private function onLoadAllAnimation() : void
+		{
+			if (m_avatar)
+				m_avatar = null;
+			if (m_avatarResource)
+			{
+				m_avatarResource.dispose();
+				m_avatarResource = null;
+			}
+			nextNode();
 		}
 
 

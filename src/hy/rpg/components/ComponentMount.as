@@ -1,6 +1,5 @@
 package hy.rpg.components
 {
-	import hy.game.avatar.SAvatar;
 	import hy.game.components.SAvatarComponent;
 	import hy.rpg.enum.EnumDirection;
 	import hy.rpg.enum.EnumLoadPriority;
@@ -50,9 +49,8 @@ package hy.rpg.components
 			tmp_frame = m_avatar.gotoAnimation(m_action, m_dir, 0, 0);
 		}
 
-		override protected function onLoadAvatarComplete(avatar : SAvatar) : void
+		override protected function onLoadAvatarComplete() : void
 		{
-			m_avatar = avatar;
 			m_dir = m_action = -1;
 			m_transform.centerOffsetY = -m_avatar.height;
 			m_data.isRide = true;
