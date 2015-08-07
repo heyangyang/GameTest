@@ -3,5 +3,6 @@
 	<!-- 预加载 -->
     	<batch id="preload">
 		<file id='base' type='ui'/>
+		<file id='resProgressBar' type='ui'/>
    	 </batch>
 </config>
