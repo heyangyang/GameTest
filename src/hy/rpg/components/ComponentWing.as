@@ -19,6 +19,7 @@ package hy.rpg.components
 			super.notifyAdded();
 			m_lazyAvatar.priority = EnumLoadPriority.WING;
 			m_isUseFilters = false;
+			m_useDefaultAvatar = false;
 		}
 
 		override protected function onStart() : void
@@ -26,6 +27,7 @@ package hy.rpg.components
 			super.onStart();
 			setAvatarId(m_data.wingId);
 		}
+
 		/**
 		 * 转换动作的一些操作
 		 *
@@ -39,9 +41,8 @@ package hy.rpg.components
 		override protected function onLoadAvatarComplete(avatar : SAvatar) : void
 		{
 			m_avatar = avatar;
-			if (!m_avatar)
-				return;
-			tmp_frame = m_avatar.gotoAnimation(SActionType.IDLE, 0, m_transform.dir, 0, 0);
+			m_dir = m_action = -1;
+			tmp_frame = m_avatar.gotoAnimation(SActionType.IDLE, m_transform.dir, 0, 0);
 		}
 	}
 }

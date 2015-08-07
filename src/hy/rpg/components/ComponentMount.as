@@ -24,6 +24,7 @@ package hy.rpg.components
 			m_lazyAvatar.priority = EnumLoadPriority.MOUNT;
 			m_useCenterOffsetY = false;
 			m_isUseFilters = false;
+			m_useDefaultAvatar = false;
 		}
 
 		override public function notifyRemoved() : void
@@ -46,14 +47,13 @@ package hy.rpg.components
 		override protected function changeAnimation() : void
 		{
 			m_render.layer = EnumDirection.isBackDirection(m_dir) ? EnumRenderLayer.MOUNT_BACK : EnumRenderLayer.MOUNT;
-			tmp_frame = m_avatar.gotoAnimation(m_action, 0, m_dir, 0, 0);
+			tmp_frame = m_avatar.gotoAnimation(m_action, m_dir, 0, 0);
 		}
 
 		override protected function onLoadAvatarComplete(avatar : SAvatar) : void
 		{
 			m_avatar = avatar;
-			if (!m_avatar)
-				return;
+			m_dir = m_action = -1;
 			m_transform.centerOffsetY = -m_avatar.height;
 			m_data.isRide = true;
 		}

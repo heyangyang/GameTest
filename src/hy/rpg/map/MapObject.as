@@ -222,13 +222,15 @@ package hy.rpg.map
 			// 从XML文件中获取地图基本信息
 			m_mapWidth = m_config.@right;
 			m_mapHeight = m_config.@bottom;
-			m_camera.setSceneSize(m_mapWidth, m_mapHeight);
 
 			m_tileWidth = Config.TILE_WIDTH;
 			m_tileHeight = Config.TILE_HEIGHT;
 
-			m_mapCols = Math.ceil(m_mapWidth / m_tileWidth);
-			m_mapRows = Math.ceil(m_mapHeight / m_tileHeight);
+			m_camera.setSceneSize(int(m_mapWidth / m_tileWidth) * m_tileWidth, int(m_mapHeight / m_tileHeight) * m_tileHeight);
+
+			m_mapCols = Math.floor(m_mapWidth / m_tileWidth) - 1;
+			m_mapRows = Math.floor(m_mapHeight / m_tileHeight) - 1;
+
 
 			resizeScreen(Config.screenWidth, Config.screenHeight);
 
@@ -372,9 +374,9 @@ package hy.rpg.map
 			if (m_bufferRect.y < 0)
 				m_bufferRect.y = 0;
 			if (m_bufferRect.x + m_bufferCols > m_mapCols)
-				m_bufferRect.x = m_bufferCols - m_mapCols;
+				m_bufferRect.x = m_mapCols - m_bufferCols;
 			if (m_bufferRect.y + m_bufferRows > m_mapRows)
-				m_bufferRect.y = m_bufferRows - m_mapRows;
+				m_bufferRect.y = m_mapRows - m_bufferRows;
 
 			//若果缓冲区域和上一次不一样
 			if (m_bufferRect.x != m_lastStartTileCol || m_bufferRect.y != m_lastStartTileRow)
@@ -437,7 +439,7 @@ package hy.rpg.map
 			var data : Object = m_fileVersions[tileId];
 			if (!data)
 			{
-				warning(this, "m_fileVersions is null : " + tileId);
+				error(this, "m_fileVersions is null : " + tileId);
 				return;
 			}
 			tile = SReferenceManager.getInstance().createMapResourceParser(ParserMapResource, m_mapId + tileId, data.url, EnumLoadPriority.MAP - m_index++, data.version);

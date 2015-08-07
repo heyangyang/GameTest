@@ -1,7 +1,7 @@
 package hy.rpg.manager
 {
 	import flash.utils.Dictionary;
-	
+
 	import hy.game.avatar.SActionType;
 	import hy.game.core.GameObject;
 	import hy.game.core.SCameraObject;
@@ -101,9 +101,10 @@ package hy.rpg.manager
 			data.isMe = true;
 			data.action = SActionType.IDLE;
 			data.transform.dir = EnumDirection.SOUTH;
+			data.id = 999999;
 			m_objectDatas.push(data);
 
-			for (var i : int = 0; i < 500; )
+			for (var i : int = 0; i < 100; )
 			{
 				gridX = UtilsCommon.getGridXByPixel(sceneW * Math.random());
 				gridY = UtilsCommon.getGridYByPixel(sceneH * Math.random());

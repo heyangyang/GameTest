@@ -19,6 +19,7 @@ package hy.rpg.components
 			m_lazyAvatar.priority = EnumLoadPriority.WEAPON;
 			m_render.layer = EnumRenderLayer.WEAPON;
 			m_isUseFilters = false;
+			m_useDefaultAvatar = false;
 		}
 
 		override protected function onStart() : void
@@ -44,14 +45,15 @@ package hy.rpg.components
 		override protected function changeAnimation() : void
 		{
 			if (m_data.isRide)
-				tmp_frame = m_avatar.gotoAnimation(SActionType.SIT, 0, m_dir, 0, 0);
+				tmp_frame = m_avatar.gotoAnimation(SActionType.SIT, m_dir, 0, 0);
 			else
-				tmp_frame = m_avatar.gotoAnimation(m_action, 0, m_dir, 0, 0);
+				tmp_frame = m_avatar.gotoAnimation(m_action, m_dir, 0, 0);
 		}
 
 		override protected function onLoadAvatarComplete(avatar : SAvatar) : void
 		{
 			m_avatar = avatar;
+			m_dir = m_action = -1;
 		}
 	}
 }
