@@ -3,6 +3,7 @@ package hy.rpg.manager
 	import hy.game.components.SAnimationComponent;
 	import hy.game.components.SAvatarComponent;
 	import hy.game.components.SMouseComponent;
+	import hy.game.components.SRenderComponent;
 	import hy.game.core.GameObject;
 	import hy.game.core.SCameraObject;
 	import hy.game.data.STransform;
@@ -93,9 +94,9 @@ package hy.rpg.manager
 				heroObject.addComponent(new ComponentMount(), EnumPriority.PRIORITY_8);
 			//名字组件
 			heroObject.addComponent(new ComponentName());
+			heroObject.addComponent(new ComponentHp());
 			//shodow
 			heroObject.addComponent(new ComponentShodow());
-			heroObject.addComponent(new ComponentHp());
 			var stateComponent : StateComponent = new StateComponent();
 			heroObject.addComponent(stateComponent, EnumPriority.PRIORITY_6);
 			stateComponent.setStates([StateStand, StateWalk]);
@@ -130,10 +131,14 @@ package hy.rpg.manager
 			if (data.mountId)
 				heroObject.addComponent(new ComponentMount(), EnumPriority.PRIORITY_8);
 			//名字组件
-			heroObject.addComponent(new ComponentName());
+			var renderComponent : SRenderComponent = new ComponentName();
+			//renderComponent.setVisible(false);
+			heroObject.addComponent(renderComponent);
+			renderComponent = new ComponentHp()
+			renderComponent.setVisible(false);
+			heroObject.addComponent(renderComponent);
 			//shodow
 			heroObject.addComponent(new ComponentShodow());
-			heroObject.addComponent(new ComponentHp());
 			heroObject.addComponent(new SMouseComponent());
 			var stateComponent : StateComponent = new StateComponent();
 			heroObject.addComponent(stateComponent, EnumPriority.PRIORITY_6);

@@ -2,10 +2,12 @@ package hy.rpg.manager
 {
 	import flash.utils.Dictionary;
 	
+	import hy.game.avatar.SActionType;
 	import hy.game.core.GameObject;
 	import hy.game.core.SCameraObject;
 	import hy.game.core.SUpdate;
 	import hy.rpg.components.data.DataComponent;
+	import hy.rpg.enum.EnumDirection;
 	import hy.rpg.seek.SRoadSeeker;
 	import hy.rpg.utils.UtilsCommon;
 
@@ -97,6 +99,8 @@ package hy.rpg.manager
 			data.mountId = "SHMountQiongQi";
 			data.name = "无法无天";
 			data.isMe = true;
+			data.action = SActionType.IDLE;
+			data.transform.dir = EnumDirection.SOUTH;
 			m_objectDatas.push(data);
 
 			for (var i : int = 0; i < 500; )
@@ -118,6 +122,7 @@ package hy.rpg.manager
 				data.level = 100 * Math.random();
 				data.hp_max = 200 * data.level;
 				data.hp_cur = data.hp_max * Math.random();
+				data.action = SActionType.IDLE;
 				data.transform.dir = 7 * Math.random();
 				data.transform.x = UtilsCommon.getPixelXByGrid(gridX);
 				data.transform.y = UtilsCommon.getPixelYByGrid(gridY);

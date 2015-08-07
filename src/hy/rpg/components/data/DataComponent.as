@@ -63,14 +63,14 @@ package hy.rpg.components.data
 		{
 			m_updateName = value;
 		}
-		
+
 		/**
-		 * 暂时不要销毁 
-		 * 
+		 * 暂时不要销毁
+		 *
 		 */
 		override public function destroy() : void
 		{
-			
+
 		}
 
 	}

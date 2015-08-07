@@ -16,7 +16,7 @@ package hy.rpg.components
 		private var m_lastHp : int;
 		private var m_isMouseOver : Boolean;
 		private var m_data : DataComponent;
-		private var isUpdatable : Boolean;
+		private var m_isUpdatable : Boolean;
 
 		public function ComponentHp(type : * = null)
 		{
@@ -27,8 +27,6 @@ package hy.rpg.components
 		{
 			super.onStart();
 			m_data = m_owner.getComponentByType(DataComponent) as DataComponent;
-			m_isMouseOver = m_data.isMe;
-			!m_isMouseOver && removeRender(m_render);
 		}
 
 		override public function notifyAdded() : void
@@ -47,23 +45,33 @@ package hy.rpg.components
 
 		override public function update() : void
 		{
-			if (!m_data.isMe && m_isMouseOver != m_transform.isMouseOver)
+			if (m_isMouseOver != m_transform.isMouseOver)
 			{
-				isUpdatable = m_isMouseOver = m_transform.isMouseOver;
-				m_isMouseOver ? addRender(m_render) : removeRender(m_render);
+				m_isMouseOver = m_transform.isMouseOver;
+				updateRenderVisible();
 			}
-			if (!m_isMouseOver)
-				return;
 			if (m_lastHp != m_data.hp_cur)
 			{
 				m_lastHp = m_data.hp_cur;
 				m_render.bitmapData = UtilsHpBar.getHp(m_data.hp_cur / m_data.hp_max * 100);
 			}
-			if (isUpdatable || m_transform.isChangeFiled(STransform.C_XYZ) || m_transform.isChangeFiled(STransform.C_WH))
+			if (m_isUpdatable || m_transform.isChangeFiled(STransform.C_XYZ) || m_transform.isChangeFiled(STransform.C_WH))
 			{
-				isUpdatable = false;
+				m_isUpdatable = false;
 				m_render.y = -m_transform.height - m_offsetY - m_transform.z + m_transform.centerOffsetY;
 			}
+		}
+
+		override protected function updateRenderVisible() : void
+		{
+			if (m_isVisible || m_isMouseOver)
+			{
+				m_isUpdatable = true;
+				addRender(m_render)
+				return;
+			}
+			m_isUpdatable = false;
+			removeRender(m_render);
 		}
 	}
 }
