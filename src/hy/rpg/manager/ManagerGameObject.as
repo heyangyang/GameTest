@@ -89,8 +89,8 @@ package hy.rpg.manager
 			var gridY : int;
 			var seekRoad : SRoadSeeker = SRoadSeeker.getInstance();
 			data = new DataComponent();
-			data.transform.x = UtilsCommon.getPixelXByGrid(45);
-			data.transform.y = UtilsCommon.getPixelYByGrid(20);
+			data.transform.x = UtilsCommon.getPixelXByGrid(28);
+			data.transform.y = UtilsCommon.getPixelYByGrid(22);
 			data.avatarId = "SHHeroXuanMing";
 			data.weaponId = "sw_6_1";
 			data.wingId = "SHHeroWing_G";
@@ -99,7 +99,7 @@ package hy.rpg.manager
 			data.isMe = true;
 			m_objectDatas.push(data);
 
-			for (var i : int = 0; i < 00; )
+			for (var i : int = 0; i < 500; )
 			{
 				gridX = UtilsCommon.getGridXByPixel(sceneW * Math.random());
 				gridY = UtilsCommon.getGridYByPixel(sceneH * Math.random());

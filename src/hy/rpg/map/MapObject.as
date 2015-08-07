@@ -220,8 +220,8 @@ package hy.rpg.map
 				m_maxMultiDistance = 1;
 
 			// 从XML文件中获取地图基本信息
-			m_mapWidth = m_config.@width;
-			m_mapHeight = m_config.@height;
+			m_mapWidth = m_config.@right;
+			m_mapHeight = m_config.@bottom;
 			m_camera.setSceneSize(m_mapWidth, m_mapHeight);
 
 			m_tileWidth = Config.TILE_WIDTH;
