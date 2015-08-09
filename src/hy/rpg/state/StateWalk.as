@@ -2,12 +2,15 @@ package hy.rpg.state
 {
 	import hy.game.avatar.SActionType;
 	import hy.game.core.GameObject;
+	import hy.game.core.SCameraObject;
 	import hy.game.core.STime;
 	import hy.game.namespaces.name_part;
 	import hy.game.state.SBaseState;
 	import hy.game.state.StateComponent;
+	import hy.rpg.manager.ManagerGameObject;
 	import hy.rpg.seek.SRoadSeeker;
 	import hy.rpg.utils.UtilsCommon;
+
 	use namespace name_part;
 
 	public class StateWalk extends SBaseState
@@ -91,6 +94,8 @@ package hy.rpg.state
 				m_transform.my = UtilsCommon.sind(m_targetAnagle) * m_moveSpeed;
 				m_transform.x += m_transform.mx;
 				m_transform.y += m_transform.my;
+				if (!SCameraObject.isInScreen(m_transform))
+					ManagerGameObject.getInstance().deleteGameObject(m_owner);
 			}
 		}
 

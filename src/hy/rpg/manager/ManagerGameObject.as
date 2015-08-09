@@ -55,6 +55,8 @@ package hy.rpg.manager
 		 * 地图内的所有对象数据
 		 */
 		private var m_objectDatas : Vector.<DataComponent>;
+		private var m_deleteObjects : Vector.<GameObject>;
+		private var m_deleteCount : int;
 		/**
 		 * 是否有增加删除数据
 		 */
@@ -70,6 +72,7 @@ package hy.rpg.manager
 			super();
 			m_visaulObjects = new Dictionary();
 			m_objectDatas = new Vector.<DataComponent>();
+			m_deleteObjects = new Vector.<GameObject>();
 			frameRate = 10;
 			m_hasCreatedObject = false;
 			init();
@@ -104,7 +107,7 @@ package hy.rpg.manager
 			data.id = 999999;
 			m_objectDatas.push(data);
 
-			for (var i : int = 0; i < 100; )
+			for (var i : int = 0; i < 300; )
 			{
 				gridX = UtilsCommon.getGridXByPixel(sceneW * Math.random());
 				gridY = UtilsCommon.getGridYByPixel(sceneH * Math.random());
@@ -135,7 +138,22 @@ package hy.rpg.manager
 
 		override public function update() : void
 		{
+			checkDeleteList();
 			createAndDisposeObject();
+		}
+
+		private function checkDeleteList() : void
+		{
+			if (m_deleteCount == 0)
+				return;
+			for each (currUpdateGame in m_deleteObjects)
+			{
+				m_objectNumChildren--;
+				delete m_visaulObjects[currUpdateGame.id];
+				currUpdateGame.destroy();
+			}
+			m_deleteCount = 0;
+			m_deleteObjects.length = 0;
 		}
 
 		/**
@@ -179,6 +197,21 @@ package hy.rpg.manager
 				return;
 			}
 			m_hasCreatedObject = false;
+		}
+
+		/**
+		 * 销毁场景中得对象
+		 * @param gameObject
+		 * @return
+		 *
+		 */
+		public function deleteGameObject(gameObject : GameObject) : void
+		{
+			if (m_visaulObjects[gameObject.id] == null)
+				return;
+			if (m_deleteObjects.indexOf(gameObject) == -1)
+				m_deleteObjects.push(gameObject);
+			m_deleteCount++;
 		}
 
 		public function get objectDatas() : Vector.<DataComponent>

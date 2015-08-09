@@ -2,7 +2,7 @@ package hy.rpg.manager
 {
 	import hy.game.components.SAnimationComponent;
 	import hy.game.components.SAvatarComponent;
-	import hy.game.components.SMouseComponent;
+	import hy.game.components.SCollisionComponent;
 	import hy.game.components.SRenderComponent;
 	import hy.game.core.GameObject;
 	import hy.game.core.SCameraObject;
@@ -12,6 +12,7 @@ package hy.rpg.manager
 	import hy.game.manager.SBaseManager;
 	import hy.game.manager.SLayerManager;
 	import hy.game.state.StateComponent;
+	import hy.rpg.components.ComponentAi;
 	import hy.rpg.components.ComponentHp;
 	import hy.rpg.components.ComponentMount;
 	import hy.rpg.components.ComponentMouse;
@@ -112,7 +113,7 @@ package hy.rpg.manager
 		}
 
 		/**
-		 *  创建玩家自己的角色
+		 *  创建其他玩家的角色
 		 *
 		 */
 		public function createHeroObject(data : DataComponent) : ObjectRole
@@ -139,7 +140,8 @@ package hy.rpg.manager
 			heroObject.addComponent(renderComponent);
 			//shodow
 			heroObject.addComponent(new ComponentShodow());
-			heroObject.addComponent(new SMouseComponent());
+			heroObject.addComponent(new SCollisionComponent());
+			heroObject.addComponent(new ComponentAi());
 			var stateComponent : StateComponent = new StateComponent();
 			heroObject.addComponent(stateComponent, EnumPriority.PRIORITY_6);
 			stateComponent.setStates([StateStand, StateWalk]);
