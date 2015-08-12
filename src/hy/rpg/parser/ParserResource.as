@@ -15,12 +15,12 @@ package hy.rpg.parser
 	{
 		private var m_id : String;
 		private var m_version : String;
-		private var m_priority : int;
-		private var m_isLoaded : Boolean;
-		private var m_isLoading : Boolean;
+		protected var m_priority : int;
+		protected var m_isLoaded : Boolean;
+		protected var m_isLoading : Boolean;
 
-		private var m_ioErrorFuns : Vector.<Function>;
-		private var m_completeFuns : Vector.<Function>;
+		protected var m_ioErrorFuns : Vector.<Function>;
+		protected var m_completeFuns : Vector.<Function>;
 
 		public var cc:String;
 		/**
@@ -68,7 +68,7 @@ package hy.rpg.parser
 		 * @param res
 		 *
 		 */
-		private function onResourceLoaded(res : SResource) : void
+		protected function onResourceLoaded(res : SResource) : void
 		{
 			startParseLoader(res.getBinary());
 		}
@@ -78,7 +78,7 @@ package hy.rpg.parser
 		 * @param res
 		 *
 		 */
-		private function onResourceIOError(res : SResource) : void
+		protected function onResourceIOError(res : SResource) : void
 		{
 			m_isLoading = false;
 			m_isLoaded = false;
@@ -138,7 +138,7 @@ package hy.rpg.parser
 			}
 		}
 
-		private function invokeNotifyByArray(functions : Vector.<Function>) : void
+		protected function invokeNotifyByArray(functions : Vector.<Function>) : void
 		{
 			if (!functions)
 				return;

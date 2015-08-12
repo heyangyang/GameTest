@@ -11,6 +11,7 @@ package
 	import hy.rpg.starter.StarterEnterScene;
 	import hy.rpg.starter.StarterMapLoader;
 	import hy.rpg.starter.StarterShortcutKey;
+	import hy.rpg.starter.StarterStarling;
 
 	/**
 	 * 启动器
@@ -31,6 +32,7 @@ package
 			addNodeByClass(StarterMapLoader);
 			addNodeByClass(StarterEnterScene);
 			addNodeByClass(StarterShortcutKey);
+			addNodeByClass(StarterStarling);
 			onFirstStart();
 		}
 
@@ -48,6 +50,7 @@ package
 			monitor.watchProperty(STime, "passedTime", "passedTime", 0x00ff00);
 
 			addNodeByType(GameNodeEnmu.base_config);
+			addNodeByType(GameNodeEnmu.start_starling);
 			addNodeByType(GameNodeEnmu.model_load);
 			addNodeByType(GameNodeEnmu.map_load);
 			addNodeByType(GameNodeEnmu.shortkey);

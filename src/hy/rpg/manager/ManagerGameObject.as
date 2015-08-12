@@ -83,8 +83,8 @@ package hy.rpg.manager
 			//虚拟数据
 			var heroTypes : Array = ["SHHeroAsura", "SHHeroExtreme", "SHHeroGhostValley", "SHHeroMoYingMan", "SHHeroMoYingWoman", "SHHeroXuanMing", "SHHeroHiddenFaery"];
 			var heroWeapons : Array = ["sw_3_0", "sw_6_1", "sw_4_0", "sw_10_1", "sw_10_0", "sw_xuan", "sw_hidden"];
-			var heroWings : Array = ["SHHeroWing_D", "", "SHHeroWing_E", "SHHeroMoYingWing", "SHHeroMoYingWingWoman", "SHHeroWing_F", "SHHeroWing_G"];
-			var heroMounts : Array = ["SHMountTaoTie", "SHMountQiongQi", "SHMountTaoTie", "SHMountTaoWu", "SHMountYingLong", "SHMoutDragon", "SHMoutDragon"];
+			var heroWings : Array = ["SHHeroWing_D", "", "SHHeroWing_D", "SHHeroMoYingWing", "SHHeroMoYingWingWoman", "SHHeroWing_G", "SHHeroWing_G"];
+			var heroMounts : Array = ["SHMountTaoTie", "SHMountTaoWu", "SHMountTaoTie", "SHMountTaoWu", "SHMountTaoTie", "SHMountTaoWu", "SHMountTaoTie"];
 			var data : DataComponent;
 			var len : int = heroTypes.length - 1;
 			var index : int;
@@ -107,7 +107,7 @@ package hy.rpg.manager
 			data.id = 999999;
 			m_objectDatas.push(data);
 
-			for (var i : int = 0; i < 300; )
+			for (var i : int = 0; i < 00; )
 			{
 				gridX = UtilsCommon.getGridXByPixel(sceneW * Math.random());
 				gridY = UtilsCommon.getGridYByPixel(sceneH * Math.random());

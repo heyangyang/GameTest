@@ -1,10 +1,15 @@
 package hy.rpg.pak
 {
 	import flash.geom.Point;
+	import flash.system.System;
+	import flash.utils.ByteArray;
 	
+	import hy.game.core.interfaces.IBitmapData;
 	import hy.game.manager.SReferenceManager;
-	import hy.game.render.SRenderBitmapData;
 	import hy.game.resources.SResource;
+	
+	import starling.base.STextureAtlas;
+	import starling.textures.Texture;
 
 	/**
 	 * 用于3d动画解析
@@ -13,7 +18,7 @@ package hy.rpg.pak
 	 */
 	public class DecoderDirectAnimation extends DecoderAnimation
 	{
-		private var textureAtlas : *;
+		private var textureAtlas : STextureAtlas;
 
 		public function DecoderDirectAnimation(id : String)
 		{
@@ -39,27 +44,27 @@ package hy.rpg.pak
 
 		protected function onXtfLoaded(resource : SResource) : void
 		{
-//			var bytes : ByteArray = resource.getBinary();
-//			var name : String = bytes.readUTF();
-//			var len : int = bytes.readUnsignedInt();
-//			var atf_bytes : ByteArray = new ByteArray();
-//			bytes.readBytes(atf_bytes, 0, len);
-//			name = bytes.readUTF();
-//			len = bytes.readUnsignedInt();
-//			var xml_bytes : ByteArray = new ByteArray();
-//			bytes.readBytes(xml_bytes, 0, len);
-//			var xml : XML = new XML(xml_bytes);
-//			var texture : Texture = Texture.fromData(atf_bytes);
-//			textureAtlas = new STextureAtlas(texture, xml);
-//			atf_bytes.clear();
-//			xml_bytes.clear();
-//			bytes.clear();
-//			System.disposeXML(xml);
-//			SReferenceManager.getInstance().clearResource(resource.url);
-//			notifyAll();
+			var bytes : ByteArray = resource.getBinary();
+			var name : String = bytes.readUTF();
+			var len : int = bytes.readUnsignedInt();
+			var atf_bytes : ByteArray = new ByteArray();
+			bytes.readBytes(atf_bytes, 0, len);
+			name = bytes.readUTF();
+			len = bytes.readUnsignedInt();
+			var xml_bytes : ByteArray = new ByteArray();
+			bytes.readBytes(xml_bytes, 0, len);
+			var xml : XML = new XML(xml_bytes);
+			var texture : Texture = Texture.fromData(atf_bytes);
+			textureAtlas = new STextureAtlas(texture, xml);
+			atf_bytes.clear();
+			xml_bytes.clear();
+			bytes.clear();
+			System.disposeXML(xml);
+			SReferenceManager.getInstance().clearResource(resource.url);
+			notifyAll();
 		}
 
-		public function getDirResult(action : String, index : uint = 0, dir : String = DEFAULT) : SRenderBitmapData
+		public function getDirResult(action : String, index : uint = 0, dir : String = DEFAULT) : IBitmapData
 		{
 			if (textureAtlas)
 				return textureAtlas.getAnimationFrame(action, dir, index);

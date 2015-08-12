@@ -8,5 +8,6 @@ package hy.rpg.starter
 		public static const map_load : String = "map_load";
 		public static const emter_scene : String = "emter_scene";
 		public static const model_load : String = "model_load";
+		public static const start_starling : String = "start_starling";
 	}
 }
