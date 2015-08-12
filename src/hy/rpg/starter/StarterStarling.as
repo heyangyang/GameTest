@@ -50,6 +50,8 @@ package hy.rpg.starter
 			Game3D(app).start();
 			mStarling.start();
 			GameFrameStart.current.onStart();
+			if(Config.isDebug)
+				Starling.current.showStatsAt("right");
 			nextNode();
 		}
 

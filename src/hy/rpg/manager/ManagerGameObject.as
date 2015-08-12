@@ -83,7 +83,7 @@ package hy.rpg.manager
 			//虚拟数据
 			var heroTypes : Array = ["SHHeroAsura", "SHHeroExtreme", "SHHeroGhostValley", "SHHeroMoYingMan", "SHHeroMoYingWoman", "SHHeroXuanMing", "SHHeroHiddenFaery"];
 			var heroWeapons : Array = ["sw_3_0", "sw_6_1", "sw_4_0", "sw_10_1", "sw_10_0", "sw_xuan", "sw_hidden"];
-			var heroWings : Array = ["SHHeroWing_D", "", "SHHeroWing_D", "SHHeroMoYingWing", "SHHeroMoYingWingWoman", "SHHeroWing_G", "SHHeroWing_G"];
+			var heroWings : Array = ["SHHeroWing_G", "", "SHHeroWing_G", "SHHeroMoYingWing", "SHHeroMoYingWingWoman", "SHHeroWing_G", "SHHeroWing_G"];
 			var heroMounts : Array = ["SHMountTaoTie", "SHMountTaoWu", "SHMountTaoTie", "SHMountTaoWu", "SHMountTaoTie", "SHMountTaoWu", "SHMountTaoTie"];
 			var data : DataComponent;
 			var len : int = heroTypes.length - 1;
@@ -99,7 +99,7 @@ package hy.rpg.manager
 			data.avatarId = "SHHeroXuanMing";
 			data.weaponId = "sw_6_1";
 			data.wingId = "SHHeroWing_G";
-			data.mountId = "SHMountQiongQi";
+			data.mountId = "SHMountTaoTie";
 			data.name = "无法无天";
 			data.isMe = true;
 			data.action = SActionType.IDLE;
@@ -107,7 +107,7 @@ package hy.rpg.manager
 			data.id = 999999;
 			m_objectDatas.push(data);
 
-			for (var i : int = 0; i < 00; )
+			for (var i : int = 0; i <500; )
 			{
 				gridX = UtilsCommon.getGridXByPixel(sceneW * Math.random());
 				gridY = UtilsCommon.getGridYByPixel(sceneH * Math.random());
@@ -122,6 +122,7 @@ package hy.rpg.manager
 				data.weaponId = heroWeapons[index];
 				data.wingId = heroWings[index];
 				data.mountId = heroMounts[index];
+				data.mountId = "SHMountTaoTie";
 				data.speed = 0.2;
 				data.level = 100 * Math.random();
 				data.hp_max = 200 * data.level;

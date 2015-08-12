@@ -26,53 +26,41 @@ package hy.rpg.parser
 
 		override public function load() : void
 		{
-			var cur_id : String = id;
 			if (Config.supportDirectX)
 			{
-				var tmp : Array = id.split("/");
-				tmp.pop();
-				tmp[0] = "avatar_atf";
-				tmp.push(tmp[1] + ".xtf");
-				cur_id = tmp.join("/");
-			}
-
-			var m_resource : SResource = SReferenceManager.getInstance().createResource(id, version);
-
-			if (m_isLoaded)
-			{
-				invokeNotifyByArray(m_completeFuns);
-			}
-			else if (m_resource.isLoaded)
-			{
-				m_isLoading = true;
+				if (action_name == null)
+					action_name = id.split("/").pop().split(".").shift();
 				startParseLoader(null);
 			}
-			else if (!m_resource.isLoading)
+			else
 			{
-				m_isLoading = true;
-				m_isLoaded = false;
-				m_resource.addNotifyCompleted(onResourceLoaded).addNotifyIOError(onResourceIOError).setPriority(m_priority).load();
+				super.load();
 			}
+
 		}
 
 		override protected function startParseLoader(bytes : ByteArray) : void
 		{
+			if (!Config.supportDirectX)
+			{
+				super.startParseLoader(bytes);
+				return;
+			}
 			var cur_id : String = id;
 			if (Config.supportDirectX)
 			{
 				var tmp : Array = id.split("/");
-				tmp[0] = "avatar_atf";
+				if (id.indexOf("avatar") != -1)
+					tmp[0] = "avatar_atf";
+				else
+					tmp[0] = "effect_atf";
 				tmp.push(tmp.pop().split(".")[0] + ".xtf");
 				cur_id = tmp.join("/");
 			}
-			if (action_name == null)
-				action_name = id.split("/").pop().split(".").shift();
 			decoder = SReferenceManager.getInstance().createDirectAnimationDeocder(cur_id);
 			_decoder.addNotify(onParseCompleted);
-			if (Config.supportDirectX)
-				_decoder.startXtfLoad(version, priority);
-			else
-				_decoder.decode(bytes, false);
+			_decoder.startXtfLoad(version, priority);
+
 		}
 
 

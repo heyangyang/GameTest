@@ -55,6 +55,8 @@ package hy.rpg.parser
 
 		public function get render() : SRender
 		{
+			if (bitmapData == null)
+				return null;
 			if (_render)
 				return _render;
 			_render = new SRender();

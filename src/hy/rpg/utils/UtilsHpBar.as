@@ -3,9 +3,10 @@ package hy.rpg.utils
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.utils.Dictionary;
-
+	
 	import hy.game.cfg.Config;
 	import hy.game.core.interfaces.IBitmapData;
+	import hy.game.render.SDirectBitmapData;
 	import hy.game.render.SRenderBitmapData;
 	import hy.game.resources.SResourceMagnger;
 
@@ -41,8 +42,8 @@ package hy.rpg.utils
 			bmd = tmp_bmd;
 			if (Config.supportDirectX)
 			{
-//				bmd = SDirectBitmapData.fromDirectBitmapData(tmp_bmd);
-//				tmp_bmd.dispose();
+				bmd = SDirectBitmapData.fromDirectBitmapData(tmp_bmd);
+				tmp_bmd.dispose();
 			}
 			dic[hp_value] = bmd;
 			return bmd;

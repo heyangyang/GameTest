@@ -3,9 +3,11 @@ package hy.rpg.render
 	import flash.geom.Matrix;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
-
+	
+	import hy.game.cfg.Config;
 	import hy.game.core.SReference;
 	import hy.game.core.interfaces.IBitmapData;
+	import hy.game.render.SDirectBitmapData;
 	import hy.game.render.SRenderBitmapData;
 	import hy.rpg.utils.UtilsFilter;
 	import hy.rpg.utils.UtilsUIStyle;
@@ -52,12 +54,12 @@ package hy.rpg.render
 			matrix.tx += -(textField.width - textField.textWidth - 4) * 0.5;
 			matrix.ty = 0;
 			SRenderBitmapData(m_bitmapData).draw(textField, matrix);
-//			if (SShellVariables.supportDirectX)
-//			{
-//				var tmp : SRenderBitmapData = bmd as SRenderBitmapData;
-//				bmd = SDirectBitmapData.fromDirectBitmapData(tmp);
-//				tmp.dispose();
-//			}
+			if (Config.supportDirectX)
+			{
+				var tmp : SRenderBitmapData = m_bitmapData as SRenderBitmapData;
+				m_bitmapData = SDirectBitmapData.fromDirectBitmapData(tmp);
+				tmp.dispose();
+			}
 		}
 
 		public function get bitmapData() : IBitmapData
