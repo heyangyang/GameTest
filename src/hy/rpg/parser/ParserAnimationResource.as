@@ -2,12 +2,11 @@ package hy.rpg.parser
 {
 	import flash.geom.Point;
 	import flash.utils.ByteArray;
-
+	
 	import hy.game.animation.SAnimationDescription;
 	import hy.game.cfg.Config;
 	import hy.game.core.interfaces.IBitmapData;
 	import hy.game.manager.SReferenceManager;
-	import hy.game.resources.SResource;
 	import hy.rpg.enum.EnumLoadPriority;
 
 
