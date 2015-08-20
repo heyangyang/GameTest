@@ -1,15 +1,13 @@
 package hy.rpg.starter
 {
+	import flash.display.DisplayObject;
 	import flash.display.Stage;
-	
+
 	import hy.game.GameFrameStart;
 	import hy.game.cfg.Config;
+	import hy.game.core.event.SEvent;
+	import hy.game.stage3D.SStage3D;
 	import hy.game.starter.SStartNode;
-	
-	import starling.base.Game3D;
-	import starling.core.Starling;
-	import starling.display.DisplayObject;
-	import starling.events.Event;
 
 	/**
 	 * 启动3D加速
@@ -18,40 +16,34 @@ package hy.rpg.starter
 	 */
 	public class StarterStarling extends SStartNode
 	{
-		private var mStarling : Starling;
+		private var stage3d : SStage3D;
 
-	 	public function StarterStarling()
+		public function StarterStarling()
 		{
 		}
 
 		override public function onStart() : void
 		{
 			if (!Config.supportDirectX)
-			{ 
+			{
 				GameFrameStart.current.onStart();
 				nextNode();
 				return;
 			}
-			Starling.multitouchEnabled = false;
+			SStage3D.multitouchEnabled = false;
 			var stage : Stage = Config.stage;
-			mStarling = new Starling(Game3D, stage);
-			mStarling.stage.stageWidth = stage.stageWidth;
-			mStarling.stage.stageHeight = stage.stageHeight;
-			mStarling.simulateMultitouch = false;
-			mStarling.enableErrorChecking = false;
-			mStarling.antiAliasing = 0;
-			mStarling.addEventListener(Event.ROOT_CREATED, onRootCreated);
+			stage3d = new SStage3D(stage);
+			stage3d.enableErrorChecking = false;
+			stage3d.antiAliasing = 0;
+			stage3d.addEventListener(SEvent.ROOT_CREATED, onRootCreated);
 		}
 
 		private function onRootCreated(event : Object, app : DisplayObject) : void
 		{
-			mStarling.removeEventListener(Event.ROOT_CREATED, onRootCreated);
-			Config.supportDirectX = Starling.context.driverInfo.indexOf("Software") == -1;
-			Game3D(app).start();
-			mStarling.start();
+			stage3d.removeEventListener(SEvent.ROOT_CREATED, onRootCreated);
+			Config.supportDirectX = SStage3D.context.driverInfo.indexOf("Software") == -1;
+			stage3d.start();
 			GameFrameStart.current.onStart();
-//			if(Config.isDebug)
-//				Starling.current.showStatsAt("right");
 			nextNode();
 		}
 

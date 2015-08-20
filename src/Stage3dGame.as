@@ -35,7 +35,7 @@ package
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 	
-	import starling.utils.VertexData;
+	import hy.game.stage3D.utils.SVertexData;
 
 //	[SWF(width="640", height="480", frameRate="60", backgroundColor="#000000")]
 
@@ -173,8 +173,8 @@ package
 			// since our particular data is 
 			// x, y, z, u, v, nx, ny, nz
 			// each vertex uses 8 array elements
-			vertexBuffer = context3D.createVertexBuffer(meshVertexData.length / VertexData.ELEMENTS_PER_VERTEX, VertexData.ELEMENTS_PER_VERTEX);
-			vertexBuffer.uploadFromVector(meshVertexData, 0, meshVertexData.length / VertexData.ELEMENTS_PER_VERTEX);
+			vertexBuffer = context3D.createVertexBuffer(meshVertexData.length / SVertexData.ELEMENTS_PER_VERTEX, SVertexData.ELEMENTS_PER_VERTEX);
+			vertexBuffer.uploadFromVector(meshVertexData, 0, meshVertexData.length / SVertexData.ELEMENTS_PER_VERTEX);
 
 			// Generate mipmaps
 			var ws : int = myTextureData.bitmapData.width;
@@ -256,11 +256,11 @@ context3D.setBlendFactors(Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFacto
 
 			// associate the vertex data with current shader program
 			// position
-			context3D.setVertexBufferAt(0, vertexBuffer, VertexData.POSITION_OFFSET, Context3DVertexBufferFormat.FLOAT_2);
+			context3D.setVertexBufferAt(0, vertexBuffer, SVertexData.POSITION_OFFSET, Context3DVertexBufferFormat.FLOAT_2);
 			// tex coord
 			//context3D.setVertexBufferAt(1, vertexBuffer, 2, Context3DVertexBufferFormat.FLOAT_4);
 			
-			context3D.setVertexBufferAt(2, vertexBuffer, VertexData.TEXCOORD_OFFSET, Context3DVertexBufferFormat.FLOAT_2);
+			context3D.setVertexBufferAt(2, vertexBuffer, SVertexData.TEXCOORD_OFFSET, Context3DVertexBufferFormat.FLOAT_2);
 
 			// which texture should we use?
 			context3D.setTextureAt(0, myTexture);
@@ -314,19 +314,19 @@ context3D.setBlendFactors(Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFacto
 				mTransformationMatrix.setTo(a, b, c, d, tx, ty);
 			}
 			
-			var vertexData:VertexData=new VertexData(4,true);
+			var vertexData:SVertexData=new SVertexData(4);
 			vertexData.setPosition(0, 0.0, 0.0);
 			vertexData.setPosition(1, mWidth, 0.0);
-			vertexData.setPosition(2, mWidth, mHeight);
-			vertexData.setPosition(3, 0.0, mHeight);
+			vertexData.setPosition(2, 0.0, mHeight);
+			vertexData.setPosition(3, mWidth, mHeight);
 //			vertexData.setUniformColor(0xffffff);
 			vertexData.setTexCoords(0, 0.0, 0.0);
 			vertexData.setTexCoords(1, 1.0, 0.0);
-			vertexData.setTexCoords(2, 1.0, 1.0);
-			vertexData.setTexCoords(3, 0.0, 1.0);
+			vertexData.setTexCoords(2, 0.0, 1.0);
+			vertexData.setTexCoords(3, 1.0, 1.0);
 //			vertexData.scaleAlpha(0,0.5,4);
 			
-			var mVertexData:VertexData=new VertexData(4,true);
+			var mVertexData:SVertexData=new SVertexData(4);
 			vertexData.copyTransformedTo(mVertexData,0,mTransformationMatrix);
 			modelViewProjection.identity();
 			//modelViewProjection.copyRawDataFrom(m_positon);
@@ -334,6 +334,7 @@ context3D.setBlendFactors(Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFacto
 			// In this example a square is made from two triangles
 //			mProjectionMatrix3D.prependTranslation(mX,mY,0);
 			meshIndexData = Vector.<uint>([0, 1, 2, 0, 2, 3,]);
+			meshIndexData = new <uint>[0, 1, 2, 1, 3, 2];
 			meshVertexData = mVertexData.rawData;
 		}
 		

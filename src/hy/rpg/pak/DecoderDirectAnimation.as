@@ -7,9 +7,8 @@ package hy.rpg.pak
 	import hy.game.core.interfaces.IBitmapData;
 	import hy.game.manager.SReferenceManager;
 	import hy.game.resources.SResource;
-	
-	import starling.base.STextureAtlas;
-	import starling.textures.Texture;
+	import hy.game.stage3D.texture.STexture;
+	import hy.game.stage3D.texture.STextureAtlas;
 
 	/**
 	 * 用于3d动画解析
@@ -54,7 +53,7 @@ package hy.rpg.pak
 			var xml_bytes : ByteArray = new ByteArray();
 			bytes.readBytes(xml_bytes, 0, len);
 			var xml : XML = new XML(xml_bytes);
-			var texture : Texture = Texture.fromData(atf_bytes);
+			var texture : STexture = STexture.fromData(atf_bytes);
 			textureAtlas = new STextureAtlas(texture, xml);
 			atf_bytes.clear();
 			xml_bytes.clear();
