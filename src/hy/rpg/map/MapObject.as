@@ -442,7 +442,6 @@ package hy.rpg.map
 				error(this, "m_fileVersions is null : " + tileId);
 				return;
 			}
-			return;
 			tile = SReferenceManager.getInstance().createMapResourceParser(ParserMapResource, m_mapId + tileId, data.url, EnumLoadPriority.MAP - m_index++, data.version);
 			tile.onComplete(onTileResourceParserComplete);
 			tile.load();

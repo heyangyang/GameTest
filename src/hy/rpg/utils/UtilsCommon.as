@@ -1,7 +1,5 @@
 package hy.rpg.utils
 {
-	import flash.display.Sprite;
-	import flash.events.Event;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.net.URLRequest;
@@ -10,7 +8,6 @@ package hy.rpg.utils
 	import flash.utils.Dictionary;
 	
 	import hy.game.cfg.Config;
-	import hy.game.utils.STimeControl;
 	import hy.rpg.enum.EnumDirection;
 	import hy.rpg.enum.EnumGrid;
 
@@ -20,48 +17,6 @@ package hy.rpg.utils
 	 */
 	public class UtilsCommon
 	{
-		public static function callLater(func : Function, timeDelay : int, repeatCount : int = 1, ... arg) : int
-		{
-			return STimeControl.setInterval.apply(null, [func, timeDelay, repeatCount].concat(arg));
-		}
-
-		public static function removeLater(id : int) : void
-		{
-			STimeControl.clearTimer(id);
-		}
-
-		public static function frameLater(func : Function, frameDelay : int, repeatCount : int = 1, ... arg) : Sprite
-		{
-			var currRepeat : int = 0;
-			var delayCount : int = 0;
-			var sp : Sprite = new Sprite();
-			sp.name = "start";
-			sp.addEventListener(Event.ENTER_FRAME, function(e : Event) : void
-				{
-					if (sp.name == "start")
-					{
-						delayCount++;
-						if (delayCount >= frameDelay)
-						{
-							delayCount = 0;
-							currRepeat++;
-							func.apply(null, arg);
-							if (currRepeat >= repeatCount)
-							{
-								e.currentTarget.removeEventListener(Event.ENTER_FRAME, arguments.callee);
-								sp = null;
-							}
-						}
-					}
-					else
-					{
-						e.currentTarget.removeEventListener(Event.ENTER_FRAME, arguments.callee);
-						sp = null;
-					}
-				});
-			return sp;
-		}
-
 		/**
 		 * 将坐标点x,y以一个int表示
 		 * @param x 不能超过short
