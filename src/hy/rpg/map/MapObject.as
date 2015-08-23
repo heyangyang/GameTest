@@ -247,7 +247,7 @@ package hy.rpg.map
 		{
 			//设置镜头的基本信息
 			m_camera.setScreenSize(w, h);
-			m_camera.updateRectangle(200, 200);
+			m_camera.updateRectangle(0, 0);
 
 			m_viewWidth = w;
 			m_viewHeight = h;

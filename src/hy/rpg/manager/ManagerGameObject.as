@@ -107,7 +107,7 @@ package hy.rpg.manager
 			data.id = 999999;
 			m_objectDatas.push(data);
 
-			for (var i : int = 0; i < 00; )
+			for (var i : int = 0; i < 000; )
 			{
 				gridX = UtilsCommon.getGridXByPixel(sceneW * Math.random());
 				gridY = UtilsCommon.getGridYByPixel(sceneH * Math.random());

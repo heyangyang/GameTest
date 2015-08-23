@@ -94,7 +94,7 @@ package hy.rpg.state
 				m_transform.my = UtilsCommon.sind(m_targetAnagle) * m_moveSpeed;
 				m_transform.x += m_transform.mx;
 				m_transform.y += m_transform.my;
-				if (!SCameraObject.isInScreen(m_transform))
+				if (!m_data.isMe && !SCameraObject.isInScreen(m_transform))
 					ManagerGameObject.getInstance().deleteGameObject(m_owner);
 			}
 		}
