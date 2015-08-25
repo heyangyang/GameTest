@@ -3,7 +3,7 @@ package hy.rpg.utils
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.utils.Dictionary;
-	
+
 	import hy.game.cfg.Config;
 	import hy.game.core.interfaces.IBitmapData;
 	import hy.game.render.SDirectBitmapData;
@@ -20,6 +20,7 @@ package hy.rpg.utils
 	{
 		private static var hp : SRenderBitmapData;
 		private static var hpBg : SRenderBitmapData;
+		private static var point : Point;
 		private static var dic : Dictionary = new Dictionary();
 
 		public static function getHp(hp_value : int) : IBitmapData
@@ -31,14 +32,17 @@ package hy.rpg.utils
 			{
 				hp = SResourceMagnger.getInstance().getImageById("res_hp") as SRenderBitmapData;
 				hpBg = SResourceMagnger.getInstance().getImageById("res_hpBg") as SRenderBitmapData;
+				point = new Point();
+				point.x = (64 - hpBg.width) * .5;
+				point.y = (8 - hpBg.height) * .5;
 			}
 
 			var rect : Rectangle = new Rectangle();
 			rect.height = hpBg.height;
 			rect.width = hpBg.width * hp_value / 100;
-			var tmp_bmd : SRenderBitmapData = new SRenderBitmapData(hpBg.width, hpBg.height, false, 0);
-			tmp_bmd.draw(hpBg);
-			tmp_bmd.copyPixels(hp, rect, new Point(), null, null, true);
+			var tmp_bmd : SRenderBitmapData = new SRenderBitmapData(64, 8, true, 0);
+			tmp_bmd.copyPixels(hpBg, hpBg.rect, point);
+			tmp_bmd.copyPixels(hp, rect, point, null, null, true);
 			bmd = tmp_bmd;
 			if (Config.supportDirectX)
 			{

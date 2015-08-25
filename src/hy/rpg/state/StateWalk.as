@@ -90,10 +90,10 @@ package hy.rpg.state
 			else
 			{
 				m_transform.dir = UtilsCommon.getDirection(m_targetAnagle);
-				m_transform.mx = UtilsCommon.cosd(m_targetAnagle) * m_moveSpeed;
-				m_transform.my = UtilsCommon.sind(m_targetAnagle) * m_moveSpeed;
-				m_transform.x += m_transform.mx;
-				m_transform.y += m_transform.my;
+				m_transform.mAddX = UtilsCommon.cosd(m_targetAnagle) * m_moveSpeed;
+				m_transform.mAddY = UtilsCommon.sind(m_targetAnagle) * m_moveSpeed;
+				m_transform.x += m_transform.mAddX;
+				m_transform.y += m_transform.mAddY;
 				if (!m_data.isMe && !SCameraObject.isInScreen(m_transform))
 					ManagerGameObject.getInstance().deleteGameObject(m_owner);
 			}

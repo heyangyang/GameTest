@@ -21,7 +21,6 @@ package hy.rpg.manager
 	 */
 	public class ManagerGameObject extends SUpdate
 	{
-		private static var instance : ManagerGameObject;
 		private static var m_objectNumChildren : int;
 
 		/**
@@ -34,7 +33,8 @@ package hy.rpg.manager
 			return m_objectNumChildren;
 		}
 
-
+		private static var instance : ManagerGameObject;
+		
 		public static function getInstance() : ManagerGameObject
 		{
 			if (instance == null)
@@ -69,7 +69,8 @@ package hy.rpg.manager
 
 		public function ManagerGameObject()
 		{
-			super();
+			if (instance)
+				error("instance != null");
 			m_visaulObjects = new Dictionary();
 			m_objectDatas = new Vector.<DataComponent>();
 			m_deleteObjects = new Vector.<GameObject>();
@@ -122,7 +123,6 @@ package hy.rpg.manager
 				data.weaponId = heroWeapons[index];
 				data.wingId = heroWings[index];
 				data.mountId = heroMounts[index];
-				data.mountId = "SHMountTaoTie";
 				data.speed = 0.2;
 				data.level = 100 * Math.random();
 				data.hp_max = 200 * data.level;

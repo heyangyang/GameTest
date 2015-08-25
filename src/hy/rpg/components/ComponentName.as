@@ -2,7 +2,9 @@ package hy.rpg.components
 {
 	import hy.game.components.SRenderComponent;
 	import hy.game.data.STransform;
+	import hy.game.manager.SLayerManager;
 	import hy.game.manager.SReferenceManager;
+	import hy.game.render.SRender;
 	import hy.rpg.components.data.DataComponent;
 	import hy.rpg.enum.EnumRenderLayer;
 	import hy.rpg.render.SNameParser;
@@ -54,14 +56,17 @@ package hy.rpg.components
 			if (m_data.updateName)
 				updateRender();
 			if (m_isUpdatable || m_transform.isChangeFiled(STransform.C_XYZ) || m_transform.isChangeFiled(STransform.C_WH))
-				m_render.y = -m_transform.height - m_offsetY - m_transform.z + m_transform.centerOffsetY;
+			{
+				m_isUpdatable = false;
+				m_render.x = m_transform.screenX + -m_parser.bitmapData.width * .5;
+				m_render.y = m_transform.screenY + -m_transform.height - m_offsetY - m_transform.z + m_transform.centerOffsetY;
+			}
 		}
 
 		private function updateRender() : void
 		{
 			parser = SReferenceManager.getInstance().createRoleName(m_data.name + "[" + m_data.level + "级]");
 			m_render.bitmapData = m_parser.bitmapData;
-			m_render.x = -m_parser.bitmapData.width * .5;
 			m_data.updateName = false;
 		}
 
@@ -69,6 +74,21 @@ package hy.rpg.components
 		{
 			m_parser && m_parser.release();
 			m_parser = value;
+		}
+
+		/**
+		 * 不添加到父类，直接添加到name层
+		 * @param render
+		 *
+		 */
+		protected override function addRender(render : SRender) : void
+		{
+			SLayerManager.getInstance().addRenderByType(SLayerManager.LAYER_NAME, render);
+		}
+
+		protected override function removeRender(render : SRender) : void
+		{
+			SLayerManager.getInstance().removeRenderByType(SLayerManager.LAYER_NAME, render);
 		}
 
 		override protected function updateRenderVisible() : void

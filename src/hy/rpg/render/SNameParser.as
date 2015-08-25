@@ -3,7 +3,7 @@ package hy.rpg.render
 	import flash.geom.Matrix;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
-	
+
 	import hy.game.cfg.Config;
 	import hy.game.core.SReference;
 	import hy.game.core.interfaces.IBitmapData;
@@ -15,7 +15,6 @@ package hy.rpg.render
 	public class SNameParser extends SReference
 	{
 		private static var textField : TextField;
-		private static var matrix : Matrix;
 
 		private var m_bitmapData : IBitmapData;
 		protected var nameTextColor : uint;
@@ -44,16 +43,11 @@ package hy.rpg.render
 			textField.defaultTextFormat = new TextFormat(UtilsUIStyle.TEXT_FONT, nameTextFontSize, nameTextColor, null, null, null, null, null, "center");
 			textField.htmlText = name;
 
-			textField.width = 200;
-			textField.height = textField.textHeight + 4;
+			textField.width = 256;
+			textField.height = 32;
 
-			if (!matrix)
-				matrix = new Matrix();
-			matrix.identity();
-			m_bitmapData = new SRenderBitmapData(textField.textWidth + 4, textField.height, true, 0);
-			matrix.tx += -(textField.width - textField.textWidth - 4) * 0.5;
-			matrix.ty = 0;
-			SRenderBitmapData(m_bitmapData).draw(textField, matrix);
+			m_bitmapData = new SRenderBitmapData(textField.width, textField.height, true, 0);
+			SRenderBitmapData(m_bitmapData).draw(textField);
 			if (Config.supportDirectX)
 			{
 				var tmp : SRenderBitmapData = m_bitmapData as SRenderBitmapData;
