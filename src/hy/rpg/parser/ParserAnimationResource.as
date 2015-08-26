@@ -59,7 +59,6 @@ package hy.rpg.parser
 			decoder = SReferenceManager.getInstance().createDirectAnimationDeocder(cur_id);
 			_decoder.addNotify(onParseCompleted);
 			_decoder.startXtfLoad(version, priority);
-
 		}
 
 
