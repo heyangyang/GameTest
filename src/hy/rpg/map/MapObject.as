@@ -34,26 +34,26 @@ package hy.rpg.map
 		/**
 		 * 地图宽高
 		 */
-		protected var m_mapWidth : int;
-		protected var m_mapHeight : int;
+		protected var mMapWidth : int;
+		protected var mMapHeight : int;
 
 		/**
 		 * 地图总列数/行数
 		 */
-		protected var m_mapCols : int;
-		protected var m_mapRows : int;
+		protected var mMapCols : int;
+		protected var mMapRows : int;
 
 		/**
 		 * 每个格子的宽高
 		 */
-		protected var m_tileWidth : int;
-		protected var m_tileHeight : int;
+		protected var mTileWidth : int;
+		protected var mTileHeight : int;
 
 		/**
 		 * 缓冲区列数/行数
 		 */
-		protected var m_bufferCols : int;
-		protected var m_bufferRows : int;
+		protected var mBufferCols : int;
+		protected var mBufferRows : int;
 		/**
 		 * 可视区域宽高度
 		 */
@@ -80,7 +80,7 @@ package hy.rpg.map
 		/**
 		 * 保存加载过的地图块位图
 		 */
-		protected var m_tiles : Dictionary;
+		protected var mTiles : Dictionary;
 
 		/**
 		 * 上一帧的缓冲区起始X索引
@@ -105,21 +105,21 @@ package hy.rpg.map
 		/**
 		 * 缓冲范围
 		 */
-		protected var m_bufferRect : SRectangle;
+		protected var mBufferRect : SRectangle;
 
 		/**
 		 * 缓冲区域大小
 		 */
-		private var m_bufferNum : int = 1;
+		private var mBufferNum : int = 1;
 
 		/**
 		 * 摄像头
 		 */
-		private var m_camera : SCameraObject;
+		private var mCamera : SCameraObject;
 		/**
 		 * 小地图缩放
 		 */
-		private var m_scale : Number;
+		private var mScale : Number;
 
 		/**
 		 * 地图id
@@ -128,21 +128,21 @@ package hy.rpg.map
 		/**
 		 * 配置文件加载完毕
 		 */
-		private var m_onConfigComplete : Function;
+		private var mOnConfigComplete : Function;
 		/**
 		 * 进度条
 		 */
-		private var m_onProgress : Function;
-		private var m_isLoaded : Boolean;
-		private var m_maxMultiDistance : int;
-		private var m_index : int;
+		private var mOnProgress : Function;
+		private var mIsLoaded : Boolean;
+		private var mMaxMultiDistance : int;
+		private var mIndex : int;
 
 		public function MapObject(min_scale : Number)
 		{
-			m_scale = min_scale;
-			m_camera = SCameraObject.getInstance();
-			m_tiles = new Dictionary();
-			m_bufferRect = new SRectangle();
+			mScale = min_scale;
+			mCamera = SCameraObject.getInstance();
+			mTiles = new Dictionary();
+			mBufferRect = new SRectangle();
 			super();
 		}
 
@@ -174,11 +174,11 @@ package hy.rpg.map
 		{
 			if (m_mapId == mapId)
 				return;
-			m_isLoaded = false;
+			mIsLoaded = false;
 			clear();
 			m_mapId = mapId;
-			m_onConfigComplete = onComplete;
-			m_onProgress = onProgress;
+			mOnConfigComplete = onComplete;
+			mOnProgress = onProgress;
 			SReferenceManager.getInstance().createResource(m_mapId).addNotifyCompleted(onConfigComplete).addNotifyProgress(onProgress).load();
 		}
 
@@ -198,7 +198,7 @@ package hy.rpg.map
 				warning("not find map block: " + m_mapId);
 				return;
 			}
-			SReferenceManager.getInstance().createResource(m_config.grid.@url, m_config.grid.@version).addNotifyCompleted(onBlockComplete).addNotifyProgress(m_onProgress).load();
+			SReferenceManager.getInstance().createResource(m_config.grid.@url, m_config.grid.@version).addNotifyCompleted(onBlockComplete).addNotifyProgress(mOnProgress).load();
 		}
 
 		/**
@@ -215,21 +215,21 @@ package hy.rpg.map
 
 			Config.BIG_MAP_SCALE = m_config.bm.@scale;
 
-			m_maxMultiDistance = int(m_config.@multiDistance);
-			if (m_maxMultiDistance < 1)
-				m_maxMultiDistance = 1;
+			mMaxMultiDistance = int(m_config.@multiDistance);
+			if (mMaxMultiDistance < 1)
+				mMaxMultiDistance = 1;
 
 			// 从XML文件中获取地图基本信息
-			m_mapWidth = m_config.@right;
-			m_mapHeight = m_config.@bottom;
+			mMapWidth = m_config.@right;
+			mMapHeight = m_config.@bottom;
 
-			m_tileWidth = Config.TILE_WIDTH;
-			m_tileHeight = Config.TILE_HEIGHT;
+			mTileWidth = Config.TILE_WIDTH;
+			mTileHeight = Config.TILE_HEIGHT;
 
-			m_camera.setSceneSize(int(m_mapWidth / m_tileWidth) * m_tileWidth, int(m_mapHeight / m_tileHeight) * m_tileHeight);
+			mCamera.setSceneSize(int(mMapWidth / mTileWidth) * mTileWidth, int(mMapHeight / mTileHeight) * mTileHeight);
 
-			m_mapCols = Math.floor(m_mapWidth / m_tileWidth) - 1;
-			m_mapRows = Math.floor(m_mapHeight / m_tileHeight) - 1;
+			mMapCols = Math.floor(mMapWidth / mTileWidth) - 1;
+			mMapRows = Math.floor(mMapHeight / mTileHeight) - 1;
 
 
 			resizeScreen(Config.screenWidth, Config.screenHeight);
@@ -246,18 +246,18 @@ package hy.rpg.map
 		public function resizeScreen(w : int, h : int) : void
 		{
 			//设置镜头的基本信息
-			m_camera.setScreenSize(w, h);
-			m_camera.updateRectangle(0, 0);
+			mCamera.setScreenSize(w, h);
+			mCamera.updateRectangle(0, 0);
 
 			m_viewWidth = w;
 			m_viewHeight = h;
 
-			m_bufferCols = Math.ceil(m_viewWidth / m_tileWidth) + m_bufferNum;
-			m_bufferRows = Math.ceil(m_viewHeight / m_tileHeight) + m_bufferNum;
+			mBufferCols = Math.ceil(m_viewWidth / mTileWidth) + mBufferNum;
+			mBufferRows = Math.ceil(m_viewHeight / mTileHeight) + mBufferNum;
 
 			//计算出缓冲区的区块
-			m_bufferRect.width = m_bufferCols;
-			m_bufferRect.height = m_bufferRows;
+			mBufferRect.width = mBufferCols;
+			mBufferRect.height = mBufferRows;
 
 			resetMapBuffer();
 		}
@@ -277,21 +277,21 @@ package hy.rpg.map
 				error(this, "地图数据出现mapBlocks=" + mapBlocks ? mapBlocks.toString() : 'null');
 			}
 			updateBlocks(mapBlocks);
-			m_onConfigComplete != null && m_onConfigComplete();
-			m_onConfigComplete = null;
-			m_onProgress = null;
-			m_isLoaded = true;
+			mOnConfigComplete != null && mOnConfigComplete();
+			mOnConfigComplete = null;
+			mOnProgress = null;
+			mIsLoaded = true;
 		}
 
 		private function updateBlocks(mapBlocks : Array = null) : void
 		{
 			if (!mapBlocks)
 				return;
-			if (m_maxMultiDistance > 1)
+			if (mMaxMultiDistance > 1)
 			{
 				var multiBlocks : Array = [];
 				var blockColumsLen : int = mapBlocks.length;
-				var multiColumsLen : int = blockColumsLen * m_maxMultiDistance;
+				var multiColumsLen : int = blockColumsLen * mMaxMultiDistance;
 				var blockRowsLen : int = mapBlocks[0].length;
 				var data : Array;
 				var j : int;
@@ -350,12 +350,12 @@ package hy.rpg.map
 			}
 		}
 
-		public function updateCamera(viewX : int, viewY : int) : void
+		public function updateCamera(viewX : Number, viewY : Number) : void
 		{
-			if (!m_isLoaded)
+			if (!mIsLoaded)
 				return;
 			//小于0表示镜头还没有初始化
-			if (viewX < 0 || viewY < 0)
+			if (isNaN(viewX) || isNaN(viewY))
 				return;
 			//如果相等，表示镜头没有移动，则不需要更新
 			if (viewX == m_lastViewX && viewY == m_lastViewY)
@@ -366,29 +366,29 @@ package hy.rpg.map
 
 			//计算出缓冲区开始的索引
 
-			m_bufferRect.x = Math.floor(viewX / m_tileWidth) - m_bufferNum;
-			m_bufferRect.y = Math.floor(viewY / m_tileHeight) - m_bufferNum;
+			mBufferRect.x = Math.floor(viewX / mTileWidth) - mBufferNum;
+			mBufferRect.y = Math.floor(viewY / mTileHeight) - mBufferNum;
 			//矫正起始坐
-			if (m_bufferRect.x < 0)
-				m_bufferRect.x = 0;
-			if (m_bufferRect.y < 0)
-				m_bufferRect.y = 0;
-			if (m_bufferRect.x + m_bufferCols > m_mapCols)
-				m_bufferRect.x = m_mapCols - m_bufferCols;
-			if (m_bufferRect.y + m_bufferRows > m_mapRows)
-				m_bufferRect.y = m_mapRows - m_bufferRows;
+			if (mBufferRect.x < 0)
+				mBufferRect.x = 0;
+			if (mBufferRect.y < 0)
+				mBufferRect.y = 0;
+			if (mBufferRect.x + mBufferCols > mMapCols)
+				mBufferRect.x = mMapCols - mBufferCols;
+			if (mBufferRect.y + mBufferRows > mMapRows)
+				mBufferRect.y = mMapRows - mBufferRows;
 
 			//若果缓冲区域和上一次不一样
-			if (m_bufferRect.x != m_lastStartTileCol || m_bufferRect.y != m_lastStartTileRow)
+			if (mBufferRect.x != m_lastStartTileCol || mBufferRect.y != m_lastStartTileRow)
 			{
 				//如果不是正常移动则刷新页面
-				if (Math.abs(m_bufferRect.x - m_lastStartTileCol) > 1 || Math.abs(m_bufferRect.y - m_lastStartTileRow) > 1)
+				if (Math.abs(mBufferRect.x - m_lastStartTileCol) > 1 || Math.abs(mBufferRect.y - m_lastStartTileRow) > 1)
 				{
 					m_lastStartTileRow = m_lastStartTileCol = -1;
 				}
 				refreshBuffer();
-				m_lastStartTileCol = m_bufferRect.x;
-				m_lastStartTileRow = m_bufferRect.y;
+				m_lastStartTileCol = mBufferRect.x;
+				m_lastStartTileRow = mBufferRect.y;
 			}
 		}
 
@@ -407,13 +407,13 @@ package hy.rpg.map
 			var colmnsCount : int;
 			var titleX : int, titleY : int;
 			//将缓冲区对应的地图区块读入缓冲区中
-			for (var rowCount : int = -m_bufferNum; rowCount <= m_bufferRows + m_bufferNum; rowCount++)
+			for (var rowCount : int = -mBufferNum; rowCount <= mBufferRows + mBufferNum; rowCount++)
 			{
-				titleY = m_bufferRect.y + rowCount;
-				for (colmnsCount = -m_bufferNum; colmnsCount <= m_bufferCols + m_bufferNum; colmnsCount++)
+				titleY = mBufferRect.y + rowCount;
+				for (colmnsCount = -mBufferNum; colmnsCount <= mBufferCols + mBufferNum; colmnsCount++)
 				{
-					titleX = m_bufferRect.x + colmnsCount;
-					if (m_bufferRect.containsByPoint(titleX, titleY))
+					titleX = mBufferRect.x + colmnsCount;
+					if (mBufferRect.containsByPoint(titleX, titleY))
 					{
 						copyTileBitmapData(titleX, titleY);
 						continue;
@@ -433,7 +433,7 @@ package hy.rpg.map
 		protected function copyTileBitmapData(tileX : int, tileY : int) : void
 		{
 			var tileId : String = encoderTileId(tileX, tileY);
-			var tile : ParserMapResource = m_tiles[tileId];
+			var tile : ParserMapResource = mTiles[tileId];
 			if (tile)
 				return;
 			var data : Object = m_fileVersions[tileId];
@@ -442,17 +442,17 @@ package hy.rpg.map
 				error(this, "m_fileVersions is null : " + tileId);
 				return;
 			}
-			tile = SReferenceManager.getInstance().createMapResourceParser(ParserMapResource, m_mapId + tileId, data.url, EnumLoadPriority.MAP - m_index++, data.version);
+			tile = SReferenceManager.getInstance().createMapResourceParser(ParserMapResource, m_mapId + tileId, data.url, EnumLoadPriority.MAP - mIndex++, data.version);
 			tile.onComplete(onTileResourceParserComplete);
 			tile.load();
-			m_tiles[tileId] = tile;
+			mTiles[tileId] = tile;
 		}
 
 		protected function onTileResourceParserComplete(res : ParserMapResource) : void
 		{
 			var tileId : String = res.id.split("/").pop().split(".").shift();
 			decoderTileId(tileId);
-			if (!m_bufferRect.containsByPoint(m_loadTilePos.x, m_loadTilePos.y))
+			if (!mBufferRect.containsByPoint(m_loadTilePos.x, m_loadTilePos.y))
 			{
 				clearTile(m_loadTilePos.x, m_loadTilePos.y);
 				return;
@@ -462,8 +462,8 @@ package hy.rpg.map
 				warning(this, "地图块数据为空！");
 				return;
 			}
-			res.render.x = m_loadTilePos.x * m_tileWidth;
-			res.render.y = m_loadTilePos.y * m_tileHeight;
+			res.render.x = m_loadTilePos.x * mTileWidth;
+			res.render.y = m_loadTilePos.y * mTileHeight;
 			addRender(res.render);
 		}
 
@@ -476,7 +476,7 @@ package hy.rpg.map
 		 */
 		protected function encoderTileId(tileX : int, tileY : int) : String
 		{
-			return UtilsCommon.xyToInt(tileX + m_bufferNum, tileY + m_bufferNum).toString(36);
+			return UtilsCommon.xyToInt(tileX + mBufferNum, tileY + mBufferNum).toString(36);
 		}
 
 		/**
@@ -487,8 +487,8 @@ package hy.rpg.map
 		 */
 		protected function decoderTileId(tileId : String) : Point
 		{
-			m_loadTilePos.x = UtilsCommon.getXFromInt(parseInt(tileId, 36)) - m_bufferNum;
-			m_loadTilePos.y = UtilsCommon.getYFromInt(parseInt(tileId, 36)) - m_bufferNum;
+			m_loadTilePos.x = UtilsCommon.getXFromInt(parseInt(tileId, 36)) - mBufferNum;
+			m_loadTilePos.y = UtilsCommon.getYFromInt(parseInt(tileId, 36)) - mBufferNum;
 			return m_loadTilePos;
 		}
 
@@ -500,11 +500,11 @@ package hy.rpg.map
 		 */
 		protected function clearTile(tileX : int, tileY : int) : void
 		{
-			if (tileX < 0 || tileY < 0 || tileX > m_mapCols || tileY > m_mapRows)
+			if (tileX < 0 || tileY < 0 || tileX > mMapCols || tileY > mMapRows)
 				return;
 			var tileId : String = encoderTileId(tileX, tileY);
-			removeTitle(m_tiles[tileId]);
-			delete m_tiles[tileId];
+			removeTitle(mTiles[tileId]);
+			delete mTiles[tileId];
 		}
 
 		private function removeTitle(tile : ParserMapResource) : void
@@ -517,10 +517,10 @@ package hy.rpg.map
 
 		private function clearAllTiles() : void
 		{
-			for (var tileId : String in m_tiles)
+			for (var tileId : String in mTiles)
 			{
-				removeTitle(m_tiles[tileId]);
-				delete m_tiles[tileId];
+				removeTitle(mTiles[tileId]);
+				delete mTiles[tileId];
 			}
 		}
 
@@ -539,8 +539,8 @@ package hy.rpg.map
 
 			clear();
 
-			m_onConfigComplete = null;
-			m_onProgress = null;
+			mOnConfigComplete = null;
+			mOnProgress = null;
 
 			super.destroy();
 		}

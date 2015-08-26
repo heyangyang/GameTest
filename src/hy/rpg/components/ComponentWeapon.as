@@ -16,7 +16,7 @@ package hy.rpg.components
 		{
 			super.notifyAdded();
 			m_lazyAvatar.priority = EnumLoadPriority.WEAPON;
-			m_render.layer = EnumRenderLayer.WEAPON;
+			mRender.layer = EnumRenderLayer.WEAPON;
 			m_isUseFilters = false;
 			m_useDefaultAvatar = false;
 		}
@@ -31,7 +31,7 @@ package hy.rpg.components
 		{
 			if (m_data.isRide && m_data.action != SActionType.ATTACK)
 			{
-				m_render.bitmapData = null;
+				mRender.bitmapData = null;
 				return;
 			}
 			super.update();

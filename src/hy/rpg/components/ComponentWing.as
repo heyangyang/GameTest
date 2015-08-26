@@ -34,13 +34,13 @@ package hy.rpg.components
 		override protected function changeAnimation() : void
 		{
 			tmp_frame = m_avatar.gotoDirection(m_dir);
-			m_render.layer = EnumDirection.isBackDirection(m_dir) ? EnumRenderLayer.WING_BACK : EnumRenderLayer.WING;
+			mRender.layer = EnumDirection.isBackDirection(m_dir) ? EnumRenderLayer.WING_BACK : EnumRenderLayer.WING;
 		}
 
 		override protected function onLoadAvatarComplete() : void
 		{
 			m_dir = m_action = -1;
-			tmp_frame = m_avatar.gotoAnimation(SActionType.IDLE, m_transform.dir, 0, 0);
+			tmp_frame = m_avatar.gotoAnimation(SActionType.IDLE, mTransform.dir, 0, 0);
 		}
 	}
 }

@@ -16,10 +16,10 @@ package hy.rpg.components
 		override public function notifyAdded() : void
 		{
 			super.notifyAdded();
-			m_render.bitmapData = SResourceMagnger.getInstance().getImageById("res_shadow_1", Config.supportDirectX);
-			m_render.x = -m_render.bitmapData.width * .5;
-			m_render.y = -20;
-			m_render.layer = EnumRenderLayer.SHODOW;
+			mRender.bitmapData = SResourceMagnger.getInstance().getImageById("res_shadow_1", Config.supportDirectX);
+			mRender.x = -mRender.bitmapData.width * .5;
+			mRender.y = -20;
+			mRender.layer = EnumRenderLayer.SHODOW;
 		}
 	}
 }

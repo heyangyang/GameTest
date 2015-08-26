@@ -1,7 +1,6 @@
 package hy.rpg.components
 {
 	import hy.game.components.SRenderComponent;
-	import hy.game.data.STransform;
 	import hy.game.manager.SLayerManager;
 	import hy.game.manager.SReferenceManager;
 	import hy.game.render.SRender;
@@ -16,10 +15,10 @@ package hy.rpg.components
 	 */
 	public class ComponentName extends SRenderComponent
 	{
-		private var m_data : DataComponent;
-		private var m_parser : SNameParser;
-		private var m_isMouseOver : Boolean;
-		private var m_isUpdatable : Boolean;
+		private var mData : DataComponent;
+		private var mParser : SNameParser;
+		private var mIsMouseOver : Boolean;
+		private var mIsUpdatable : Boolean;
 
 		public function ComponentName(type : * = null)
 		{
@@ -29,51 +28,58 @@ package hy.rpg.components
 		override protected function onStart() : void
 		{
 			super.onStart();
-			m_data = m_owner.getComponentByType(DataComponent) as DataComponent;
+			mData = m_owner.getComponentByType(DataComponent) as DataComponent;
+			mTransform.addPositionChange(updatePosition);
+			mTransform.addSizeChange(updatePosition);
 		}
 
 		override public function notifyAdded() : void
 		{
 			super.notifyAdded();
-			m_render.layer = EnumRenderLayer.NAME;
-			m_offsetY = 20;
+			mRender.layer = EnumRenderLayer.NAME;
+			mOffsetY = 20;
 		}
 
 		override public function notifyRemoved() : void
 		{
 			super.notifyRemoved();
-			m_data = null;
+			mData = null;
 			parser = null;
 		}
 
 		override public function update() : void
 		{
-			if (m_isMouseOver != m_transform.isMouseOver)
+			if (mIsMouseOver != mTransform.isMouseOver)
 			{
-				m_isUpdatable = m_isMouseOver = m_transform.isMouseOver;
+				mIsUpdatable = mIsMouseOver = mTransform.isMouseOver;
 				updateRenderVisible();
 			}
-			if (m_data.updateName)
+			if (mData.updateName)
 				updateRender();
-			if (m_isUpdatable || m_transform.isChangeFiled(STransform.C_XYZ) || m_transform.isChangeFiled(STransform.C_WH))
+			if (mIsUpdatable)
 			{
-				m_isUpdatable = false;
-				m_render.x = m_transform.screenX + -m_parser.bitmapData.width * .5;
-				m_render.y = m_transform.screenY + -m_transform.height - m_offsetY - m_transform.z + m_transform.centerOffsetY;
+				mIsUpdatable = false;
+				updatePosition();
 			}
 		}
 
 		private function updateRender() : void
 		{
-			parser = SReferenceManager.getInstance().createRoleName(m_data.name + "[" + m_data.level + "级]");
-			m_render.bitmapData = m_parser.bitmapData;
-			m_data.updateName = false;
+			parser = SReferenceManager.getInstance().createRoleName(mData.name + "[" + mData.level + "级]");
+			mRender.bitmapData = mParser.bitmapData;
+			mData.updateName = false;
+		}
+
+		protected function updatePosition() : void
+		{
+			mRender.x = mTransform.screenX + -mParser.bitmapData.width * .5;
+			mRender.y = mTransform.screenY + -mTransform.height - mOffsetY - mTransform.z + mTransform.centerOffsetY;
 		}
 
 		public function set parser(value : SNameParser) : void
 		{
-			m_parser && m_parser.release();
-			m_parser = value;
+			mParser && mParser.release();
+			mParser = value;
 		}
 
 		/**
@@ -93,14 +99,14 @@ package hy.rpg.components
 
 		override protected function updateRenderVisible() : void
 		{
-			if (m_isVisible || m_isMouseOver)
+			if (mIsVisible || mIsMouseOver)
 			{
-				m_isUpdatable = true;
-				addRender(m_render)
+				mIsUpdatable = true;
+				addRender(mRender)
 				return;
 			}
-			m_isUpdatable = false;
-			removeRender(m_render);
+			mIsUpdatable = false;
+			removeRender(mRender);
 		}
 	}
 }

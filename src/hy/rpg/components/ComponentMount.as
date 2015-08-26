@@ -45,14 +45,14 @@ package hy.rpg.components
 		 */
 		override protected function changeAnimation() : void
 		{
-			m_render.layer = EnumDirection.isBackDirection(m_dir) ? EnumRenderLayer.MOUNT_BACK : EnumRenderLayer.MOUNT;
+			mRender.layer = EnumDirection.isBackDirection(m_dir) ? EnumRenderLayer.MOUNT_BACK : EnumRenderLayer.MOUNT;
 			tmp_frame = m_avatar.gotoAnimation(m_action, m_dir, 0, 0);
 		}
 
 		override protected function onLoadAvatarComplete() : void
 		{
 			m_dir = m_action = -1;
-			m_transform.centerOffsetY = -m_avatar.height;
+			mTransform.centerOffsetY = -m_avatar.height;
 			m_data.isRide = true;
 		}
 	}

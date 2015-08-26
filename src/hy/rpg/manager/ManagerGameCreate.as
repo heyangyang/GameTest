@@ -55,8 +55,7 @@ package hy.rpg.manager
 		public function createCameraObject() : void
 		{
 			var camera : SCameraObject = SCameraObject.getInstance();
-			SLayerManager.getInstance().addObjectByType(SLayerManager.LAYER_MAP, camera);
-			camera.registerd(EnumPriority.PRIORITY_1);
+			camera.registerd(EnumPriority.PRIORITY_MAX);
 		}
 
 		/**
