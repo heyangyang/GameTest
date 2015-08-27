@@ -17,7 +17,7 @@ package hy.rpg.pak
 	 */
 	public class DecoderDirectAnimation extends DecoderAnimation
 	{
-		private var textureAtlas : STextureAtlas;
+		private var mTextureAtlas : STextureAtlas;
 
 		public function DecoderDirectAnimation(id : String)
 		{
@@ -54,7 +54,7 @@ package hy.rpg.pak
 			bytes.readBytes(xml_bytes, 0, len);
 			var xml : XML = new XML(xml_bytes);
 			var texture : STexture = STexture.fromData(atf_bytes);
-			textureAtlas = new STextureAtlas(texture, xml);
+			mTextureAtlas = new STextureAtlas(texture, xml);
 			atf_bytes.clear();
 			xml_bytes.clear();
 			bytes.clear();
@@ -65,16 +65,16 @@ package hy.rpg.pak
 
 		public function getDirResult(action : String, index : uint = 0, dir : String = DEFAULT) : IBitmapData
 		{
-			if (textureAtlas)
-				return textureAtlas.getAnimationFrame(action, dir, index);
+			if (mTextureAtlas)
+				return mTextureAtlas.getAnimationFrame(action, dir, index);
 			else
 				return getResult(index, dir);
 		}
 
 		public function getDirOffest(action : String, index : uint = 0, dir : String = DEFAULT) : Point
 		{
-			if (textureAtlas)
-				return textureAtlas.getPoint(action, dir, index);
+			if (mTextureAtlas)
+				return mTextureAtlas.getPoint(action, dir, index);
 			else
 				return getOffest(index, dir);
 		}
@@ -82,10 +82,10 @@ package hy.rpg.pak
 		override protected function destroy() : void
 		{
 			super.destroy();
-			if (textureAtlas)
+			if (mTextureAtlas)
 			{
-				textureAtlas.dispose();
-				textureAtlas = null;
+				mTextureAtlas.dispose();
+				mTextureAtlas = null;
 			}
 		}
 	}

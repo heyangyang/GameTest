@@ -15,21 +15,21 @@ package hy.rpg.components
 		override public function notifyAdded() : void
 		{
 			super.notifyAdded();
-			m_lazyAvatar.priority = EnumLoadPriority.WEAPON;
+			mLazyAvatar.priority = EnumLoadPriority.WEAPON;
 			mRender.layer = EnumRenderLayer.WEAPON;
-			m_isUseFilters = false;
-			m_useDefaultAvatar = false;
+			mIsUseFilters = false;
+			mUseDefaultAvatar = false;
 		}
 
 		override protected function onStart() : void
 		{
 			super.onStart();
-			setAvatarId(m_data.weaponId);
+			setAvatarId(mData.weaponId);
 		}
 
 		override public function update() : void
 		{
-			if (m_data.isRide && m_data.action != SActionType.ATTACK)
+			if (mData.isRide && mData.action != SActionType.ATTACK)
 			{
 				mRender.bitmapData = null;
 				return;
@@ -43,15 +43,15 @@ package hy.rpg.components
 		 */
 		override protected function changeAnimation() : void
 		{
-			if (m_data.isRide)
-				tmp_frame = m_avatar.gotoAnimation(SActionType.SIT, m_dir, 0, 0);
+			if (mData.isRide)
+				tmp_frame = mAvatar.gotoAnimation(SActionType.SIT, mDir, 0, 0);
 			else
-				tmp_frame = m_avatar.gotoAnimation(m_action, m_dir, 0, 0);
+				tmp_frame = mAvatar.gotoAnimation(mAction, mDir, 0, 0);
 		}
 
 		override protected function onLoadAvatarComplete() : void
 		{
-			m_dir = m_action = -1;
+			mDir = mAction = -1;
 		}
 	}
 }

@@ -21,21 +21,21 @@ package hy.rpg.pak
 	{
 		public static const DEFAULT : String = "1";
 		public var id : String;
-		private var decode_index : int;
-		private var decode_count : int;
+		private var mDecodeIndex : int;
+		private var mDecodeCount : int;
 		/**
 		 * 用来加载解析
 		 */
-		private var loader_dic : Dictionary;
+		private var mLoaderDic : Dictionary;
 		public var isSend : Boolean;
 		/**
 		 * 解析完后的动画
 		 */
-		protected var result_dic : Dictionary;
-		private var _isCompleted : Boolean;
-		private var notifyCompleteds : Array;
-		private var errorCompleteds : Array;
-		private var resource : SResource;
+		protected var mResultDic : Dictionary;
+		private var mIsCompleted : Boolean;
+		private var mNotifyCompleteds : Array;
+		private var mErrorCompleteds : Array;
+		private var mResource : SResource;
 
 		public function DecoderAnimation(id : String)
 		{
@@ -52,20 +52,20 @@ package hy.rpg.pak
 		 */
 		public function loadResource(ver : String, priority : int) : void
 		{
-			if (resource)
+			if (mResource)
 				return;
-			resource = SReferenceManager.getInstance().createResource(id, ver);
+			mResource = SReferenceManager.getInstance().createResource(id, ver);
 
-			if (resource.isLoading)
+			if (mResource.isLoading)
 				return;
 
-			if (resource.isLoaded)
+			if (mResource.isLoaded)
 			{
-				onResourceLoaded(resource);
+				onResourceLoaded(mResource);
 				return;
 			}
 
-			resource.addNotifyCompleted(onResourceLoaded).addNotifyIOError(onResourceIOError).setPriority(priority).load();
+			mResource.addNotifyCompleted(onResourceLoaded).addNotifyIOError(onResourceIOError).setPriority(priority).load();
 		}
 
 		/**
@@ -99,13 +99,13 @@ package hy.rpg.pak
 		public function decode(bytes : ByteArray, isClear : Boolean = true) : void
 		{
 			//正在解析中
-			if(loader_dic)
+			if(mLoaderDic)
 				return;
 			bytes.position = 0
 			var head : String = bytes.readUTF();
 			var pak : DecoderPak;
-			loader_dic = new Dictionary();
-			decode_index = decode_count = 0;
+			mLoaderDic = new Dictionary();
+			mDecodeIndex = mDecodeCount = 0;
 			if (head == "zip")
 			{
 				var direction : int;
@@ -117,7 +117,7 @@ package hy.rpg.pak
 					direction = bytes.readByte();
 					bytesAvailable = bytes.readUnsignedInt();
 					bytes.position += bytesAvailable;
-					decode_count++;
+					mDecodeCount++;
 				}
 				bytes.position = old_position;
 				while (bytes.bytesAvailable > 0)
@@ -131,7 +131,7 @@ package hy.rpg.pak
 			}
 			else
 			{
-				decode_count++;
+				mDecodeCount++;
 				createPakDecoder(bytes);
 			}
 			isClear && bytes.clear();
@@ -150,7 +150,7 @@ package hy.rpg.pak
 			pak.onComplete(onParseCompleted).onIOError(onReload);
 			pak.decode();
 			pak.loadImages();
-			loader_dic[dir] = pak;
+			mLoaderDic[dir] = pak;
 			return pak;
 		}
 
@@ -163,20 +163,20 @@ package hy.rpg.pak
 		 */
 		private function onParseCompleted(decoder : DecoderPak) : void
 		{
-			if (++decode_index < decode_count)
+			if (++mDecodeIndex < mDecodeCount)
 				return;
-			result_dic = new Dictionary();
+			mResultDic = new Dictionary();
 			var dir : String, i : int, len : int;
 			var bmd : SRenderBitmapData;
-			for (dir in loader_dic)
+			for (dir in mLoaderDic)
 			{
-				decoder = loader_dic[dir];
+				decoder = mLoaderDic[dir];
 				len = decoder.length;
 				for (i = 0; i < len; i++)
 				{
 					bmd = decoder.getResult(i);
 				}
-				result_dic[dir] = decoder;
+				mResultDic[dir] = decoder;
 			}
 			notifyAll();
 		}
@@ -194,9 +194,9 @@ package hy.rpg.pak
 			var args : Array;
 			var bmd : BitmapData;
 			var len : int;
-			for (dir in loader_dic)
+			for (dir in mLoaderDic)
 			{
-				decoder = loader_dic[dir];
+				decoder = mLoaderDic[dir];
 				args = []
 				len = decoder.length;
 				for (i = 0; i < len; i++)
@@ -233,7 +233,7 @@ package hy.rpg.pak
 		 */
 		public function parseBackThreadMessage(message : Array) : void
 		{
-			result_dic = new Dictionary();
+			mResultDic = new Dictionary();
 			var len : int = message.length, args_len : int;
 			var tmp_data : Array;
 			var decoder : DecoderPak;
@@ -246,7 +246,7 @@ package hy.rpg.pak
 			{
 				tmp_data = message[i];
 				decoder = new DecoderPak(id, null);
-				result_dic[tmp_data[0]] = decoder;
+				mResultDic[tmp_data[0]] = decoder;
 				decoder.width = tmp_data[2];
 				decoder.height = tmp_data[3];
 				decoder.offests = parseOffests(tmp_data[4]);
@@ -264,7 +264,7 @@ package hy.rpg.pak
 		 */
 		public function get isCompleted() : Boolean
 		{
-			return _isCompleted;
+			return mIsCompleted;
 		}
 
 		private function parseOffests(data : Array) : Array
@@ -282,7 +282,7 @@ package hy.rpg.pak
 
 		private function onReload(decoder : DecoderPak) : void
 		{
-			if (++decode_index < decode_count)
+			if (++mDecodeIndex < mDecodeCount)
 				return;
 			notifyAll();
 			SDebug.error("解析图片出错" + id);
@@ -290,7 +290,7 @@ package hy.rpg.pak
 
 		public function get width() : int
 		{
-			for each (var decoder : DecoderPak in result_dic)
+			for each (var decoder : DecoderPak in mResultDic)
 			{
 				return decoder.width;
 			}
@@ -299,7 +299,7 @@ package hy.rpg.pak
 
 		public function get height() : int
 		{
-			for each (var decoder : DecoderPak in result_dic)
+			for each (var decoder : DecoderPak in mResultDic)
 			{
 				return decoder.height;
 			}
@@ -308,7 +308,7 @@ package hy.rpg.pak
 
 		public function get length() : int
 		{
-			for each (var decoder : DecoderPak in result_dic)
+			for each (var decoder : DecoderPak in mResultDic)
 			{
 				return decoder.length;
 			}
@@ -317,40 +317,40 @@ package hy.rpg.pak
 
 		public function getOffest(index : uint = 0, dir : String = DEFAULT) : Point
 		{
-			if (result_dic == null)
+			if (mResultDic == null)
 				return null;
-			if (result_dic[dir] == null)
+			if (mResultDic[dir] == null)
 			{
 				var tmp_dir : String = dir;
-				for (dir in result_dic)
+				for (dir in mResultDic)
 					break;
 			}
-			return DecoderPak(result_dic[dir]).getOffest(index);
+			return DecoderPak(mResultDic[dir]).getOffest(index);
 		}
 
 		public function getResult(index : uint = 0, dir : String = DEFAULT) : SRenderBitmapData
 		{
-			if (result_dic == null)
+			if (mResultDic == null)
 				return null;
-			if (result_dic[dir] == null)
+			if (mResultDic[dir] == null)
 			{
 				var tmp_dir : String = dir;
-				for (dir in result_dic)
+				for (dir in mResultDic)
 					break;
 			}
-			return DecoderPak(result_dic[dir]).getResult(index);
+			return DecoderPak(mResultDic[dir]).getResult(index);
 		}
 
 		override protected function destroy() : void
 		{
 			super.destroy();
 			isSend = false;
-			if (notifyCompleteds)
-				notifyCompleteds.length = 0
-			if (errorCompleteds)
-				errorCompleteds.length = 0
-			notifyCompleteds = null;
-			errorCompleteds = null;
+			if (mNotifyCompleteds)
+				mNotifyCompleteds.length = 0
+			if (mErrorCompleteds)
+				mErrorCompleteds.length = 0
+			mNotifyCompleteds = null;
+			mErrorCompleteds = null;
 			clearResultPakDecoder();
 			clearPakDecoder();
 		}
@@ -362,10 +362,10 @@ package hy.rpg.pak
 		 */
 		public function addNotify(fun : Function) : void
 		{
-			if (notifyCompleteds == null)
-				notifyCompleteds = [];
-			if (notifyCompleteds.indexOf(fun) == -1)
-				notifyCompleteds.push(fun);
+			if (mNotifyCompleteds == null)
+				mNotifyCompleteds = [];
+			if (mNotifyCompleteds.indexOf(fun) == -1)
+				mNotifyCompleteds.push(fun);
 		}
 
 		/**
@@ -375,10 +375,10 @@ package hy.rpg.pak
 		 */
 		public function addErrorNotify(fun : Function) : void
 		{
-			if (errorCompleteds == null)
-				errorCompleteds = [];
-			if (errorCompleteds.indexOf(fun) == -1)
-				errorCompleteds.push(fun);
+			if (mErrorCompleteds == null)
+				mErrorCompleteds = [];
+			if (mErrorCompleteds.indexOf(fun) == -1)
+				mErrorCompleteds.push(fun);
 		}
 
 		/**
@@ -387,41 +387,41 @@ package hy.rpg.pak
 		 */
 		public function notifyAll() : void
 		{
-			_isCompleted = true;
-			for each (var fun : Function in notifyCompleteds)
+			mIsCompleted = true;
+			for each (var fun : Function in mNotifyCompleteds)
 			{
 				fun && fun(this);
 			}
-			if (notifyCompleteds)
-				notifyCompleteds.length = 0;
+			if (mNotifyCompleteds)
+				mNotifyCompleteds.length = 0;
 		}
 
 		public function notifyError() : void
 		{
-			for each (var fun : Function in errorCompleteds)
+			for each (var fun : Function in mErrorCompleteds)
 			{
 				fun && fun(this);
 			}
-			if (errorCompleteds)
-				errorCompleteds.length = 0;
+			if (mErrorCompleteds)
+				mErrorCompleteds.length = 0;
 		}
 
 		private function clearPakDecoder() : void
 		{
-			for each (var pak : DecoderPak in loader_dic)
+			for each (var pak : DecoderPak in mLoaderDic)
 			{
 				pak.dispose();
 			}
-			loader_dic = null;
+			mLoaderDic = null;
 		}
 
 		private function clearResultPakDecoder() : void
 		{
-			for each (var pak : DecoderPak in result_dic)
+			for each (var pak : DecoderPak in mResultDic)
 			{
 				pak.dispose();
 			}
-			result_dic = null;
+			mResultDic = null;
 		}
 	}
 }

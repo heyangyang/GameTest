@@ -15,22 +15,22 @@ package hy.rpg.state
 
 	public class StateWalk extends SBaseState
 	{
-		protected var m_seekRoad : SRoadSeeker;
-		private var m_paths : Array;
-		private var m_step : int;
-		private var m_stepEnd : int;
-		private var m_lastTargetGridX : int;
-		private var m_lastTargetGridY : int;
-		private var m_targetDistance : int;
-		private var m_targetAnagle : int;
-		private var m_moveSpeed : Number;
+		protected var mSeekRoad : SRoadSeeker;
+		private var mPaths : Array;
+		private var mStep : int;
+		private var mStepEnd : int;
+		private var mLastTargetGridX : int;
+		private var mLastTargetGridY : int;
+		private var mTargetDistance : int;
+		private var mTargetAnagle : int;
+		private var mMoveSpeed : Number;
 
 		public function StateWalk(gameObject : GameObject, stateMgr : StateComponent)
 		{
 			super(gameObject, stateMgr);
-			m_action = SActionType.RUN;
-			m_id = EnumState.WALK;
-			m_seekRoad = SRoadSeeker.getInstance();
+			mAction = SActionType.RUN;
+			mId = EnumState.WALK;
+			mSeekRoad = SRoadSeeker.getInstance();
 		}
 
 		/**
@@ -40,10 +40,10 @@ package hy.rpg.state
 		 */
 		override public function tryChangeState() : Boolean
 		{
-			if (m_seekRoad.isBlock(m_data.targetGridX, m_data.targetGridY))
+			if (mSeekRoad.isBlock(mData.targetGridX, mData.targetGridY))
 				return false;
-			m_paths = m_seekRoad.find(UtilsCommon.getGridXByPixel(m_transform.x), UtilsCommon.getGridXByPixel(m_transform.y), m_data.targetGridX, m_data.targetGridY);
-			if (!m_paths || m_paths.length == 0)
+			mPaths = mSeekRoad.find(UtilsCommon.getGridXByPixel(mTransform.x), UtilsCommon.getGridXByPixel(mTransform.y), mData.targetGridX, mData.targetGridY);
+			if (!mPaths || mPaths.length == 0)
 				return false;
 			return true;
 		}
@@ -54,10 +54,10 @@ package hy.rpg.state
 		 */
 		override public function enterState() : void
 		{
-			m_lastTargetGridX = m_data.targetGridX;
-			m_lastTargetGridY = m_data.targetGridY;
-			m_stepEnd = m_paths.length;
-			m_step = 0;
+			mLastTargetGridX = mData.targetGridX;
+			mLastTargetGridY = mData.targetGridY;
+			mStepEnd = mPaths.length;
+			mStep = 0;
 		}
 
 		/**
@@ -68,7 +68,7 @@ package hy.rpg.state
 		override public function update() : void
 		{
 			super.update();
-			if (m_lastTargetGridX != m_data.targetGridX || m_lastTargetGridY != m_data.targetGridY)
+			if (mLastTargetGridX != mData.targetGridX || mLastTargetGridY != mData.targetGridY)
 			{
 				if (!tryChangeState())
 				{
@@ -78,24 +78,24 @@ package hy.rpg.state
 				enterState();
 			}
 
-			m_targetDistance = UtilsCommon.getDistance(m_transform.x, m_transform.y, m_data.targetX, m_data.targetY);
-			m_moveSpeed = m_data.speed * STime.deltaTime;
-			m_targetAnagle = UtilsCommon.getAngle(m_transform.x, m_transform.y, m_data.targetX, m_data.targetY);
+			mTargetDistance = UtilsCommon.getDistance(mTransform.x, mTransform.y, mData.targetX, mData.targetY);
+			mMoveSpeed = mData.speed * STime.deltaTime;
+			mTargetAnagle = UtilsCommon.getAngle(mTransform.x, mTransform.y, mData.targetX, mData.targetY);
 
 			//距离小于速度,达到这格格子末尾
-			if (m_targetDistance <= Math.ceil(m_moveSpeed))
+			if (mTargetDistance <= Math.ceil(mMoveSpeed))
 			{
 				onStand();
 			}
 			else
 			{
-				m_transform.dir = UtilsCommon.getDirection(m_targetAnagle);
-				m_transform.mAddX = UtilsCommon.cosd(m_targetAnagle) * m_moveSpeed;
-				m_transform.mAddY = UtilsCommon.sind(m_targetAnagle) * m_moveSpeed;
-				m_transform.x += m_transform.mAddX;
-				m_transform.y += m_transform.mAddY;
-				if (!m_data.isMe && !SCameraObject.isInScreen(m_transform))
-					ManagerGameObject.getInstance().deleteGameObject(m_owner);
+				mTransform.dir = UtilsCommon.getDirection(mTargetAnagle);
+				mTransform.mAddX = UtilsCommon.cosd(mTargetAnagle) * mMoveSpeed;
+				mTransform.mAddY = UtilsCommon.sind(mTargetAnagle) * mMoveSpeed;
+				mTransform.x += mTransform.mAddX;
+				mTransform.y += mTransform.mAddY;
+				if (!mData.isMe && !SCameraObject.isInScreen(mTransform))
+					ManagerGameObject.getInstance().deleteGameObject(mOwner);
 			}
 		}
 

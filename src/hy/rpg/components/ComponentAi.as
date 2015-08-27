@@ -12,16 +12,16 @@ package hy.rpg.components
 
 	public class ComponentAi extends FrameComponent
 	{
-		private var m_data : DataComponent;
-		private var m_state : StateComponent;
+		private var mData : DataComponent;
+		private var mState : StateComponent;
 		/**
 		 * 更新间隔
 		 */
-		private const m_frameInterval : uint = 2000;
+		private const mFrameInterval : uint = 2000;
 		/**
 		 * 记录当前持续时间
 		 */
-		protected var m_frameElapsedTime : uint = 0;
+		protected var mFrameElapsedTime : uint = 0;
 
 		public function ComponentAi(type : * = null)
 		{
@@ -44,16 +44,16 @@ package hy.rpg.components
 		 */
 		override protected function onStart() : void
 		{
-			m_data = m_owner.getComponentByType(DataComponent) as DataComponent;
-			m_state = m_owner.getComponentByType(StateComponent) as StateComponent;
+			mData = mOwner.getComponentByType(DataComponent) as DataComponent;
+			mState = mOwner.getComponentByType(StateComponent) as StateComponent;
 		}
 
 		override public function update() : void
 		{
-			m_frameElapsedTime += STime.deltaTime;
-			if (m_frameElapsedTime < m_frameInterval)
+			mFrameElapsedTime += STime.deltaTime;
+			if (mFrameElapsedTime < mFrameInterval)
 				return;
-			m_frameElapsedTime -= m_frameInterval;
+			mFrameElapsedTime -= mFrameInterval;
 			//20%几率产生移动
 			if (Math.random() > 0.2)
 				return;
@@ -70,11 +70,11 @@ package hy.rpg.components
 				runAnyWay();
 				return;
 			}
-			m_data.targetX = UtilsCommon.getPixelXByGrid(gridX);
-			m_data.targetY = UtilsCommon.getPixelYByGrid(gridY);
-			m_data.targetGridX = gridX;
-			m_data.targetGridY = gridY;
-			m_state.changeStateById(EnumState.WALK);
+			mData.targetX = UtilsCommon.getPixelXByGrid(gridX);
+			mData.targetY = UtilsCommon.getPixelYByGrid(gridY);
+			mData.targetGridX = gridX;
+			mData.targetGridY = gridY;
+			mState.changeStateById(EnumState.WALK);
 		}
 	}
 }

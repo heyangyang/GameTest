@@ -21,7 +21,7 @@ package hy.rpg.manager
 	 */
 	public class ManagerGameObject extends SUpdate
 	{
-		private static var m_objectNumChildren : int;
+		private static var mObjectNumChildren : int;
 
 		/**
 		 * 可视范围内的对象数量
@@ -30,7 +30,7 @@ package hy.rpg.manager
 		 */
 		public static function get objectNumChildren() : int
 		{
-			return m_objectNumChildren;
+			return mObjectNumChildren;
 		}
 
 		private static var instance : ManagerGameObject;
@@ -45,37 +45,37 @@ package hy.rpg.manager
 		/**
 		 * 上一次场景的坐标X,Y
 		 */
-		private var m_lastSceneX : int = -99;
-		private var m_lastSceneY : int = -99;
+		private var mLastSceneX : int = -99;
+		private var mLastSceneY : int = -99;
 		/**
 		 * 可视范围内的对象
 		 */
-		private var m_visaulObjects : Dictionary;
+		private var mVisaulObjects : Dictionary;
 		/**
 		 * 地图内的所有对象数据
 		 */
-		private var m_objectDatas : Vector.<DataComponent>;
-		private var m_deleteObjects : Vector.<GameObject>;
-		private var m_deleteCount : int;
+		private var mObjectDatas : Vector.<DataComponent>;
+		private var mDeleteObjects : Vector.<GameObject>;
+		private var mDeleteCount : int;
 		/**
 		 * 是否有增加删除数据
 		 */
-		private var m_isDataChange : Boolean;
+		private var mIsDataChange : Boolean;
 		private var currUpdateGame : GameObject;
 		/**
 		 * 是否还有没有创建完成的对象
 		 */
-		private var m_hasCreatedObject : Boolean;
+		private var mHasCreatedObject : Boolean;
 
 		public function ManagerGameObject()
 		{
 			if (instance)
 				error("instance != null");
-			m_visaulObjects = new Dictionary();
-			m_objectDatas = new Vector.<DataComponent>();
-			m_deleteObjects = new Vector.<GameObject>();
+			mVisaulObjects = new Dictionary();
+			mObjectDatas = new Vector.<DataComponent>();
+			mDeleteObjects = new Vector.<GameObject>();
 			frameRate = 10;
-			m_hasCreatedObject = false;
+			mHasCreatedObject = false;
 			init();
 		}
 
@@ -106,7 +106,7 @@ package hy.rpg.manager
 			data.action = SActionType.IDLE;
 			data.transform.dir = EnumDirection.SOUTH;
 			data.id = 999999;
-			m_objectDatas.push(data);
+			mObjectDatas.push(data);
 
 			for (var i : int = 0; i < 000; )
 			{
@@ -132,7 +132,7 @@ package hy.rpg.manager
 				data.transform.x = UtilsCommon.getPixelXByGrid(gridX);
 				data.transform.y = UtilsCommon.getPixelYByGrid(gridY);
 				data.id = i++;
-				m_objectDatas.push(data);
+				mObjectDatas.push(data);
 			}
 		}
 
@@ -145,16 +145,16 @@ package hy.rpg.manager
 
 		private function checkDeleteList() : void
 		{
-			if (m_deleteCount == 0)
+			if (mDeleteCount == 0)
 				return;
-			for each (currUpdateGame in m_deleteObjects)
+			for each (currUpdateGame in mDeleteObjects)
 			{
-				m_objectNumChildren--;
-				delete m_visaulObjects[currUpdateGame.id];
+				mObjectNumChildren--;
+				delete mVisaulObjects[currUpdateGame.id];
 				currUpdateGame.destroy();
 			}
-			m_deleteCount = 0;
-			m_deleteObjects.length = 0;
+			mDeleteCount = 0;
+			mDeleteObjects.length = 0;
 		}
 
 		/**
@@ -165,39 +165,39 @@ package hy.rpg.manager
 		 */
 		private function createAndDisposeObject() : void
 		{
-			if (!m_hasCreatedObject && !m_isDataChange && SCameraObject.sceneX == m_lastSceneX && SCameraObject.sceneY == m_lastSceneY)
+			if (!mHasCreatedObject && !mIsDataChange && SCameraObject.sceneX == mLastSceneX && SCameraObject.sceneY == mLastSceneY)
 				return;
-			m_lastSceneX = SCameraObject.sceneX;
-			m_lastSceneY = SCameraObject.sceneY;
-			m_objectNumChildren = 0;
-			for each (currUpdateGame in m_visaulObjects)
+			mLastSceneX = SCameraObject.sceneX;
+			mLastSceneY = SCameraObject.sceneY;
+			mObjectNumChildren = 0;
+			for each (currUpdateGame in mVisaulObjects)
 			{
 				if (SCameraObject.isInScreen(currUpdateGame.transform))
 				{
-					m_objectNumChildren++;
+					mObjectNumChildren++;
 					continue;
 				}
-				delete m_visaulObjects[currUpdateGame.id];
+				delete mVisaulObjects[currUpdateGame.id];
 				currUpdateGame.destroy();
 			}
 
-			for each (var data : DataComponent in m_objectDatas)
+			for each (var data : DataComponent in mObjectDatas)
 			{
 				if (data.isMe)
 				{
-					if (m_visaulObjects[data.id] == null)
-						m_visaulObjects[data.id] = ManagerGameCreate.getInstance().createMyselfHeroObject(data);
+					if (mVisaulObjects[data.id] == null)
+						mVisaulObjects[data.id] = ManagerGameCreate.getInstance().createMyselfHeroObject(data);
 					continue;
 				}
 				if (!SCameraObject.isInScreen(data.transform))
 					continue
-				if (m_visaulObjects[data.id])
+				if (mVisaulObjects[data.id])
 					continue;
-				m_visaulObjects[data.id] = ManagerGameCreate.getInstance().createHeroObject(data);
-				m_hasCreatedObject = true;
+				mVisaulObjects[data.id] = ManagerGameCreate.getInstance().createHeroObject(data);
+				mHasCreatedObject = true;
 				return;
 			}
-			m_hasCreatedObject = false;
+			mHasCreatedObject = false;
 		}
 
 		/**
@@ -208,21 +208,21 @@ package hy.rpg.manager
 		 */
 		public function deleteGameObject(gameObject : GameObject) : void
 		{
-			if (m_visaulObjects[gameObject.id] == null)
+			if (mVisaulObjects[gameObject.id] == null)
 				return;
-			if (m_deleteObjects.indexOf(gameObject) == -1)
-				m_deleteObjects.push(gameObject);
-			m_deleteCount++;
+			if (mDeleteObjects.indexOf(gameObject) == -1)
+				mDeleteObjects.push(gameObject);
+			mDeleteCount++;
 		}
 
 		public function get objectDatas() : Vector.<DataComponent>
 		{
-			return m_objectDatas;
+			return mObjectDatas;
 		}
 
 		public function get isDataChange() : Boolean
 		{
-			return m_isDataChange;
+			return mIsDataChange;
 		}
 	}
 }

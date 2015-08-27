@@ -10,8 +10,8 @@ package hy.rpg.state
 		public function StateAutoWalk(gameObject : GameObject, stateMgr : StateComponent)
 		{
 			super(gameObject, stateMgr);
-			m_action = SActionType.WALK;
-			m_id = EnumState.AUTO_WALK;
+			mAction = SActionType.WALK;
+			mId = EnumState.AUTO_WALK;
 		}
 	}
 }

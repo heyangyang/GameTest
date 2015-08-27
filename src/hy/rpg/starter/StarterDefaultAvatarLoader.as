@@ -12,8 +12,8 @@ package hy.rpg.starter
 	 */
 	public class StarterDefaultAvatarLoader extends SStartNode
 	{
-		private var m_avatarResource : SAvatarResource;
-		private var m_avatar : SAvatar;
+		private var mAvatarResource : SAvatarResource;
+		private var mAvatar : SAvatar;
 
 		public function StarterDefaultAvatarLoader()
 		{
@@ -26,16 +26,16 @@ package hy.rpg.starter
 		 */
 		override public function onStart() : void
 		{
-			SAvatarComponent.default_avatar = m_avatar = new SAvatar();
-			m_avatarResource = new SAvatarResource(m_avatar);
-			m_avatarResource.setAvatarId("SHHDefault");
-			m_avatarResource.addNotifyCompleted(onLoadAvatarComplete);
-			m_avatarResource.loadResource();
+			SAvatarComponent.default_avatar = mAvatar = new SAvatar();
+			mAvatarResource = new SAvatarResource(mAvatar);
+			mAvatarResource.setAvatarId("SHHDefault");
+			mAvatarResource.addNotifyCompleted(onLoadAvatarComplete);
+			mAvatarResource.loadResource();
 		}
 
 		private function onLoadAvatarComplete() : void
 		{
-			m_avatar.animationsByParts.loaderAnimation(onLoadAllAnimation);
+			mAvatar.animationsByParts.loaderAnimation(onLoadAllAnimation);
 		}
 
 		/**
@@ -44,12 +44,12 @@ package hy.rpg.starter
 		 */
 		private function onLoadAllAnimation() : void
 		{
-			if (m_avatar)
-				m_avatar = null;
-			if (m_avatarResource)
+			if (mAvatar)
+				mAvatar = null;
+			if (mAvatarResource)
 			{
-				m_avatarResource.dispose();
-				m_avatarResource = null;
+				mAvatarResource.dispose();
+				mAvatarResource = null;
 			}
 			nextNode();
 		}

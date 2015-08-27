@@ -7,8 +7,8 @@ package hy.rpg.components.data
 	{
 		public var id : int;
 		public var isMe : Boolean;
-		private var m_name : String;
-		private var m_updateName : Boolean;
+		private var mName : String;
+		private var mUpdateName : Boolean;
 		public var speed : Number = 0.25;
 		public var hp_max : int = 200;
 		public var hp_cur : int = 200;
@@ -38,15 +38,15 @@ package hy.rpg.components.data
 
 		public function get name() : String
 		{
-			return m_name;
+			return mName;
 		}
 
 		public function set name(value : String) : void
 		{
-			if (m_name == value)
+			if (mName == value)
 				return;
-			m_name = value;
-			m_updateName = true;
+			mName = value;
+			mUpdateName = true;
 		}
 
 		/**
@@ -56,12 +56,12 @@ package hy.rpg.components.data
 		 */
 		public function get updateName() : Boolean
 		{
-			return m_updateName;
+			return mUpdateName;
 		}
 
 		public function set updateName(value : Boolean) : void
 		{
-			m_updateName = value;
+			mUpdateName = value;
 		}
 
 		/**

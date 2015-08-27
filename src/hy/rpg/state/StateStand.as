@@ -11,8 +11,8 @@ package hy.rpg.state
 		public function StateStand(gameObject : GameObject, stateMgr : StateComponent)
 		{
 			super(gameObject, stateMgr);
-			m_action = SActionType.IDLE;
-			m_id = EnumState.STAND;
+			mAction = SActionType.IDLE;
+			mId = EnumState.STAND;
 		}
 
 		/**

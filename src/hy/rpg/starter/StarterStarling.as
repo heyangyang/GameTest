@@ -15,7 +15,7 @@ package hy.rpg.starter
 	 */
 	public class StarterStarling extends SStartNode
 	{
-		private var stage3d : SStage3D;
+		private var mStage3d : SStage3D;
 
 		public function StarterStarling()
 		{
@@ -30,16 +30,16 @@ package hy.rpg.starter
 				return;
 			}
 			SStage3D.multitouchEnabled = false;
-			stage3d = new SStage3D(Config.stage);
-			stage3d.enableErrorChecking = false;
-			stage3d.antiAliasing = 0;
-			stage3d.addEventListener(SEvent.ROOT_CREATED, onRootCreated);
+			mStage3d = new SStage3D(Config.stage);
+			mStage3d.enableErrorChecking = false;
+			mStage3d.antiAliasing = 0;
+			mStage3d.addEventListener(SEvent.ROOT_CREATED, onRootCreated);
 		}
 
 		private function onRootCreated(event : Object, app : DisplayObject) : void
 		{
-			stage3d.removeEventListener(SEvent.ROOT_CREATED, onRootCreated);
-			stage3d.start();
+			mStage3d.removeEventListener(SEvent.ROOT_CREATED, onRootCreated);
+			mStage3d.start();
 			Config.supportDirectX = SStage3D.context.driverInfo.indexOf("Software") == -1;
 			GameFrameStart.current.onStart();
 			nextNode();

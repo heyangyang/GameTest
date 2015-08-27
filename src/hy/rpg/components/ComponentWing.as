@@ -16,15 +16,15 @@ package hy.rpg.components
 		override public function notifyAdded() : void
 		{
 			super.notifyAdded();
-			m_lazyAvatar.priority = EnumLoadPriority.WING;
-			m_isUseFilters = false;
-			m_useDefaultAvatar = false;
+			mLazyAvatar.priority = EnumLoadPriority.WING;
+			mIsUseFilters = false;
+			mUseDefaultAvatar = false;
 		}
 
 		override protected function onStart() : void
 		{
 			super.onStart();
-			setAvatarId(m_data.wingId);
+			setAvatarId(mData.wingId);
 		}
 
 		/**
@@ -33,14 +33,14 @@ package hy.rpg.components
 		 */
 		override protected function changeAnimation() : void
 		{
-			tmp_frame = m_avatar.gotoDirection(m_dir);
-			mRender.layer = EnumDirection.isBackDirection(m_dir) ? EnumRenderLayer.WING_BACK : EnumRenderLayer.WING;
+			tmp_frame = mAvatar.gotoDirection(mDir);
+			mRender.layer = EnumDirection.isBackDirection(mDir) ? EnumRenderLayer.WING_BACK : EnumRenderLayer.WING;
 		}
 
 		override protected function onLoadAvatarComplete() : void
 		{
-			m_dir = m_action = -1;
-			tmp_frame = m_avatar.gotoAnimation(SActionType.IDLE, mTransform.dir, 0, 0);
+			mDir = mAction = -1;
+			tmp_frame = mAvatar.gotoAnimation(SActionType.IDLE, mTransform.dir, 0, 0);
 		}
 	}
 }

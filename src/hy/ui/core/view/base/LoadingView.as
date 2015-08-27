@@ -6,7 +6,7 @@ package hy.ui.core.view.base
 
 	public class LoadingView extends SSprite
 	{
-		private var m_skin : Sprite;
+		private var mSkin : Sprite;
 
 		public function LoadingView()
 		{
@@ -15,7 +15,7 @@ package hy.ui.core.view.base
 
 		override protected function init() : void
 		{
-			m_skin = new(getClass(""));
+			mSkin = new(getClass(""));
 		}
 	}
 }

@@ -27,7 +27,7 @@ package hy.rpg.parser
 	 */
 	public class ParserMapResource extends ParserPakResource
 	{
-		private var _render : SRender;
+		private var mRender : SRender;
 		private var mTexture : SDirectBitmapData;
 
 		public function ParserMapResource(id : String, version : String = null, priority : int = EnumLoadPriority.MAP)
@@ -76,17 +76,17 @@ package hy.rpg.parser
 		{
 			if (bitmapData == null)
 				return null;
-			if (_render)
-				return _render;
-			_render = new SRender();
-			_render.bitmapData = bitmapData;
-			return _render;
+			if (mRender)
+				return mRender;
+			mRender = new SRender();
+			mRender.bitmapData = bitmapData;
+			return mRender;
 		}
 
 		override protected function destroy() : void
 		{
 			super.destroy();
-			_render.dispose();
+			mRender.dispose();
 		}
 	}
 }

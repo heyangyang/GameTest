@@ -10,8 +10,8 @@ package hy.rpg.state
 		public function StateAttack(gameObject:GameObject, stateMgr:StateComponent)
 		{
 			super(gameObject, stateMgr);
-			m_action = SActionType.ATTACK;
-			m_id = EnumState.ATTACK;
+			mAction = SActionType.ATTACK;
+			mId = EnumState.ATTACK;
 		}
 	}
 }

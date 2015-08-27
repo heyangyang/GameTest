@@ -23,12 +23,12 @@ package hy.rpg.components
 		/**
 		 * 每次点击响应的间隔
 		 */
-		private const m_Interval : int = 100;
+		private const mInterval : int = 100;
 
-		private var m_data : DataComponent;
-		private var m_state : StateComponent;
-		private var m_delay : int;
-		private var m_clickCount : int;
+		private var mData : DataComponent;
+		private var mState : StateComponent;
+		private var mDelay : int;
+		private var mClickCount : int;
 
 		public function ComponentMouse(type : * = null)
 		{
@@ -37,29 +37,29 @@ package hy.rpg.components
 
 		override protected function onStart() : void
 		{
-			m_state = m_owner.getComponentByType(StateComponent) as StateComponent;
-			m_data = m_owner.getComponentByType(DataComponent) as DataComponent;
+			mState = mOwner.getComponentByType(StateComponent) as StateComponent;
+			mData = mOwner.getComponentByType(DataComponent) as DataComponent;
 			Config.stage.addEventListener(MouseEvent.CLICK, onClick);
 		}
 
 		override public function notifyRemoved() : void
 		{
-			m_state = null;
-			m_data = null;
+			mState = null;
+			mData = null;
 			Config.stage.removeEventListener(MouseEvent.CLICK, onClick);
 		}
 
 		protected function onClick(evt : MouseEvent) : void
 		{
-			if (STime.getTimer - m_delay < m_Interval)
+			if (STime.getTimer - mDelay < mInterval)
 				return;
-			m_delay = STime.getTimer;
-			m_data.targetX = SCameraObject.sceneX + evt.stageX;
-			m_data.targetY = SCameraObject.sceneY + evt.stageY;
-			m_data.targetGridX = UtilsCommon.getGridXByPixel(m_data.targetX);
-			m_data.targetGridY = UtilsCommon.getGridYByPixel(m_data.targetY);
-			ManagerGameCreate.getInstance().createSceneEffect("clickRoad", (m_clickCount++).toString(), m_data.targetX, m_data.targetY, 1);
-			m_state.changeStateById(EnumState.WALK);
+			mDelay = STime.getTimer;
+			mData.targetX = SCameraObject.sceneX + evt.stageX;
+			mData.targetY = SCameraObject.sceneY + evt.stageY;
+			mData.targetGridX = UtilsCommon.getGridXByPixel(mData.targetX);
+			mData.targetGridY = UtilsCommon.getGridYByPixel(mData.targetY);
+			ManagerGameCreate.getInstance().createSceneEffect("clickRoad", (mClickCount++).toString(), mData.targetX, mData.targetY, 1);
+			mState.changeStateById(EnumState.WALK);
 		}
 	}
 }

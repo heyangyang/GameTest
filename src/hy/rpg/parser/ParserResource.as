@@ -13,14 +13,14 @@ package hy.rpg.parser
 	 */
 	public class ParserResource extends SReference
 	{
-		private var m_id : String;
-		private var m_version : String;
-		protected var m_priority : int;
-		protected var m_isLoaded : Boolean;
-		protected var m_isLoading : Boolean;
+		private var mId : String;
+		private var mVersion : String;
+		protected var mPriority : int;
+		protected var mIsLoaded : Boolean;
+		protected var mIsLoading : Boolean;
 
-		protected var m_ioErrorFuns : Vector.<Function>;
-		protected var m_completeFuns : Vector.<Function>;
+		protected var mIoErrorFuns : Vector.<Function>;
+		protected var mCompleteFuns : Vector.<Function>;
 
 		public var cc:String;
 		/**
@@ -33,9 +33,9 @@ package hy.rpg.parser
 		public function ParserResource(id : String, version : String = null, priority : int = EnumLoadPriority.MAX)
 		{
 			super();
-			m_id = id;
-			m_version = version;
-			m_priority = priority;
+			mId = id;
+			mVersion = version;
+			mPriority = priority;
 		}
 
 		/**
@@ -44,22 +44,22 @@ package hy.rpg.parser
 		 */
 		public function load() : void
 		{
-			var m_resource : SResource = SReferenceManager.getInstance().createResource(m_id, m_version);
+			var mResource : SResource = SReferenceManager.getInstance().createResource(mId, mVersion);
 
-			if (m_isLoaded)
+			if (mIsLoaded)
 			{
-				invokeNotifyByArray(m_completeFuns);
+				invokeNotifyByArray(mCompleteFuns);
 			}
-			else if (m_resource.isLoaded)
+			else if (mResource.isLoaded)
 			{
-				m_isLoading = true;
+				mIsLoading = true;
 				startParseLoader(null);
 			}
-			else if (!m_resource.isLoading)
+			else if (!mResource.isLoading)
 			{
-				m_isLoading = true;
-				m_isLoaded = false;
-				m_resource.addNotifyCompleted(onResourceLoaded).addNotifyIOError(onResourceIOError).setPriority(m_priority).load();
+				mIsLoading = true;
+				mIsLoaded = false;
+				mResource.addNotifyCompleted(onResourceLoaded).addNotifyIOError(onResourceIOError).setPriority(mPriority).load();
 			}
 		}
 
@@ -80,26 +80,26 @@ package hy.rpg.parser
 		 */
 		protected function onResourceIOError(res : SResource) : void
 		{
-			m_isLoading = false;
-			m_isLoaded = false;
-			invokeNotifyByArray(m_ioErrorFuns);
+			mIsLoading = false;
+			mIsLoaded = false;
+			invokeNotifyByArray(mIoErrorFuns);
 		}
 
 		public function onIOError(fun : Function) : ParserResource
 		{
-			if (!m_ioErrorFuns)
-				m_ioErrorFuns = new Vector.<Function>();
-			if (m_ioErrorFuns && m_ioErrorFuns.indexOf(fun) == -1)
-				m_ioErrorFuns.push(fun);
+			if (!mIoErrorFuns)
+				mIoErrorFuns = new Vector.<Function>();
+			if (mIoErrorFuns && mIoErrorFuns.indexOf(fun) == -1)
+				mIoErrorFuns.push(fun);
 			return this;
 		}
 
 		public function onComplete(fun : Function) : ParserResource
 		{
-			if (!m_completeFuns)
-				m_completeFuns = new Vector.<Function>();
-			if (m_completeFuns && m_completeFuns.indexOf(fun) == -1)
-				m_completeFuns.push(fun);
+			if (!mCompleteFuns)
+				mCompleteFuns = new Vector.<Function>();
+			if (mCompleteFuns && mCompleteFuns.indexOf(fun) == -1)
+				mCompleteFuns.push(fun);
 			return this;
 		}
 
@@ -119,22 +119,22 @@ package hy.rpg.parser
 		 */
 		protected function parseCompleted() : void
 		{
-			m_isLoading = false;
-			m_isLoaded = true;
-			invokeNotifyByArray(m_completeFuns);
+			mIsLoading = false;
+			mIsLoaded = true;
+			invokeNotifyByArray(mCompleteFuns);
 		}
 
 		private function cleanNotify() : void
 		{
-			if (m_ioErrorFuns)
+			if (mIoErrorFuns)
 			{
-				m_ioErrorFuns.length = 0;
-				m_ioErrorFuns = null;
+				mIoErrorFuns.length = 0;
+				mIoErrorFuns = null;
 			}
-			if (m_completeFuns)
+			if (mCompleteFuns)
 			{
-				m_completeFuns.length = 0;
-				m_completeFuns = null;
+				mCompleteFuns.length = 0;
+				mCompleteFuns = null;
 			}
 		}
 
@@ -156,17 +156,17 @@ package hy.rpg.parser
 		 */
 		public function get id() : String
 		{
-			return m_id;
+			return mId;
 		}
 
 		public function get version() : String
 		{
-			return m_version;
+			return mVersion;
 		}
 
 		public function get priority() : int
 		{
-			return m_priority;
+			return mPriority;
 		}
 
 		/**
@@ -176,7 +176,7 @@ package hy.rpg.parser
 		 */
 		public function get isLoaded() : Boolean
 		{
-			return m_isLoaded;
+			return mIsLoaded;
 		}
 
 
@@ -187,7 +187,7 @@ package hy.rpg.parser
 		 */
 		public function get isLoading() : Boolean
 		{
-			return m_isLoading;
+			return mIsLoading;
 		}
 
 		override protected function destroy() : void

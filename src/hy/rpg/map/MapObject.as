@@ -345,8 +345,8 @@ package hy.rpg.map
 		{
 			if (transform.x != SCameraObject.sceneX || transform.y != SCameraObject.sceneY)
 			{
-				m_render.x = transform.x = -SCameraObject.sceneX;
-				m_render.y = transform.y = -SCameraObject.sceneY;
+				mRender.x = transform.x = -SCameraObject.sceneX;
+				mRender.y = transform.y = -SCameraObject.sceneY;
 			}
 		}
 
@@ -534,7 +534,7 @@ package hy.rpg.map
 
 		override public function destroy() : void
 		{
-			if (m_isDisposed)
+			if (mIsDisposed)
 				return;
 
 			clear();

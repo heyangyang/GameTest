@@ -27,7 +27,7 @@ package hy.rpg.components
 		override protected function onStart() : void
 		{
 			super.onStart();
-			mData = m_owner.getComponentByType(DataComponent) as DataComponent;
+			mData = mOwner.getComponentByType(DataComponent) as DataComponent;
 			mTransform.addPositionChange(updatePosition);
 			mTransform.addSizeChange(updatePosition);
 		}

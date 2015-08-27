@@ -1,9 +1,8 @@
 package hy.rpg.render
 {
-	import flash.geom.Matrix;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
-
+	
 	import hy.game.cfg.Config;
 	import hy.game.core.SReference;
 	import hy.game.core.interfaces.IBitmapData;
@@ -16,17 +15,17 @@ package hy.rpg.render
 	{
 		private static var textField : TextField;
 
-		private var m_bitmapData : IBitmapData;
-		protected var nameTextColor : uint;
-		protected var nameTextFontSize : int;
-		protected var name : String;
+		private var mBitmapData : IBitmapData;
+		protected var mNameTextColor : uint;
+		protected var mNameTextFontSize : int;
+		protected var mName : String;
 
 		public function SNameParser(name : String, nameTextFontSize : int = 13, nameTextColor : uint = 0xffffff)
 		{
 			super();
-			this.name = name;
-			this.nameTextColor = nameTextColor;
-			this.nameTextFontSize = nameTextFontSize;
+			this.mName = name;
+			this.mNameTextColor = nameTextColor;
+			this.mNameTextFontSize = nameTextFontSize;
 			init();
 		}
 
@@ -40,46 +39,46 @@ package hy.rpg.render
 			}
 
 			textField.filters = UtilsFilter.blackFilters;
-			textField.defaultTextFormat = new TextFormat(UtilsUIStyle.TEXT_FONT, nameTextFontSize, nameTextColor, null, null, null, null, null, "center");
-			textField.htmlText = name;
+			textField.defaultTextFormat = new TextFormat(UtilsUIStyle.TEXT_FONT, mNameTextFontSize, mNameTextColor, null, null, null, null, null, "center");
+			textField.htmlText = mName;
 
 			textField.width = 256;
 			textField.height = 32;
 
-			m_bitmapData = new SRenderBitmapData(textField.width, textField.height, true, 0);
-			SRenderBitmapData(m_bitmapData).draw(textField);
+			mBitmapData = new SRenderBitmapData(textField.width, textField.height, true, 0);
+			SRenderBitmapData(mBitmapData).draw(textField);
 			if (Config.supportDirectX)
 			{
-				var tmp : SRenderBitmapData = m_bitmapData as SRenderBitmapData;
-				m_bitmapData = SDirectBitmapData.fromDirectBitmapData(tmp);
+				var tmp : SRenderBitmapData = mBitmapData as SRenderBitmapData;
+				mBitmapData = SDirectBitmapData.fromDirectBitmapData(tmp);
 				tmp.dispose();
 			}
 		}
 
 		public function get bitmapData() : IBitmapData
 		{
-			return m_bitmapData;
+			return mBitmapData;
 		}
 
 		public function get width() : int
 		{
-			if (!m_bitmapData)
+			if (!mBitmapData)
 				return 0;
-			return m_bitmapData.width;
+			return mBitmapData.width;
 		}
 
 		public function get height() : int
 		{
-			if (!m_bitmapData)
+			if (!mBitmapData)
 				return 0;
-			return m_bitmapData.height;
+			return mBitmapData.height;
 		}
 
 		override protected function destroy() : void
 		{
 			super.destroy();
-			m_bitmapData && m_bitmapData.dispose();
-			m_bitmapData = null;
+			mBitmapData && mBitmapData.dispose();
+			mBitmapData = null;
 		}
 	}
 }
