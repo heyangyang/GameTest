@@ -3,6 +3,7 @@ package hy.rpg.manager
 	import hy.game.components.SAnimationComponent;
 	import hy.game.components.SAvatarComponent;
 	import hy.game.components.SCollisionComponent;
+	import hy.game.components.SRenderComponent;
 	import hy.game.core.GameObject;
 	import hy.game.core.SCameraObject;
 	import hy.game.data.STransform;
@@ -103,7 +104,7 @@ package hy.rpg.manager
 			heroObject.addComponent(new ComponentMouse());
 			addTargetEffect(heroObject, "expGuangHuan", null, 0, EnumRenderLayer.SHODOW_ANIMATION);
 			SLayerManager.getInstance().addObjectByType(SLayerManager.LAYER_ENTITY, heroObject);
-			heroObject.registerd();
+			heroObject.registerd(EnumPriority.PRIORITY_MAX);
 			//为镜头添加焦点对象
 			SCameraObject.getInstance().setGameFocus(heroObject);
 			heroObject.tag = EnumTags.PLAYER;
@@ -130,14 +131,14 @@ package hy.rpg.manager
 			if (data.mountId)
 				heroObject.addComponent(new ComponentMount(), EnumPriority.PRIORITY_8);
 			//名字组件
-//			var renderComponent : SRenderComponent = new ComponentName();
-//			//renderComponent.setVisible(false);
-//			heroObject.addComponent(renderComponent);
-//			renderComponent = new ComponentHp()
-//			renderComponent.setVisible(false);
-//			heroObject.addComponent(renderComponent);
+			var renderComponent : SRenderComponent = new ComponentName();
+			//renderComponent.setVisible(false);
+			heroObject.addComponent(renderComponent);
+			renderComponent = new ComponentHp()
+			renderComponent.setVisible(false);
+			heroObject.addComponent(renderComponent);
 			//shodow
-//			heroObject.addComponent(new ComponentShodow());
+			heroObject.addComponent(new ComponentShodow());
 			heroObject.addComponent(new SCollisionComponent());
 			heroObject.addComponent(new ComponentAi());
 			var stateComponent : StateComponent = new StateComponent();

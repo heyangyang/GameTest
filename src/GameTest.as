@@ -12,11 +12,9 @@ package
 		{
 			stage ? init() : addEventListener(Event.ADDED_TO_STAGE, init);
 		}
-
 		private function init(evt : Event = null) : void
 		{
 			new GameFrameStart(stage, new GameStarter());
 		}
-		
 	}
 }
