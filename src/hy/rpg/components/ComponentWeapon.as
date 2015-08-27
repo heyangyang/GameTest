@@ -15,7 +15,7 @@ package hy.rpg.components
 		override public function notifyAdded() : void
 		{
 			super.notifyAdded();
-			mLazyAvatar.priority = EnumLoadPriority.WEAPON;
+			mResource.priority = EnumLoadPriority.WEAPON;
 			mRender.layer = EnumRenderLayer.WEAPON;
 			mIsUseFilters = false;
 			mUseDefaultAvatar = false;

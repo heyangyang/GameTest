@@ -22,7 +22,6 @@ package hy.rpg.parser
 		{
 			super(desc.url, desc.version, priority);
 		}
-
 		override public function load() : void
 		{
 			if (Config.supportDirectX)
@@ -61,21 +60,11 @@ package hy.rpg.parser
 			_decoder.startXtfLoad(version, priority);
 		}
 
-
 		override protected function loadThreadResource() : void
 		{
-			var cur_id : String = id;
-//			if (_isDirect)
-//			{
-//				var tmp : Array = id.split("/");
-//				tmp.pop();
-//				tmp[0] = "avatar_atf";
-//				tmp.push(tmp[1] + ".xtf");
-//				cur_id = tmp.join("/");
-//			}
 			if (action_name == null)
 				action_name = id.split("/").pop().split(".").shift();
-			decoder = SReferenceManager.getInstance().createDirectAnimationDeocder(cur_id);
+			decoder = SReferenceManager.getInstance().createDirectAnimationDeocder(id);
 			if (!_decoder.isCompleted)
 				_decoder.addNotify(parseComplete);
 			else

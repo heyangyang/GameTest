@@ -20,7 +20,7 @@ package hy.rpg.components
 		override public function notifyAdded() : void
 		{
 			super.notifyAdded();
-			mLazyAvatar.priority = EnumLoadPriority.MOUNT;
+			mResource.priority = EnumLoadPriority.MOUNT;
 			mUseCenterOffsetY = false;
 			mIsUseFilters = false;
 			mUseDefaultAvatar = false;
