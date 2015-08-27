@@ -1,7 +1,6 @@
 package hy.rpg.starter
 {
 	import flash.display.DisplayObject;
-	import flash.display.Stage;
 	
 	import hy.game.GameFrameStart;
 	import hy.game.cfg.Config;
@@ -30,9 +29,8 @@ package hy.rpg.starter
 				nextNode();
 				return;
 			}
-			var stage : Stage = Config.stage;
 			SStage3D.multitouchEnabled = false;
-			stage3d = new SStage3D(stage);
+			stage3d = new SStage3D(Config.stage);
 			stage3d.enableErrorChecking = false;
 			stage3d.antiAliasing = 0;
 			stage3d.addEventListener(SEvent.ROOT_CREATED, onRootCreated);
