@@ -532,7 +532,7 @@ package hy.rpg.map
 			mFileVersions = null;
 		}
 
-		override public function destroy() : void
+		override public function dispose() : void
 		{
 			if (mIsDisposed)
 				return;
@@ -542,7 +542,7 @@ package hy.rpg.map
 			mOnConfigComplete = null;
 			mOnProgress = null;
 
-			super.destroy();
+			super.dispose();
 		}
 	}
 }

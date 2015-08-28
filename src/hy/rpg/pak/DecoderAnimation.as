@@ -4,7 +4,7 @@ package hy.rpg.pak
 	import flash.geom.Point;
 	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
-
+	
 	import hy.game.core.SReference;
 	import hy.game.manager.SReferenceManager;
 	import hy.game.render.SRenderBitmap;
@@ -20,18 +20,17 @@ package hy.rpg.pak
 	public class DecoderAnimation extends SReference
 	{
 		public static const DEFAULT : String = "1";
-		public var id : String;
+		private var mId : String;
 		private var mDecodeIndex : int;
 		private var mDecodeCount : int;
 		/**
 		 * 用来加载解析
 		 */
 		private var mLoaderDic : Dictionary;
-		public var isSend : Boolean;
 		/**
 		 * 解析完后的动画
 		 */
-		protected var mResultDic : Dictionary;
+		private var mResultDic : Dictionary;
 		private var mIsCompleted : Boolean;
 		private var mNotifyCompleteds : Array;
 		private var mErrorCompleteds : Array;
@@ -39,8 +38,13 @@ package hy.rpg.pak
 
 		public function DecoderAnimation(id : String)
 		{
-			this.id = id;
+			this.mId = id;
 			super();
+		}
+
+		public function get id() : String
+		{
+			return mId;
 		}
 
 		/**
@@ -54,7 +58,7 @@ package hy.rpg.pak
 		{
 			if (mResource)
 				return;
-			mResource = SReferenceManager.getInstance().createResource(id, ver);
+			mResource = SReferenceManager.getInstance().createResource(mId, ver);
 
 			if (mResource.isLoading)
 				return;
@@ -87,7 +91,7 @@ package hy.rpg.pak
 		private function onResourceLoaded(resource : SResource) : void
 		{
 			decode(resource.data);
-			SReferenceManager.getInstance().clearResource(id);
+			SReferenceManager.getInstance().clearResource(mId);
 		}
 
 		/**
@@ -96,10 +100,10 @@ package hy.rpg.pak
 		 * @param bytes
 		 *
 		 */
-		public function decode(bytes : ByteArray, isClear : Boolean = true) : void
+		public function decode(bytes : ByteArray) : void
 		{
 			//正在解析中
-			if(mLoaderDic)
+			if (mLoaderDic)
 				return;
 			bytes.position = 0
 			var head : String = bytes.readUTF();
@@ -134,7 +138,7 @@ package hy.rpg.pak
 				mDecodeCount++;
 				createPakDecoder(bytes);
 			}
-			isClear && bytes.clear();
+			bytes.clear();
 		}
 
 		/**
@@ -146,7 +150,7 @@ package hy.rpg.pak
 		 */
 		private function createPakDecoder(bytes : ByteArray, dir : String = DEFAULT) : DecoderPak
 		{
-			var pak : DecoderPak = new DecoderPak(id, bytes);
+			var pak : DecoderPak = new DecoderPak(mId, bytes);
 			pak.onComplete(onParseCompleted).onIOError(onReload);
 			pak.decode();
 			pak.loadImages();
@@ -189,7 +193,7 @@ package hy.rpg.pak
 		public function getSendMainThreadMessage() : Array
 		{
 			var dir : String, i : int;
-			var message : Array = [id];
+			var message : Array = [mId];
 			var decoder : DecoderPak;
 			var args : Array;
 			var bmd : BitmapData;
@@ -204,7 +208,7 @@ package hy.rpg.pak
 					bmd = decoder.getShareResult(i);
 					if (bmd == null)
 					{
-						warning(this, id + "decoder failed");
+						warning(this, mId + "decoder failed");
 						continue;
 					}
 					args.push(bitmapDataToByteArray(bmd));
@@ -245,7 +249,7 @@ package hy.rpg.pak
 			for (var i : int = 1; i < len; i++)
 			{
 				tmp_data = message[i];
-				decoder = new DecoderPak(id, null);
+				decoder = new DecoderPak(mId, null);
 				mResultDic[tmp_data[0]] = decoder;
 				decoder.width = tmp_data[2];
 				decoder.height = tmp_data[3];
@@ -285,7 +289,7 @@ package hy.rpg.pak
 			if (++mDecodeIndex < mDecodeCount)
 				return;
 			notifyAll();
-			SDebug.error("解析图片出错" + id);
+			SDebug.error("解析图片出错" + mId);
 		}
 
 		public function get width() : int
@@ -341,10 +345,9 @@ package hy.rpg.pak
 			return DecoderPak(mResultDic[dir]).getResult(index);
 		}
 
-		override protected function destroy() : void
+		override protected function dispose() : void
 		{
-			super.destroy();
-			isSend = false;
+			super.dispose();
 			if (mNotifyCompleteds)
 				mNotifyCompleteds.length = 0
 			if (mErrorCompleteds)

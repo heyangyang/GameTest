@@ -1,7 +1,7 @@
 package hy.rpg.starter
 {
 	import flash.display.DisplayObject;
-	
+
 	import hy.game.GameFrameStart;
 	import hy.game.cfg.Config;
 	import hy.game.core.event.SEvent;
@@ -25,6 +25,8 @@ package hy.rpg.starter
 		{
 			if (!Config.supportDirectX)
 			{
+				//地图宽度
+				Config.TILE_WIDTH = Config.TILE_HEIGHT = 200;
 				GameFrameStart.current.onStart();
 				nextNode();
 				return;
@@ -41,6 +43,11 @@ package hy.rpg.starter
 			mStage3d.removeEventListener(SEvent.ROOT_CREATED, onRootCreated);
 			mStage3d.start();
 			Config.supportDirectX = SStage3D.context.driverInfo.indexOf("Software") == -1;
+			if (!Config.supportDirectX)
+			{
+				//地图宽度
+				Config.TILE_WIDTH = Config.TILE_HEIGHT = 200;
+			}
 			GameFrameStart.current.onStart();
 			nextNode();
 		}

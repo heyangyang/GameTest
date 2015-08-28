@@ -2,6 +2,7 @@ package hy.rpg.parser
 {
 	import flash.utils.ByteArray;
 	
+	import hy.game.core.SCall;
 	import hy.game.core.SReference;
 	import hy.game.manager.SReferenceManager;
 	import hy.game.resources.SResource;
@@ -15,14 +16,15 @@ package hy.rpg.parser
 	{
 		private var mId : String;
 		private var mVersion : String;
-		protected var mPriority : int;
-		protected var mIsLoaded : Boolean;
-		protected var mIsLoading : Boolean;
+		private var mPriority : int;
+		private var mIsCompleted : Boolean;
+		private var mIsLoading : Boolean;
 
-		protected var mIoErrorFuns : Vector.<Function>;
-		protected var mCompleteFuns : Vector.<Function>;
+		private var mIoErrorCall : SCall;
+		private var mCompleteCall : SCall;
 
-		public var cc:String;
+		public var cc : String;
+
 		/**
 		 * 创建一个资源解析器
 		 * @param id
@@ -30,12 +32,14 @@ package hy.rpg.parser
 		 * @param priority 优先级
 		 *
 		 */
-		public function ParserResource(id : String, version : String = null, priority : int = EnumLoadPriority.MAX)
+		public function ParserResource(id : String, version : String = null, priority : int = EnumLoadPriority.MIN)
 		{
 			super();
 			mId = id;
 			mVersion = version;
 			mPriority = priority;
+			mIoErrorCall = new SCall(this);
+			mCompleteCall = new SCall(this);
 		}
 
 		/**
@@ -46,19 +50,22 @@ package hy.rpg.parser
 		{
 			var mResource : SResource = SReferenceManager.getInstance().createResource(mId, mVersion);
 
-			if (mIsLoaded)
+			//已经加载并且处理完毕
+			if (mIsCompleted)
 			{
-				invokeNotifyByArray(mCompleteFuns);
+				mCompleteCall.excute();
+				mCompleteCall.clear();
 			}
+			//资源加载完毕，需要解析
 			else if (mResource.isLoaded)
 			{
 				mIsLoading = true;
-				startParseLoader(null);
+				parseLoaderData(null);
 			}
 			else if (!mResource.isLoading)
 			{
 				mIsLoading = true;
-				mIsLoaded = false;
+				mIsCompleted = false;
 				mResource.addNotifyCompleted(onResourceLoaded).addNotifyIOError(onResourceIOError).setPriority(mPriority).load();
 			}
 		}
@@ -68,9 +75,9 @@ package hy.rpg.parser
 		 * @param res
 		 *
 		 */
-		protected function onResourceLoaded(res : SResource) : void
+		private function onResourceLoaded(res : SResource) : void
 		{
-			startParseLoader(res.getBinary());
+			parseLoaderData(res.getBinary());
 		}
 
 		/**
@@ -78,28 +85,23 @@ package hy.rpg.parser
 		 * @param res
 		 *
 		 */
-		protected function onResourceIOError(res : SResource) : void
+		private function onResourceIOError(res : SResource) : void
 		{
 			mIsLoading = false;
-			mIsLoaded = false;
-			invokeNotifyByArray(mIoErrorFuns);
+			mIsCompleted = false;
+			mIoErrorCall.excute();
+			mIoErrorCall.clear();
 		}
 
 		public function onIOError(fun : Function) : ParserResource
 		{
-			if (!mIoErrorFuns)
-				mIoErrorFuns = new Vector.<Function>();
-			if (mIoErrorFuns && mIoErrorFuns.indexOf(fun) == -1)
-				mIoErrorFuns.push(fun);
+			mIoErrorCall.push(fun);
 			return this;
 		}
 
 		public function onComplete(fun : Function) : ParserResource
 		{
-			if (!mCompleteFuns)
-				mCompleteFuns = new Vector.<Function>();
-			if (mCompleteFuns && mCompleteFuns.indexOf(fun) == -1)
-				mCompleteFuns.push(fun);
+			mCompleteCall.push(fun);
 			return this;
 		}
 
@@ -108,8 +110,9 @@ package hy.rpg.parser
 		 * @param bytes
 		 *
 		 */
-		protected function startParseLoader(bytes : ByteArray) : void
+		protected function parseLoaderData(bytes : ByteArray) : void
 		{
+			
 		}
 
 
@@ -117,36 +120,11 @@ package hy.rpg.parser
 		 * 解析完成后
 		 *
 		 */
-		protected function parseCompleted() : void
+		protected function parseLoaderCompleted() : void
 		{
 			mIsLoading = false;
-			mIsLoaded = true;
-			invokeNotifyByArray(mCompleteFuns);
-		}
-
-		private function cleanNotify() : void
-		{
-			if (mIoErrorFuns)
-			{
-				mIoErrorFuns.length = 0;
-				mIoErrorFuns = null;
-			}
-			if (mCompleteFuns)
-			{
-				mCompleteFuns.length = 0;
-				mCompleteFuns = null;
-			}
-		}
-
-		protected function invokeNotifyByArray(functions : Vector.<Function>) : void
-		{
-			if (!functions)
-				return;
-			for each (var notify : Function in functions)
-			{
-				notify(this);
-			}
-			functions.length = 0;
+			mIsCompleted = true;
+			mCompleteCall.excute();
 		}
 
 		/**
@@ -170,15 +148,14 @@ package hy.rpg.parser
 		}
 
 		/**
-		 * 加载完成
+		 * 加载并且解析完成
 		 * @return
 		 *
 		 */
-		public function get isLoaded() : Boolean
+		public function get isComplete() : Boolean
 		{
-			return mIsLoaded;
+			return mIsCompleted;
 		}
-
 
 		/**
 		 * 正在加载
@@ -190,10 +167,19 @@ package hy.rpg.parser
 			return mIsLoading;
 		}
 
-		override protected function destroy() : void
+		override protected function dispose() : void
 		{
-			cleanNotify();
-			super.destroy();
+			if (mIoErrorCall)
+			{
+				mIoErrorCall.dispose();
+				mIoErrorCall = null;
+			}
+			if (mCompleteCall)
+			{
+				mCompleteCall.dispose();
+				mCompleteCall = null;
+			}
+			super.dispose();
 		}
 	}
 }

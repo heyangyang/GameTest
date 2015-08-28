@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009"
+					   xmlns:s="library://ns.adobe.com/flex/spark"
+					   xmlns:mx="library://ns.adobe.com/flex/mx"
+					   creationComplete="init(event)">
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+
+			protected function init(event : FlexEvent) : void
+			{
+				updateFile(new File("D:/hy/GameTest/trunk/src/"))
+//				updateFile(new File("D:/hy/TestHy/trunk/src/hy/"))
+				trace(1111111)
+			}
+
+			private function updateFile(file : File) : void
+			{
+				var list : Array = file.getDirectoryListing();
+				for each (var tmpFile : File in list)
+				{
+					if (tmpFile.isDirectory)
+					{
+						updateFile(tmpFile);
+						continue;
+					}
+					if (tmpFile.extension != "as")
+						continue;
+					updateCode(tmpFile);
+				}
+			}
+
+			private function updateCode(file : File) : void
+			{
+				var code : String = readFile(file.nativePath);
+				var index : int;
+				var replace : String;
+				while (true)
+				{
+					index = code.indexOf("m_");
+					if (index == -1)
+						break;
+					replace = code.substring(index, index + 3);
+					code = code.replace(replace, "m" + replace.substring(2).toLocaleUpperCase());
+				}
+				writeFile(file.nativePath, code);
+			}
+
+			/**保存文本文件*/
+			public static function writeFile(path : String, content : String, charSet : String = "utf-8") : void
+			{
+				var stream : FileStream = new FileStream();
+				var file : File = new File(path);
+				stream.open(file, FileMode.WRITE);
+				stream.writeMultiByte(content, charSet);
+				stream.close();
+			}
+
+			/**读取文本文件*/
+			public static function readFile(path : String, charSet : String = "utf-8") : String
+			{
+				var stream : FileStream = new FileStream();
+				var file : File = new File(path);
+				if (!file.exists)
+					return "";
+				stream.open(file, FileMode.READ);
+				var bytes : ByteArray = new ByteArray();
+				stream.readBytes(bytes);
+				bytes.position = 0;
+				var str : String = bytes.readMultiByte(bytes.bytesAvailable, charSet);
+				stream.close();
+				return str;
+			}
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+</s:WindowedApplication>

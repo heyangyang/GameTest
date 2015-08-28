@@ -108,7 +108,7 @@ package hy.rpg.manager
 			data.id = 999999;
 			mObjectDatas.push(data);
 
-			for (var i : int = 0; i < 500; )
+			for (var i : int = 0; i < 00; )
 			{
 				gridX = UtilsCommon.getGridXByPixel(sceneW * Math.random());
 				gridY = UtilsCommon.getGridYByPixel(sceneH * Math.random());
@@ -151,7 +151,7 @@ package hy.rpg.manager
 			{
 				mObjectNumChildren--;
 				delete mVisaulObjects[currUpdateGame.id];
-				currUpdateGame.destroy();
+				currUpdateGame.dispose();
 			}
 			mDeleteCount = 0;
 			mDeleteObjects.length = 0;
@@ -178,7 +178,7 @@ package hy.rpg.manager
 					continue;
 				}
 				delete mVisaulObjects[currUpdateGame.id];
-				currUpdateGame.destroy();
+				currUpdateGame.dispose();
 			}
 
 			for each (var data : DataComponent in mObjectDatas)

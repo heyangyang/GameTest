@@ -3,7 +3,7 @@ package hy.rpg.pak
 	import flash.geom.Point;
 	import flash.system.System;
 	import flash.utils.ByteArray;
-	
+
 	import hy.game.core.interfaces.IBitmapData;
 	import hy.game.manager.SReferenceManager;
 	import hy.game.resources.SResource;
@@ -30,7 +30,7 @@ package hy.rpg.pak
 		 */
 		public function startXtfLoad(ver : String, priority : int) : void
 		{
-			var resource : SResource = SReferenceManager.getInstance().createResource(id,ver);
+			var resource : SResource = SReferenceManager.getInstance().createResource(id, ver);
 
 			if (resource.isLoaded)
 			{
@@ -63,25 +63,25 @@ package hy.rpg.pak
 			notifyAll();
 		}
 
-		public function getDirResult(action : String, index : uint = 0, dir : String = DEFAULT) : IBitmapData
+		public function getDirResult(index : uint = 0, dir : String = DEFAULT) : IBitmapData
 		{
 			if (mTextureAtlas)
-				return mTextureAtlas.getAnimationFrame(action, dir, index);
+				return mTextureAtlas.getAnimationFrame(dir, index);
 			else
 				return getResult(index, dir);
 		}
 
-		public function getDirOffest(action : String, index : uint = 0, dir : String = DEFAULT) : Point
+		public function getDirOffest(index : uint = 0, dir : String = DEFAULT) : Point
 		{
 			if (mTextureAtlas)
-				return mTextureAtlas.getPoint(action, dir, index);
+				return mTextureAtlas.getPoint(dir, index);
 			else
 				return getOffest(index, dir);
 		}
 
-		override protected function destroy() : void
+		override protected function dispose() : void
 		{
-			super.destroy();
+			super.dispose();
 			if (mTextureAtlas)
 			{
 				mTextureAtlas.dispose();

@@ -68,7 +68,7 @@ package hy.rpg.components.data
 		 * 暂时不要销毁
 		 *
 		 */
-		override public function destroy() : void
+		override public function dispose() : void
 		{
 
 		}

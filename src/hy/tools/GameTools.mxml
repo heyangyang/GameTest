@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009"
+					   xmlns:s="library://ns.adobe.com/flex/spark"
+					   xmlns:mx="library://ns.adobe.com/flex/mx"
+					   creationComplete="init(event)">
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+
+			private var filter : Array;
+			private var data : String;
+			private var root_url : String;
+			private var role_file : File;
+			private var dic : Dictionary;
+
+			protected function init(event : FlexEvent) : void
+			{
+				filter = ["swf", ".mp3", "src", "sec", "smc", "xml"];
+				root_url = "D:/hy/GameTest/trunk/assets/";
+				var version_data : String = readFile(root_url + "/" + "version.dat");
+				var list : Array = version_data.split("\n");
+				var len : int = list.length;
+				var tmpArr : Array;
+				dic = new Dictionary();
+				for (var i : int = 0; i < len; i++)
+				{
+					tmpArr = list[i].split("\t");
+					dic[tmpArr[0]] = tmpArr;
+				}
+
+				role_file = new File(root_url);
+				data = "";
+				updateFile(role_file);
+				writeFile(root_url + "version.dat", data);
+				trace(data);
+			}
+
+			/**保存文本文件*/
+			public static function writeFile(path : String, content : String, charSet : String = "utf-8") : void
+			{
+				var stream : FileStream = new FileStream();
+				var file : File = new File(path);
+				stream.open(file, FileMode.WRITE);
+				var bytes : ByteArray = new ByteArray();
+				bytes.writeUTF(content);
+				bytes.compress();
+				stream.writeBytes(bytes);
+				stream.close();
+			}
+
+			/**读取文本文件*/
+			public static function readFile(path : String, charSet : String = "utf-8") : String
+			{
+				var stream : FileStream = new FileStream();
+				var file : File = new File(path);
+				if (!file.exists)
+					return "";
+				stream.open(file, FileMode.READ);
+				var bytes : ByteArray = new ByteArray();
+				stream.readBytes(bytes);
+				bytes.position = 0;
+				bytes.uncompress();
+				bytes.position = 0;
+				var str : String = bytes.readUTF();
+				stream.close();
+				return str;
+			}
+
+			private function updateFile(file : File) : void
+			{
+				var list : Array = file.getDirectoryListing();
+				var tmpArr : Array;
+				var object : Object;
+				var vserion : String;
+				var url : String;
+				var type : int;
+				for each (var child : File in list)
+				{
+					if (child.isDirectory)
+					{
+						updateFile(child);
+						continue;
+					}
+					tmpArr = child.name.split(".");
+					type = filter.indexOf(tmpArr[1])
+					if (type == -1)
+						continue;
+					if (child.url.indexOf("_atf") >= 0)
+						tmpArr[0] += "_atf";
+					object = dic[tmpArr[0]];
+					if (object == null)
+						vserion = "0";
+					else if (Number(object[2]) == child.modificationDate.getTime())
+						vserion = object[3];
+					else
+						vserion = (int(object[3]) + 1) + "";
+					url = child.url.replace(role_file.url + "/", "");
+					if (object && url != object[1])
+						throw new Error("aaa");
+					data += tmpArr[0] + "\t" + url + "\t" + child.modificationDate.getTime() + "\t" + vserion + "\t" + type + "\n";
+				}
+			}
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+</s:WindowedApplication>

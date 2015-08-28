@@ -2,12 +2,11 @@ package hy.rpg.parser
 {
 	import flash.geom.Point;
 	import flash.utils.ByteArray;
-	
+
 	import hy.game.animation.SAnimationDescription;
 	import hy.game.cfg.Config;
 	import hy.game.core.interfaces.IBitmapData;
 	import hy.game.manager.SReferenceManager;
-	import hy.rpg.enum.EnumLoadPriority;
 
 
 	/**
@@ -16,96 +15,43 @@ package hy.rpg.parser
 	 */
 	public class ParserAnimationResource extends ParserPakResource
 	{
-		protected var action_name : String;
-
-		public function ParserAnimationResource(desc : SAnimationDescription, priority : int = EnumLoadPriority.EFFECT)
+		public function ParserAnimationResource(desc : SAnimationDescription, priority : int)
 		{
 			super(desc.url, desc.version, priority);
 		}
+
 		override public function load() : void
 		{
 			if (Config.supportDirectX)
 			{
-				if (action_name == null)
-					action_name = id.split("/").pop().split(".").shift();
-				startParseLoader(null);
+				parseLoaderData(null);
 			}
 			else
 			{
 				super.load();
 			}
-
 		}
 
-		override protected function startParseLoader(bytes : ByteArray) : void
+		override protected function parseLoaderData(bytes : ByteArray) : void
 		{
 			if (!Config.supportDirectX)
 			{
-				super.startParseLoader(bytes);
+				super.parseLoaderData(bytes);
 				return;
 			}
-			var cur_id : String = id;
-			if (Config.supportDirectX)
-			{
-				var tmp : Array = id.split("/");
-				if (id.indexOf("avatar") != -1)
-					tmp[0] = "avatar_atf";
-				else
-					tmp[0] = "effect_atf";
-				tmp.push(tmp.pop().split(".")[0] + ".xtf");
-				cur_id = tmp.join("/");
-			}
-			decoder = SReferenceManager.getInstance().createDirectAnimationDeocder(cur_id);
-			_decoder.addNotify(onParseCompleted);
-			_decoder.startXtfLoad(version, priority);
-		}
-
-		override protected function loadThreadResource() : void
-		{
-			if (action_name == null)
-				action_name = id.split("/").pop().split(".").shift();
 			decoder = SReferenceManager.getInstance().createDirectAnimationDeocder(id);
-			if (!_decoder.isCompleted)
-				_decoder.addNotify(parseComplete);
-			else
-				parseComplete(_decoder);
-			if (!_decoder.isSend)
-			{
-				_decoder.isSend = true;
-
-				//直接用使用atf加载，不经过多线程
-//				if (_isDirect)
-//				{
-//					_decoder.startXtfLoad(version, priority);
-//					return;
-//				}
-
-				if (load_list.length > COUNT)
-				{
-					need_send_list.push([id, version, priority]);
-					isSort = true;
-				}
-				else
-				{
-					var send_arr : Array = [id, version, priority];
-					load_list.push(send_arr);
-//					SThreadEvent.dispatchEvent(SThreadEvent.LOAD_SEND, send_arr);
-				}
-			}
+			decoder.addNotify(onParseCompleted);
+			decoder.startXtfLoad(version, priority);
 		}
 
 		public function getBitmapDataByDir(frame : int, dir : String) : IBitmapData
 		{
-			if (_decoder)
-				return _decoder.getDirResult(action_name, frame - 1, dir);
-			return null;
+			return decoder ? decoder.getDirResult(frame - 1, dir) : null;
 		}
 
-		override public function getOffset(index : int, dir : String) : Point
+		public function getOffset(index : int, dir : String) : Point
 		{
-			if (_decoder)
-				return _decoder.getDirOffest(action_name, index, dir);
-			return null;
+			return decoder ? decoder.getDirOffest(index, dir) : null;
 		}
 	}
 }

@@ -74,9 +74,9 @@ package hy.rpg.render
 			return mBitmapData.height;
 		}
 
-		override protected function destroy() : void
+		override protected function dispose() : void
 		{
-			super.destroy();
+			super.dispose();
 			mBitmapData && mBitmapData.dispose();
 			mBitmapData = null;
 		}

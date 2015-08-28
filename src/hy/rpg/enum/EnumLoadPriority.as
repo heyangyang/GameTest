@@ -8,7 +8,6 @@ package hy.rpg.enum
 	 */
 	public class EnumLoadPriority
 	{
-
 		public static const SOUND : int = 1;
 		public static const UI_EFFECT : int = 2;
 		public static const MIN : int = 3;
