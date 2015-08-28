@@ -1,6 +1,11 @@
 package hy.rpg.enum
 {
 
+	/**
+	 * 数值越大，所在层级越高 
+	 * @author hyy
+	 * 
+	 */
 	public class EnumRenderLayer
 	{
 		public static const SHODOW_ANIMATION : int = -10;
