@@ -2,9 +2,9 @@ package hy.rpg.enum
 {
 
 	/**
-	 * 数值越大，所在层级越高 
+	 * 数值越大，所在层级越高
 	 * @author hyy
-	 * 
+	 *
 	 */
 	public class EnumRenderLayer
 	{
