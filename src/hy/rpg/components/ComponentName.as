@@ -89,12 +89,12 @@ package hy.rpg.components
 		 */
 		protected override function addRender(render : SRender) : void
 		{
-			SLayerManager.getInstance().addRenderByType(SLayerManager.LAYER_NAME, render);
+			SLayerManager.getInstance().push(SLayerManager.LAYER_NAME, render);
 		}
 
 		protected override function removeRender(render : SRender) : void
 		{
-			SLayerManager.getInstance().removeRenderByType(SLayerManager.LAYER_NAME, render);
+			SLayerManager.getInstance().push(SLayerManager.LAYER_NAME, render);
 		}
 
 		override protected function updateRenderVisible() : void

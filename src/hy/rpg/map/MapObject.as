@@ -9,7 +9,9 @@ package hy.rpg.map
 	import hy.game.core.GameObject;
 	import hy.game.core.SCameraObject;
 	import hy.game.data.SRectangle;
+	import hy.game.manager.SLayerManager;
 	import hy.game.manager.SReferenceManager;
+	import hy.game.render.SRender;
 	import hy.game.resources.SResource;
 	import hy.rpg.enum.EnumLoadPriority;
 	import hy.rpg.parser.ParserImageResource;
@@ -31,6 +33,10 @@ package hy.rpg.map
 				instance = new MapObject(Config.SMALL_MAP_SCALE);
 			return instance;
 		}
+		/**
+		 * 渲染对象
+		 */
+		protected var mRender : SRender;
 		/**
 		 * 地图宽高
 		 */
@@ -139,6 +145,7 @@ package hy.rpg.map
 
 		public function MapObject(min_scale : Number)
 		{
+			mRender = new SRender();
 			mScale = min_scale;
 			mCamera = SCameraObject.getInstance();
 			mTiles = new Dictionary();
@@ -149,12 +156,14 @@ package hy.rpg.map
 		override public function registerd(priority : int = 0) : void
 		{
 			super.registerd(priority);
+			SLayerManager.getInstance().push(SLayerManager.LAYER_MAP, mRender);
 			GameDispatcher.addEventListener(GameDispatcher.RESIZE, onResizeHandler);
 		}
 
 		override public function unRegisterd() : void
 		{
 			super.unRegisterd();
+			SLayerManager.getInstance().remove(SLayerManager.LAYER_MAP, mRender);
 			GameDispatcher.removeEventListener(GameDispatcher.RESIZE, onResizeHandler);
 		}
 
@@ -282,7 +291,7 @@ package hy.rpg.map
 			mOnProgress = null;
 			mIsLoaded = true;
 		}
-		
+
 		private function updateBlocks(mapBlocks : Array = null) : void
 		{
 			if (!mapBlocks)
@@ -464,7 +473,7 @@ package hy.rpg.map
 			}
 			res.render.x = mLoadTilePos.x * mTileWidth;
 			res.render.y = mLoadTilePos.y * mTileHeight;
-			addRender(res.render);
+			mRender.addChild(res.render);
 		}
 
 		/**
@@ -511,7 +520,7 @@ package hy.rpg.map
 		{
 			if (!tile)
 				return;
-			removeRender(tile.render);
+			mRender.removeChild(tile.render);
 			tile.release();
 		}
 

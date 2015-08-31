@@ -10,7 +10,6 @@ package hy.rpg.manager
 	import hy.game.enum.EnumPriority;
 	import hy.game.enum.EnumTags;
 	import hy.game.manager.SBaseManager;
-	import hy.game.manager.SLayerManager;
 	import hy.game.state.StateComponent;
 	import hy.rpg.components.ComponentAi;
 	import hy.rpg.components.ComponentHp;
@@ -68,7 +67,6 @@ package hy.rpg.manager
 		{
 			var map : MapObject = MapObject.getInstance();
 			map.transform = new STransform();
-			SLayerManager.getInstance().addObjectByType(SLayerManager.LAYER_MAP, map);
 			map.registerd();
 			return map;
 		}
@@ -81,6 +79,7 @@ package hy.rpg.manager
 		{
 			var heroObject : ObjectRole = new ObjectRole();
 			heroObject.id = data.id;
+			heroObject.tag = EnumTags.PLAYER;
 			heroObject.transform = data.transform;
 			heroObject.addComponent(data);
 			//avatar组件
@@ -103,11 +102,9 @@ package hy.rpg.manager
 			//鼠标组件
 			heroObject.addComponent(new ComponentMouse());
 			addTargetEffect(heroObject, "expGuangHuan", null, 0, EnumRenderLayer.SHODOW_ANIMATION);
-			SLayerManager.getInstance().addObjectByType(SLayerManager.LAYER_ENTITY, heroObject);
 			heroObject.registerd(EnumPriority.PRIORITY_MAX);
 			//为镜头添加焦点对象
 			SCameraObject.getInstance().setGameFocus(heroObject);
-			heroObject.tag = EnumTags.PLAYER;
 			return heroObject;
 		}
 
@@ -119,6 +116,7 @@ package hy.rpg.manager
 		{
 			var heroObject : ObjectRole = new ObjectRole();
 			heroObject.id = data.id;
+			heroObject.tag = EnumTags.PLAYER;
 			heroObject.transform = data.transform;
 			heroObject.addComponent(data);
 			//avatar组件
@@ -144,9 +142,7 @@ package hy.rpg.manager
 			var stateComponent : StateComponent = new StateComponent();
 			heroObject.addComponent(stateComponent, EnumPriority.PRIORITY_6);
 			stateComponent.setStates([StateStand, StateWalk]);
-			SLayerManager.getInstance().addObjectByType(SLayerManager.LAYER_ENTITY, heroObject);
 			heroObject.registerd();
-			heroObject.tag = EnumTags.PLAYER;
 			return heroObject;
 		}
 
