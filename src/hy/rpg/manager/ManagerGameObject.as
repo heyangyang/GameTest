@@ -34,7 +34,7 @@ package hy.rpg.manager
 		}
 
 		private static var instance : ManagerGameObject;
-		
+
 		public static function getInstance() : ManagerGameObject
 		{
 			if (instance == null)
@@ -108,7 +108,7 @@ package hy.rpg.manager
 			data.id = 999999;
 			mObjectDatas.push(data);
 
-			for (var i : int = 0; i < 00; )
+			for (var i : int = 0; i < 0; i++)
 			{
 				gridX = UtilsCommon.getGridXByPixel(sceneW * Math.random());
 				gridY = UtilsCommon.getGridYByPixel(sceneH * Math.random());

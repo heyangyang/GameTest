@@ -4,7 +4,7 @@ package hy.rpg.pak
 	import flash.system.System;
 	import flash.utils.ByteArray;
 
-	import hy.game.core.interfaces.IBitmapData;
+	import hy.game.interfaces.display.IBitmapData;
 	import hy.game.manager.SReferenceManager;
 	import hy.game.resources.SResource;
 	import hy.game.stage3D.texture.STexture;

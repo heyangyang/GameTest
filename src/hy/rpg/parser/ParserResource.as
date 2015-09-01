@@ -53,8 +53,7 @@ package hy.rpg.parser
 			//已经加载并且处理完毕
 			if (mIsCompleted)
 			{
-				mCompleteCall.excute();
-				mCompleteCall.clear();
+				mCompleteCall.excute(true);
 			}
 			//资源加载完毕，需要解析
 			else if (mResource.isLoaded)
@@ -89,8 +88,7 @@ package hy.rpg.parser
 		{
 			mIsLoading = false;
 			mIsCompleted = false;
-			mIoErrorCall.excute();
-			mIoErrorCall.clear();
+			mIoErrorCall.excute(true);
 		}
 
 		public function onIOError(fun : Function) : ParserResource

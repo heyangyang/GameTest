@@ -3,9 +3,7 @@ package hy.rpg.components
 	import hy.game.components.SRenderComponent;
 	import hy.game.manager.SLayerManager;
 	import hy.game.manager.SReferenceManager;
-	import hy.game.render.SRender;
 	import hy.rpg.components.data.DataComponent;
-	import hy.rpg.enum.EnumRenderLayer;
 	import hy.rpg.render.SNameParser;
 
 	/**
@@ -36,7 +34,8 @@ package hy.rpg.components
 		override public function notifyAdded() : void
 		{
 			super.notifyAdded();
-			mRender.layer = EnumRenderLayer.NAME;
+			mLayerType = SLayerManager.LAYER_NAME;
+//			mRender.layer = EnumRenderLayer.NAME;
 			mOffsetY = 20;
 		}
 
@@ -74,27 +73,13 @@ package hy.rpg.components
 		{
 			mRender.x = mTransform.screenX + -mParser.bitmapData.width * .5;
 			mRender.y = mTransform.screenY + -mTransform.height - mOffsetY - mTransform.z + mTransform.centerOffsetY;
+			mRender.depth = mTransform.screenY;
 		}
 
 		public function set parser(value : SNameParser) : void
 		{
 			mParser && mParser.release();
 			mParser = value;
-		}
-
-		/**
-		 * 不添加到父类，直接添加到name层
-		 * @param render
-		 *
-		 */
-		protected override function addRender(render : SRender) : void
-		{
-			SLayerManager.getInstance().push(SLayerManager.LAYER_NAME, render);
-		}
-
-		protected override function removeRender(render : SRender) : void
-		{
-			SLayerManager.getInstance().push(SLayerManager.LAYER_NAME, render);
 		}
 
 		override protected function updateRenderVisible() : void

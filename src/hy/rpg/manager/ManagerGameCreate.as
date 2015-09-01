@@ -10,6 +10,7 @@ package hy.rpg.manager
 	import hy.game.enum.EnumPriority;
 	import hy.game.enum.EnumTags;
 	import hy.game.manager.SBaseManager;
+	import hy.game.manager.SLayerManager;
 	import hy.game.state.StateComponent;
 	import hy.rpg.components.ComponentAi;
 	import hy.rpg.components.ComponentHp;
@@ -20,9 +21,8 @@ package hy.rpg.manager
 	import hy.rpg.components.ComponentWeapon;
 	import hy.rpg.components.ComponentWing;
 	import hy.rpg.components.data.DataComponent;
-	import hy.rpg.enum.EnumRenderLayer;
 	import hy.rpg.map.MapObject;
-	import hy.rpg.object.ObjectRole;
+	import hy.rpg.object.ObjectOtherRole;
 	import hy.rpg.state.StateStand;
 	import hy.rpg.state.StateWalk;
 
@@ -75,9 +75,9 @@ package hy.rpg.manager
 		 *  创建玩家自己的角色
 		 *
 		 */
-		public function createMyselfHeroObject(data : DataComponent) : ObjectRole
+		public function createMyselfHeroObject(data : DataComponent) : GameObject
 		{
-			var heroObject : ObjectRole = new ObjectRole();
+			var heroObject : GameObject = new GameObject();
 			heroObject.id = data.id;
 			heroObject.tag = EnumTags.PLAYER;
 			heroObject.transform = data.transform;
@@ -101,7 +101,7 @@ package hy.rpg.manager
 			stateComponent.setStates([StateStand, StateWalk]);
 			//鼠标组件
 			heroObject.addComponent(new ComponentMouse());
-			addTargetEffect(heroObject, "expGuangHuan", null, 0, EnumRenderLayer.SHODOW_ANIMATION);
+//			addTargetEffect(heroObject, "expGuangHuan", null, 0, SLayerManager.LAYER_EFFECT_BOTTOM);
 			heroObject.registerd(EnumPriority.PRIORITY_MAX);
 			//为镜头添加焦点对象
 			SCameraObject.getInstance().setGameFocus(heroObject);
@@ -112,9 +112,9 @@ package hy.rpg.manager
 		 *  创建其他玩家的角色
 		 *
 		 */
-		public function createHeroObject(data : DataComponent) : ObjectRole
+		public function createHeroObject(data : DataComponent) : GameObject
 		{
-			var heroObject : ObjectRole = new ObjectRole();
+			var heroObject : ObjectOtherRole = new ObjectOtherRole();
 			heroObject.id = data.id;
 			heroObject.tag = EnumTags.PLAYER;
 			heroObject.transform = data.transform;
@@ -133,8 +133,8 @@ package hy.rpg.manager
 			//renderComponent.setVisible(false);
 			heroObject.addComponent(renderComponent);
 			renderComponent = new ComponentHp()
-			renderComponent.setVisible(false);
 			heroObject.addComponent(renderComponent);
+			renderComponent.setVisible(false);
 			//shodow
 			heroObject.addComponent(new ComponentShodow());
 			heroObject.addComponent(new SCollisionComponent());
@@ -146,14 +146,14 @@ package hy.rpg.manager
 			return heroObject;
 		}
 
-		public function addTargetEffect(gameObject : GameObject, id : String, typeId : String, loops : int, layer : int = 0, offsetX : int = 0, offsetY : int = 0) : SAnimationComponent
+		public function addTargetEffect(gameObject : GameObject, id : String, typeId : String, loops : int, layerType : String = SLayerManager.LAYER_EFFECT_BOTTOM, offsetX : int = 0, offsetY : int = 0) : SAnimationComponent
 		{
 			var animaitonCom : SAnimationComponent = new SAnimationComponent(typeId ? typeId : id);
 			animaitonCom.setEffectId(id);
 			animaitonCom.setLoops(loops);
 			animaitonCom.setOffsetXY(offsetX, offsetY);
 			animaitonCom.setPosition(0, 0);
-			animaitonCom.setLayer(layer);
+			animaitonCom.setLayerType(layerType);
 			gameObject.addComponent(animaitonCom);
 			return animaitonCom;
 		}
@@ -165,7 +165,7 @@ package hy.rpg.manager
 			animaitonCom.setLoops(loops);
 			animaitonCom.setOffsetXY(offsetX, offsetY);
 			animaitonCom.setPosition(x, y);
-			animaitonCom.setLayer(1);
+			animaitonCom.setLayerType(SLayerManager.LAYER_EFFECT_BOTTOM);
 			MapObject.getInstance().addComponent(animaitonCom);
 			return animaitonCom;
 		}

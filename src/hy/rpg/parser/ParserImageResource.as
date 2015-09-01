@@ -1,6 +1,6 @@
 package hy.rpg.parser
 {
-	import hy.game.core.interfaces.IBitmapData;
+	import hy.game.interfaces.display.IBitmapData;
 	import hy.rpg.enum.EnumLoadPriority;
 
 

@@ -5,7 +5,7 @@ package hy.rpg.parser
 
 	import hy.game.animation.SAnimationDescription;
 	import hy.game.cfg.Config;
-	import hy.game.core.interfaces.IBitmapData;
+	import hy.game.interfaces.display.IBitmapData;
 	import hy.game.manager.SReferenceManager;
 
 

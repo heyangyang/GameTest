@@ -3,7 +3,7 @@ package hy.rpg.parser
 	import flash.utils.ByteArray;
 
 	import hy.game.cfg.Config;
-	import hy.game.core.interfaces.IBitmapData;
+	import hy.game.interfaces.display.IBitmapData;
 	import hy.game.render.SDirectBitmapData;
 	import hy.game.render.SRender;
 	import hy.game.stage3D.texture.STexture;

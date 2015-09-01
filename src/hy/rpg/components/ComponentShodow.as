@@ -3,7 +3,6 @@ package hy.rpg.components
 	import hy.game.cfg.Config;
 	import hy.game.components.SRenderComponent;
 	import hy.game.manager.SLayerManager;
-	import hy.game.render.SRender;
 	import hy.game.resources.SResourceMagnger;
 	import hy.rpg.components.data.DataComponent;
 	import hy.rpg.enum.EnumRenderLayer;
@@ -31,29 +30,16 @@ package hy.rpg.components
 		override public function notifyAdded() : void
 		{
 			super.notifyAdded();
+			mLayerType = SLayerManager.LAYER_ENTITY;
 			mRender.bitmapData = SResourceMagnger.getInstance().getImageById("res_shadow_1", Config.supportDirectX);
-			mRender.layer = EnumRenderLayer.SHODOW;
+			//mRender.layer = EnumRenderLayer.SHODOW;
 		}
 
 		protected function updatePosition() : void
 		{
 			mRender.x = mTransform.screenX - (mRender.bitmapData.width >> 1);
 			mRender.y = mTransform.screenY - 20;
-		}
-
-		/**
-		 * 不添加到父类，直接添加到name层
-		 * @param render
-		 *
-		 */
-		protected override function addRender(render : SRender) : void
-		{
-			SLayerManager.getInstance().push(SLayerManager.LAYER_ENTITY, render);
-		}
-
-		protected override function removeRender(render : SRender) : void
-		{
-			SLayerManager.getInstance().push(SLayerManager.LAYER_ENTITY, render);
+			mRender.depth = mTransform.screenY;
 		}
 	}
 }

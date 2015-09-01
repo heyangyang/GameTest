@@ -2,7 +2,6 @@ package hy.rpg.components
 {
 	import hy.game.components.SRenderComponent;
 	import hy.game.manager.SLayerManager;
-	import hy.game.render.SRender;
 	import hy.rpg.components.data.DataComponent;
 	import hy.rpg.enum.EnumRenderLayer;
 	import hy.rpg.utils.UtilsHpBar;
@@ -35,7 +34,8 @@ package hy.rpg.components
 		override public function notifyAdded() : void
 		{
 			super.notifyAdded();
-			mRender.layer = EnumRenderLayer.HP;
+			mLayerType = SLayerManager.LAYER_HP;
+			//mRender.layer = EnumRenderLayer.HP;
 			mLastHp = -1;
 		}
 
@@ -68,21 +68,7 @@ package hy.rpg.components
 		{
 			mRender.x = mTransform.screenX - 30;
 			mRender.y = mTransform.screenY - mTransform.height - mOffsetY - mTransform.z + mTransform.centerOffsetY;
-		}
-
-		/**
-		 * 不添加到父类，直接添加到name层
-		 * @param render
-		 *
-		 */
-		protected override function addRender(render : SRender) : void
-		{
-			SLayerManager.getInstance().push(SLayerManager.LAYER_HP, render);
-		}
-
-		protected override function removeRender(render : SRender) : void
-		{
-			SLayerManager.getInstance().push(SLayerManager.LAYER_HP, render);
+			mRender.depth = mTransform.screenY;
 		}
 
 		override protected function updateRenderVisible() : void

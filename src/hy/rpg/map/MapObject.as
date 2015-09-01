@@ -3,7 +3,7 @@ package hy.rpg.map
 	import flash.geom.Point;
 	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
-
+	
 	import hy.game.cfg.Config;
 	import hy.game.core.GameDispatcher;
 	import hy.game.core.GameObject;
@@ -346,19 +346,6 @@ package hy.rpg.map
 			updateCamera(SCameraObject.sceneX, SCameraObject.sceneY);
 		}
 
-		/**
-		 * 更新transform的一些信息
-		 *
-		 */
-		override protected function updateTransform() : void
-		{
-			if (transform.x != SCameraObject.sceneX || transform.y != SCameraObject.sceneY)
-			{
-				mRender.x = transform.x = -SCameraObject.sceneX;
-				mRender.y = transform.y = -SCameraObject.sceneY;
-			}
-		}
-
 		public function updateCamera(viewX : Number, viewY : Number) : void
 		{
 			if (!mIsLoaded)
@@ -369,10 +356,10 @@ package hy.rpg.map
 			//如果相等，表示镜头没有移动，则不需要更新
 			if (viewX == mLastViewX && viewY == mLastViewY)
 				return;
-
+			transform.x = mRender.x = -viewX;
+			transform.y = mRender.y = -viewY;
 			mLastViewX = viewX;
 			mLastViewY = viewY;
-
 			//计算出缓冲区开始的索引
 
 			mBufferRect.x = Math.floor(viewX / mTileWidth) - mBufferNum;
@@ -520,7 +507,7 @@ package hy.rpg.map
 		{
 			if (!tile)
 				return;
-			mRender.removeChild(tile.render);
+			mRender.removeDisplay(tile.render);
 			tile.release();
 		}
 
