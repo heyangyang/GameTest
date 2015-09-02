@@ -85,7 +85,7 @@ package hy.rpg.manager
 			var heroTypes : Array = ["SHHeroAsura", "SHHeroExtreme", "SHHeroGhostValley", "SHHeroMoYingMan", "SHHeroMoYingWoman", "SHHeroXuanMing", "SHHeroHiddenFaery"];
 			var heroWeapons : Array = ["sw_3_0", "sw_6_1", "sw_4_0", "sw_10_1", "sw_10_0", "sw_xuan", "sw_hidden"];
 			var heroWings : Array = ["SHHeroWing_G", "", "SHHeroWing_G", "SHHeroMoYingWing", "SHHeroMoYingWingWoman", "SHHeroWing_G", "SHHeroWing_G"];
-			var heroMounts : Array = ["SHMountTaoTie", "SHMountTaoTie", "SHMountTaoTie", "SHMountTaoTie", "SHMountTaoTie", "SHMountTaoTie", "SHMountTaoTie"];
+			var heroMounts : Array = ["SHMoutDragon", "SHMountYingLong", "SHMountTaoTie", "SHMountQiongQi", "SHmountIceFenghuang", "SHMountDarkDragon", "SHMountChiru"];
 			var data : DataComponent;
 			var len : int = heroTypes.length - 1;
 			var index : int;
@@ -100,7 +100,8 @@ package hy.rpg.manager
 			data.avatarId = "SHHeroXuanMing";
 			data.weaponId = "sw_6_1";
 			data.wingId = "SHHeroWing_G";
-			data.mountId = "SHMountTaoTie";
+			data.mountId = "SHMoutDragon";
+//			data.mountId = "SHMountTaoTie";
 			data.name = "无法无天";
 			data.isMe = true;
 			data.action = SActionType.IDLE;
@@ -108,7 +109,7 @@ package hy.rpg.manager
 			data.id = 999999;
 			mObjectDatas.push(data);
 
-			for (var i : int = 0; i < 0; i++)
+			for (var i : int = 0; i < 500;)
 			{
 				gridX = UtilsCommon.getGridXByPixel(sceneW * Math.random());
 				gridY = UtilsCommon.getGridYByPixel(sceneH * Math.random());
@@ -131,6 +132,8 @@ package hy.rpg.manager
 				data.transform.dir = 1 + int(6 * Math.random());
 				data.transform.x = UtilsCommon.getPixelXByGrid(gridX);
 				data.transform.y = UtilsCommon.getPixelYByGrid(gridY);
+//				data.transform.x = UtilsCommon.getPixelXByGrid(30);
+//				data.transform.y = UtilsCommon.getPixelYByGrid(22);
 				data.id = i++;
 				mObjectDatas.push(data);
 			}

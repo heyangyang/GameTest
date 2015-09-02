@@ -101,7 +101,7 @@ package hy.rpg.manager
 			stateComponent.setStates([StateStand, StateWalk]);
 			//鼠标组件
 			heroObject.addComponent(new ComponentMouse());
-//			addTargetEffect(heroObject, "expGuangHuan", null, 0, SLayerManager.LAYER_EFFECT_BOTTOM);
+			addTargetEffect(heroObject, "expGuangHuan", null, 0, SLayerManager.LAYER_EFFECT_BOTTOM);
 			heroObject.registerd(EnumPriority.PRIORITY_MAX);
 			//为镜头添加焦点对象
 			SCameraObject.getInstance().setGameFocus(heroObject);

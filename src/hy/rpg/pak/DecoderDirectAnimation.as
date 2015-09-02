@@ -3,7 +3,7 @@ package hy.rpg.pak
 	import flash.geom.Point;
 	import flash.system.System;
 	import flash.utils.ByteArray;
-
+	
 	import hy.game.interfaces.display.IBitmapData;
 	import hy.game.manager.SReferenceManager;
 	import hy.game.resources.SResource;

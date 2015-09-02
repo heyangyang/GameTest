@@ -17,6 +17,5 @@ package
 		{
 			new GameFrameStart(stage, new GameStarter());
 		}
-
 	}
 }
