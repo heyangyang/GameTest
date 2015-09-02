@@ -4,6 +4,7 @@ package
 	import hy.game.manager.SReferenceManager;
 	import hy.game.monitor.SMonitor;
 	import hy.game.stage3D.SRenderSupport;
+	import hy.game.stage3D.SVertexBufferManager;
 	import hy.game.starter.SGameStartBase;
 	import hy.rpg.manager.ManagerGameObject;
 	import hy.rpg.starter.GameNodeEnmu;
@@ -50,6 +51,7 @@ package
 			monitor.watchProperty(STime, "deltaTime", "deltaTime", 0x00ff00);
 			monitor.watchProperty(STime, "passedTime", "passedTime", 0x00ff00);
 			monitor.watchProperty(SRenderSupport, "drawCount", "drawCount", 0x00ff00);
+			monitor.watchProperty(SVertexBufferManager, "vertexCount", "vertexCount", 0x00ff00);
 
 			addNodeByType(GameNodeEnmu.base_config);
 			addNodeByType(GameNodeEnmu.start_starling);

@@ -3,6 +3,7 @@ package hy.rpg.manager
 	import flash.utils.Dictionary;
 
 	import hy.game.avatar.SActionType;
+	import hy.game.cfg.Config;
 	import hy.game.core.GameObject;
 	import hy.game.core.SCameraObject;
 	import hy.game.core.SUpdate;
@@ -100,8 +101,10 @@ package hy.rpg.manager
 			data.avatarId = "SHHeroXuanMing";
 			data.weaponId = "sw_6_1";
 			data.wingId = "SHHeroWing_G";
-			data.mountId = "SHMoutDragon";
-//			data.mountId = "SHMountTaoTie";
+			if (Config.supportDirectX)
+				data.mountId = "SHMoutDragon";
+			else
+				data.mountId = "SHMountTaoTie";
 			data.name = "无法无天";
 			data.isMe = true;
 			data.action = SActionType.IDLE;
@@ -109,7 +112,7 @@ package hy.rpg.manager
 			data.id = 999999;
 			mObjectDatas.push(data);
 
-			for (var i : int = 0; i < 500;)
+			for (var i : int = 0; i < 1; )
 			{
 				gridX = UtilsCommon.getGridXByPixel(sceneW * Math.random());
 				gridY = UtilsCommon.getGridYByPixel(sceneH * Math.random());
@@ -123,7 +126,10 @@ package hy.rpg.manager
 				data.avatarId = data.name;
 				data.weaponId = heroWeapons[index];
 				data.wingId = heroWings[index];
-				data.mountId = heroMounts[index];
+				if (Config.supportDirectX)
+					data.mountId = heroMounts[index];
+				else
+					data.mountId = "SHMountTaoTie";
 				data.speed = 0.2;
 				data.level = 100 * Math.random();
 				data.hp_max = 200 * data.level;
@@ -132,8 +138,8 @@ package hy.rpg.manager
 				data.transform.dir = 1 + int(6 * Math.random());
 				data.transform.x = UtilsCommon.getPixelXByGrid(gridX);
 				data.transform.y = UtilsCommon.getPixelYByGrid(gridY);
-//				data.transform.x = UtilsCommon.getPixelXByGrid(30);
-//				data.transform.y = UtilsCommon.getPixelYByGrid(22);
+				data.transform.x = UtilsCommon.getPixelXByGrid(30);
+				data.transform.y = UtilsCommon.getPixelYByGrid(22);
 				data.id = i++;
 				mObjectDatas.push(data);
 			}

@@ -138,7 +138,7 @@ package hy.rpg.manager
 			//shodow
 			heroObject.addComponent(new ComponentShodow());
 			heroObject.addComponent(new SCollisionComponent());
-			heroObject.addComponent(new ComponentAi());
+//			heroObject.addComponent(new ComponentAi());
 			var stateComponent : StateComponent = new StateComponent();
 			heroObject.addComponent(stateComponent, EnumPriority.PRIORITY_6);
 			stateComponent.setStates([StateStand, StateWalk]);
