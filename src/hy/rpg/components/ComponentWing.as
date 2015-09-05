@@ -17,7 +17,7 @@ package hy.rpg.components
 		{
 			super.notifyAdded();
 			mResource.priority = EnumLoadPriority.WING;
-			mIsUseFilters = false;
+//			mIsUseFilters = false;
 			mUseDefaultAvatar = false;
 		}
 

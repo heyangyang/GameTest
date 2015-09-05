@@ -22,7 +22,7 @@ package hy.rpg.components
 			super.notifyAdded();
 			mResource.priority = EnumLoadPriority.MOUNT;
 			mUseCenterOffsetY = false;
-			mIsUseFilters = false;
+//			mIsUseFilters = false;
 			mUseDefaultAvatar = false;
 		}
 

@@ -32,7 +32,7 @@ package hy.rpg.components
 			super.notifyAdded();
 			mLayerType = SLayerManager.LAYER_ENTITY;
 			mRender.bitmapData = SResourceMagnger.getInstance().getImageById("res_shadow_1", Config.supportDirectX);
-			//mRender.layer = EnumRenderLayer.SHODOW;
+			mRender.layer = EnumRenderLayer.SHODOW;
 		}
 
 		protected function updatePosition() : void
