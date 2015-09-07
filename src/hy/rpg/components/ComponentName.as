@@ -65,7 +65,7 @@ package hy.rpg.components
 		private function updateRender() : void
 		{
 			parser = SReferenceManager.getInstance().createRoleName(mData.name + "[" + mData.level + "级]");
-			mRender.bitmapData = mParser.bitmapData;
+			mRender.data = mParser.bitmapData;
 			mData.updateName = false;
 		}
 

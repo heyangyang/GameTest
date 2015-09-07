@@ -3,15 +3,15 @@ package hy.rpg.map
 	import flash.geom.Point;
 	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
-	
+
 	import hy.game.cfg.Config;
 	import hy.game.core.GameDispatcher;
 	import hy.game.core.GameObject;
 	import hy.game.core.SCameraObject;
 	import hy.game.data.SRectangle;
+	import hy.game.interfaces.display.IDisplayContainer;
 	import hy.game.manager.SLayerManager;
 	import hy.game.manager.SReferenceManager;
-	import hy.game.render.SRender;
 	import hy.game.resources.SResource;
 	import hy.rpg.enum.EnumLoadPriority;
 	import hy.rpg.parser.ParserImageResource;
@@ -36,7 +36,7 @@ package hy.rpg.map
 		/**
 		 * 渲染对象
 		 */
-		protected var mRender : SRender;
+		protected var mRender : IDisplayContainer;
 		/**
 		 * 地图宽高
 		 */
@@ -145,7 +145,6 @@ package hy.rpg.map
 
 		public function MapObject(min_scale : Number)
 		{
-			mRender = new SRender();
 			mScale = min_scale;
 			mCamera = SCameraObject.getInstance();
 			mTiles = new Dictionary();
@@ -156,14 +155,14 @@ package hy.rpg.map
 		override public function registerd(priority : int = 0) : void
 		{
 			super.registerd(priority);
-			SLayerManager.getInstance().push(SLayerManager.LAYER_MAP, mRender);
+			mRender = SLayerManager.getInstance().getLayer(SLayerManager.LAYER_MAP);
 			GameDispatcher.addEventListener(GameDispatcher.RESIZE, onResizeHandler);
 		}
 
 		override public function unRegisterd() : void
 		{
 			super.unRegisterd();
-			SLayerManager.getInstance().remove(SLayerManager.LAYER_MAP, mRender);
+			mRender = null;
 			GameDispatcher.removeEventListener(GameDispatcher.RESIZE, onResizeHandler);
 		}
 
@@ -460,7 +459,7 @@ package hy.rpg.map
 			}
 			res.render.x = mLoadTilePos.x * mTileWidth;
 			res.render.y = mLoadTilePos.y * mTileHeight;
-			mRender.addChild(res.render);
+			mRender.addDisplay(res.render);
 		}
 
 		/**
@@ -507,7 +506,7 @@ package hy.rpg.map
 		{
 			if (!tile)
 				return;
-			mRender.removeDisplay(tile.render);
+			tile.render && mRender.removeDisplay(tile.render);
 			tile.release();
 		}
 

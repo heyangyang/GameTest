@@ -85,12 +85,12 @@ package hy.rpg.manager
 			//avatar组件
 			if (data.avatarId)
 				heroObject.addComponent(new SAvatarComponent(), EnumPriority.PRIORITY_9);
-			if (data.weaponId)
-				heroObject.addComponent(new ComponentWeapon(), EnumPriority.PRIORITY_7);
-			if (data.wingId)
-				heroObject.addComponent(new ComponentWing(), EnumPriority.PRIORITY_7);
-			if (data.mountId)
-				heroObject.addComponent(new ComponentMount(), EnumPriority.PRIORITY_8);
+//			if (data.weaponId)
+//				heroObject.addComponent(new ComponentWeapon(), EnumPriority.PRIORITY_7);
+//			if (data.wingId)
+//				heroObject.addComponent(new ComponentWing(), EnumPriority.PRIORITY_7);
+//			if (data.mountId)
+//				heroObject.addComponent(new ComponentMount(), EnumPriority.PRIORITY_8);
 			//名字组件
 			heroObject.addComponent(new ComponentName());
 			heroObject.addComponent(new ComponentHp());
@@ -122,12 +122,12 @@ package hy.rpg.manager
 			//avatar组件
 			if (data.avatarId)
 				heroObject.addComponent(new SAvatarComponent(), EnumPriority.PRIORITY_9);
-			if (data.weaponId)
-				heroObject.addComponent(new ComponentWeapon(), EnumPriority.PRIORITY_7);
-			if (data.wingId)
-				heroObject.addComponent(new ComponentWing(), EnumPriority.PRIORITY_7);
-			if (data.mountId)
-				heroObject.addComponent(new ComponentMount(), EnumPriority.PRIORITY_8);
+//			if (data.weaponId)
+//				heroObject.addComponent(new ComponentWeapon(), EnumPriority.PRIORITY_7);
+//			if (data.wingId)
+//				heroObject.addComponent(new ComponentWing(), EnumPriority.PRIORITY_7);
+//			if (data.mountId)
+//				heroObject.addComponent(new ComponentMount(), EnumPriority.PRIORITY_8);
 			//名字组件
 			var renderComponent : SRenderComponent = new ComponentName();
 			//renderComponent.setVisible(false);

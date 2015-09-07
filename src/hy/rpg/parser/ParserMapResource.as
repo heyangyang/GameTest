@@ -1,11 +1,13 @@
 package hy.rpg.parser
 {
 	import flash.utils.ByteArray;
-
+	
 	import hy.game.cfg.Config;
+	import hy.game.interfaces.display.IBitmap;
 	import hy.game.interfaces.display.IBitmapData;
+	import hy.game.render.SDirectBitmap;
 	import hy.game.render.SDirectBitmapData;
-	import hy.game.render.SRender;
+	import hy.game.render.SRenderBitmap;
 	import hy.game.stage3D.texture.STexture;
 	import hy.rpg.enum.EnumLoadPriority;
 
@@ -16,7 +18,7 @@ package hy.rpg.parser
 	 */
 	public class ParserMapResource extends ParserPakResource
 	{
-		private var mRender : SRender;
+		private var mRender : IBitmap;
 		private var mTexture : SDirectBitmapData;
 
 		public function ParserMapResource(id : String, version : String = null, priority : int = EnumLoadPriority.MAP)
@@ -44,14 +46,17 @@ package hy.rpg.parser
 			return decoder ? decoder.getResult() : null;
 		}
 
-		public function get render() : SRender
+		public function get render() : IBitmap
 		{
 			if (bitmapData == null)
 				return null;
 			if (mRender)
 				return mRender;
-			mRender = new SRender();
-			mRender.bitmapData = bitmapData;
+			if (Config.supportDirectX)
+				mRender = new SDirectBitmap();
+			else
+				mRender = new SRenderBitmap();
+			mRender.data = bitmapData;
 			return mRender;
 		}
 

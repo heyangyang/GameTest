@@ -55,7 +55,7 @@ package hy.rpg.components
 			if (mLastHp != mData.hp_cur)
 			{
 				mLastHp = mData.hp_cur;
-				mRender.bitmapData = UtilsHpBar.getHp(mData.hp_cur / mData.hp_max * 100);
+				mRender.data = UtilsHpBar.getHp(mData.hp_cur / mData.hp_max * 100);
 			}
 			if (mIsUpdatable)
 			{

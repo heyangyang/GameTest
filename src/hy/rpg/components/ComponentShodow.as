@@ -31,13 +31,13 @@ package hy.rpg.components
 		{
 			super.notifyAdded();
 			mLayerType = SLayerManager.LAYER_ENTITY;
-			mRender.bitmapData = SResourceMagnger.getInstance().getImageById("res_shadow_1", Config.supportDirectX);
+			mRender.data = SResourceMagnger.getInstance().getImageById("res_shadow_1", Config.supportDirectX);
 			mRender.layer = EnumRenderLayer.SHODOW;
 		}
 
 		protected function updatePosition() : void
 		{
-			mRender.x = mTransform.screenX - (mRender.bitmapData.width >> 1);
+			mRender.x = mTransform.screenX - (mRender.width >> 1);
 			mRender.y = mTransform.screenY - 20;
 			mRender.depth = mTransform.screenY;
 		}
