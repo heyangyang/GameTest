@@ -1,9 +1,8 @@
 package hy.rpg.render
 {
-	import flash.display3D.Context3DTextureFormat;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
-
+	
 	import hy.game.cfg.Config;
 	import hy.game.core.SReference;
 	import hy.game.interfaces.display.IBitmapData;
