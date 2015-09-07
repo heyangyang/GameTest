@@ -13,7 +13,7 @@ package
 	import hy.rpg.starter.StarterEnterScene;
 	import hy.rpg.starter.StarterMapLoader;
 	import hy.rpg.starter.StarterShortcutKey;
-	import hy.rpg.starter.StarterStarling;
+	import hy.rpg.starter.StarterStage3d;
 
 	/**
 	 * 启动器
@@ -34,7 +34,7 @@ package
 			addNodeByClass(StarterMapLoader);
 			addNodeByClass(StarterEnterScene);
 			addNodeByClass(StarterShortcutKey);
-			addNodeByClass(StarterStarling);
+			addNodeByClass(StarterStage3d);
 			onFirstStart();
 		}
 

@@ -1,9 +1,10 @@
 package hy.rpg.starter
 {
 	import flash.display.DisplayObject;
-
+	
 	import hy.game.GameFrameStart;
 	import hy.game.cfg.Config;
+	import hy.game.components.SCollisionComponent;
 	import hy.game.core.event.SEvent;
 	import hy.game.stage3D.SStage3D;
 	import hy.game.starter.SStartNode;
@@ -13,11 +14,11 @@ package hy.rpg.starter
 	 * @author wait
 	 *
 	 */
-	public class StarterStarling extends SStartNode
+	public class StarterStage3d extends SStartNode
 	{
 		private var mStage3d : SStage3D;
 
-		public function StarterStarling()
+		public function StarterStage3d()
 		{
 		}
 
@@ -25,9 +26,6 @@ package hy.rpg.starter
 		{
 			if (!Config.supportDirectX)
 			{
-				//地图宽度
-				Config.TILE_WIDTH = Config.TILE_HEIGHT = 200;
-				GameFrameStart.current.onStart();
 				nextNode();
 				return;
 			}
@@ -43,13 +41,17 @@ package hy.rpg.starter
 			mStage3d.removeEventListener(SEvent.ROOT_CREATED, onRootCreated);
 			mStage3d.start();
 			Config.supportDirectX = SStage3D.context.driverInfo.indexOf("Software") == -1;
+			nextNode();
+		}
+
+		protected override function nextNode() : void
+		{
 			if (!Config.supportDirectX)
-			{
 				//地图宽度
 				Config.TILE_WIDTH = Config.TILE_HEIGHT = 200;
-			}
+			SCollisionComponent.init(Config.supportDirectX);
 			GameFrameStart.current.onStart();
-			nextNode();
+			super.nextNode();
 		}
 
 		override public function get id() : String

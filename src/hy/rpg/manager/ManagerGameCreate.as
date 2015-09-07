@@ -85,8 +85,8 @@ package hy.rpg.manager
 			//avatar组件
 			if (data.avatarId)
 				heroObject.addComponent(new SAvatarComponent(), EnumPriority.PRIORITY_9);
-//			if (data.weaponId)
-//				heroObject.addComponent(new ComponentWeapon(), EnumPriority.PRIORITY_7);
+			if (data.weaponId)
+				heroObject.addComponent(new ComponentWeapon(), EnumPriority.PRIORITY_7);
 //			if (data.wingId)
 //				heroObject.addComponent(new ComponentWing(), EnumPriority.PRIORITY_7);
 //			if (data.mountId)
@@ -122,8 +122,8 @@ package hy.rpg.manager
 			//avatar组件
 			if (data.avatarId)
 				heroObject.addComponent(new SAvatarComponent(), EnumPriority.PRIORITY_9);
-//			if (data.weaponId)
-//				heroObject.addComponent(new ComponentWeapon(), EnumPriority.PRIORITY_7);
+			if (data.weaponId)
+				heroObject.addComponent(new ComponentWeapon(), EnumPriority.PRIORITY_7);
 //			if (data.wingId)
 //				heroObject.addComponent(new ComponentWing(), EnumPriority.PRIORITY_7);
 //			if (data.mountId)

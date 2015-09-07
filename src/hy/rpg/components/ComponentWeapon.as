@@ -31,7 +31,7 @@ package hy.rpg.components
 		{
 			if (mData.isRide && mData.action != SActionType.ATTACK)
 			{
-				mRender.bitmapData = null;
+				mRender.data = null;
 				return;
 			}
 			super.update();
