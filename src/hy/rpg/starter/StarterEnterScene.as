@@ -3,6 +3,7 @@ package hy.rpg.starter
 	import hy.game.monitor.SMonitor;
 	import hy.game.starter.SStartNode;
 	import hy.rpg.manager.ManagerGameObject;
+	import hy.rpg.weather.SRainWeather;
 
 	/**
 	 * 转换场景
@@ -25,6 +26,7 @@ package hy.rpg.starter
 		{
 			ManagerGameObject.getInstance().registerd();
 			SMonitor.getInstance().registerd();
+			SRainWeather.getInstance().registerd();
 		}
 
 		override public function get id() : String
