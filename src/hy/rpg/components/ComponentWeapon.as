@@ -5,6 +5,11 @@ package hy.rpg.components
 	import hy.rpg.enum.EnumLoadPriority;
 	import hy.rpg.enum.EnumRenderLayer;
 
+	/**
+	 * 武器
+	 * @author hyy
+	 *
+	 */
 	public class ComponentWeapon extends SAvatarComponent
 	{
 		public function ComponentWeapon(type : * = null)
@@ -42,11 +47,15 @@ package hy.rpg.components
 		override protected function changeAvatarAction() : void
 		{
 			if (mTransform.isRide)
-				mAvatar.gotoAnimation(SActionType.SIT, mTransform.dir, 0, 0);
-			else
-				mAvatar.gotoAnimation(mTransform.action, mTransform.dir, 0, 0);
+				return;
+			mAvatar.gotoAnimation(mTransform.action, mTransform.dir, 0, 0);
+			mUpdateRectangle = true;
 		}
 
+		/**
+		 * 加载完毕
+		 *
+		 */
 		override protected function onLoadAvatarComplete() : void
 		{
 			changeAvatarAction();

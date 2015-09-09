@@ -83,9 +83,10 @@ package hy.rpg.manager
 			heroObject.transform = data.transform;
 			heroObject.addComponent(data);
 			//avatar组件
+			var avatarCom : SAvatarComponent;
 			if (data.avatarId)
 			{
-				var avatarCom : SAvatarComponent = new SAvatarComponent();
+				avatarCom = new SAvatarComponent();
 				avatarCom.autoUpdateFrame = true;
 				avatarCom.useCenterOffsetY = true;
 				avatarCom.isUseFilters = true;
@@ -94,10 +95,14 @@ package hy.rpg.manager
 			}
 			if (data.weaponId)
 				heroObject.addComponent(new ComponentWeapon(), EnumPriority.PRIORITY_7);
-//			if (data.wingId)
-//				heroObject.addComponent(new ComponentWing(), EnumPriority.PRIORITY_7);
-//			if (data.mountId)
-//				heroObject.addComponent(new ComponentMount(), EnumPriority.PRIORITY_8);
+			if (data.wingId)
+			{
+				avatarCom = new ComponentWing()
+				avatarCom.useCenterOffsetY = true;
+				heroObject.addComponent(avatarCom, EnumPriority.PRIORITY_7);
+			}
+			if (data.mountId)
+				heroObject.addComponent(new ComponentMount(), EnumPriority.PRIORITY_8);
 			//名字组件
 			heroObject.addComponent(new ComponentName());
 			heroObject.addComponent(new ComponentHp());
@@ -127,9 +132,10 @@ package hy.rpg.manager
 			heroObject.transform = data.transform;
 			heroObject.addComponent(data);
 			//avatar组件
+			var avatarCom : SAvatarComponent;
 			if (data.avatarId)
 			{
-				var avatarCom : SAvatarComponent = new SAvatarComponent();
+				avatarCom = new SAvatarComponent();
 				avatarCom.autoUpdateFrame = true;
 				avatarCom.useCenterOffsetY = true;
 				avatarCom.isUseFilters = true;
@@ -138,10 +144,14 @@ package hy.rpg.manager
 			}
 			if (data.weaponId)
 				heroObject.addComponent(new ComponentWeapon(), EnumPriority.PRIORITY_7);
-//			if (data.wingId)
-//				heroObject.addComponent(new ComponentWing(), EnumPriority.PRIORITY_7);
-//			if (data.mountId)
-//				heroObject.addComponent(new ComponentMount(), EnumPriority.PRIORITY_8);
+			if (data.wingId)
+			{
+				avatarCom = new ComponentWing()
+				avatarCom.useCenterOffsetY = true;
+				heroObject.addComponent(avatarCom, EnumPriority.PRIORITY_7);
+			}
+			if (data.mountId)
+				heroObject.addComponent(new ComponentMount(), EnumPriority.PRIORITY_8);
 			//名字组件
 			var renderComponent : SRenderComponent = new ComponentName();
 			//renderComponent.setVisible(false);
@@ -152,7 +162,7 @@ package hy.rpg.manager
 			//shodow
 			heroObject.addComponent(new ComponentShodow());
 			heroObject.addComponent(new SCollisionComponent());
-//			heroObject.addComponent(new ComponentAi());
+			heroObject.addComponent(new ComponentAi());
 			var stateComponent : StateComponent = new StateComponent();
 			heroObject.addComponent(stateComponent, EnumPriority.PRIORITY_6);
 			stateComponent.setStates([StateStand, StateWalk]);

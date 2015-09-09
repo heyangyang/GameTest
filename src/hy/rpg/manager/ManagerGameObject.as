@@ -112,7 +112,7 @@ package hy.rpg.manager
 			data.id = 999999;
 			mObjectDatas.push(data);
 
-			for (var i : int = 0; i < 1; )
+			for (var i : int = 0; i < 10; )
 			{
 				gridX = UtilsCommon.getGridXByPixel(sceneW * Math.random());
 				gridY = UtilsCommon.getGridYByPixel(sceneH * Math.random());
@@ -138,8 +138,8 @@ package hy.rpg.manager
 				data.transform.dir = 1 + int(6 * Math.random());
 				data.transform.x = UtilsCommon.getPixelXByGrid(gridX);
 				data.transform.y = UtilsCommon.getPixelYByGrid(gridY);
-				data.transform.x = UtilsCommon.getPixelXByGrid(30);
-				data.transform.y = UtilsCommon.getPixelYByGrid(22);
+//				data.transform.x = UtilsCommon.getPixelXByGrid(30);
+//				data.transform.y = UtilsCommon.getPixelYByGrid(22);
 				data.id = i++;
 				mObjectDatas.push(data);
 			}
@@ -174,11 +174,6 @@ package hy.rpg.manager
 		 */
 		private function createAndDisposeObject() : void
 		{
-			if (!mHasCreatedObject && !mIsDataChange && SCameraObject.sceneX == mLastSceneX && SCameraObject.sceneY == mLastSceneY)
-				return;
-			mLastSceneX = SCameraObject.sceneX;
-			mLastSceneY = SCameraObject.sceneY;
-			mObjectNumChildren = 0;
 			for each (currUpdateGame in mVisaulObjects)
 			{
 				if (SCameraObject.isInScreen(currUpdateGame.transform))
@@ -189,6 +184,12 @@ package hy.rpg.manager
 				delete mVisaulObjects[currUpdateGame.id];
 				currUpdateGame.dispose();
 			}
+			
+			if (!mHasCreatedObject && !mIsDataChange && SCameraObject.sceneX == mLastSceneX && SCameraObject.sceneY == mLastSceneY)
+				return;
+			mLastSceneX = SCameraObject.sceneX;
+			mLastSceneY = SCameraObject.sceneY;
+			mObjectNumChildren = 0;
 
 			for each (var data : DataComponent in mObjectDatas)
 			{

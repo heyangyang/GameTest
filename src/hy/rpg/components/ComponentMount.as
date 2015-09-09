@@ -44,8 +44,13 @@ package hy.rpg.components
 		{
 			mRender.layer = EnumDirection.isBackDirection(mTransform.dir) ? EnumRenderLayer.MOUNT_BACK : EnumRenderLayer.MOUNT;
 			mAvatar.gotoAnimation(mTransform.action, mTransform.dir, 0, 0);
+			mUpdateRectangle = true;
 		}
 
+		/**
+		 * 加载完毕
+		 *
+		 */
 		override protected function onLoadAvatarComplete() : void
 		{
 			mTransform.centerOffsetY = -mAvatar.height;

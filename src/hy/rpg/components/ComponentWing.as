@@ -33,8 +33,13 @@ package hy.rpg.components
 		{
 			mAvatar.gotoDirection(mTransform.dir);
 			mRender.layer = EnumDirection.isBackDirection(mTransform.dir) ? EnumRenderLayer.WING_BACK : EnumRenderLayer.WING;
+			mUpdateRectangle = true;
 		}
 
+		/**
+		 * 加载完毕
+		 *
+		 */
 		override protected function onLoadAvatarComplete() : void
 		{
 			mAvatar.gotoAnimation(SActionType.IDLE, mTransform.dir, 0, 0);
