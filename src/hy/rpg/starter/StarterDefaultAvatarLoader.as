@@ -26,7 +26,7 @@ package hy.rpg.starter
 		 */
 		override public function onStart() : void
 		{
-			SAvatarComponent.default_avatar = mAvatar = new SAvatar();
+			SAvatarComponent.sDefaultAvatar = mAvatar = new SAvatar();
 			mAvatarResource = new SAvatarResource(mAvatar);
 			mAvatarResource.setAvatarId("SHHDefault");
 			mAvatarResource.addNotifyCompleted(onLoadAvatarComplete);

@@ -17,8 +17,6 @@ package hy.rpg.components
 			super.notifyAdded();
 			mResource.priority = EnumLoadPriority.WEAPON;
 			mRender.layer = EnumRenderLayer.WEAPON;
-//			mIsUseFilters = false;
-			mUseDefaultAvatar = false;
 		}
 
 		override protected function onStart() : void
@@ -29,7 +27,7 @@ package hy.rpg.components
 
 		override public function update() : void
 		{
-			if (mData.isRide && mData.action != SActionType.ATTACK)
+			if (mTransform.isRide && mTransform.action != SActionType.ATTACK)
 			{
 				mRender.data = null;
 				return;
@@ -41,17 +39,17 @@ package hy.rpg.components
 		 * 转换动作的一些操作
 		 *
 		 */
-		override protected function changeAnimation() : void
+		override protected function changeAvatarAction() : void
 		{
-			if (mData.isRide)
-				tmp_frame = mAvatar.gotoAnimation(SActionType.SIT, mDir, 0, 0);
+			if (mTransform.isRide)
+				mAvatar.gotoAnimation(SActionType.SIT, mTransform.dir, 0, 0);
 			else
-				tmp_frame = mAvatar.gotoAnimation(mAction, mDir, 0, 0);
+				mAvatar.gotoAnimation(mTransform.action, mTransform.dir, 0, 0);
 		}
 
 		override protected function onLoadAvatarComplete() : void
 		{
-			mDir = mAction = -1;
+			changeAvatarAction();
 		}
 	}
 }

@@ -3,7 +3,6 @@ package hy.rpg.components
 	import hy.game.components.SRenderComponent;
 	import hy.game.manager.SLayerManager;
 	import hy.rpg.components.data.DataComponent;
-	import hy.rpg.enum.EnumRenderLayer;
 	import hy.rpg.utils.UtilsHpBar;
 
 	/**
@@ -35,7 +34,6 @@ package hy.rpg.components
 		{
 			super.notifyAdded();
 			mLayerType = SLayerManager.LAYER_HP;
-			//mRender.layer = EnumRenderLayer.HP;
 			mLastHp = -1;
 		}
 

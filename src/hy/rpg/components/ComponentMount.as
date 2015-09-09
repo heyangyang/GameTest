@@ -21,16 +21,13 @@ package hy.rpg.components
 		{
 			super.notifyAdded();
 			mResource.priority = EnumLoadPriority.MOUNT;
-			mUseCenterOffsetY = false;
-//			mIsUseFilters = false;
-			mUseDefaultAvatar = false;
 		}
 
 		override public function notifyRemoved() : void
 		{
 			super.notifyRemoved();
-			if (mData)
-				mData.isRide = false;
+			if (mTransform)
+				mTransform.isRide = false;
 		}
 
 		override protected function onStart() : void
@@ -43,17 +40,17 @@ package hy.rpg.components
 		 * 转换动作的一些操作
 		 *
 		 */
-		override protected function changeAnimation() : void
+		override protected function changeAvatarAction() : void
 		{
-			mRender.layer = EnumDirection.isBackDirection(mDir) ? EnumRenderLayer.MOUNT_BACK : EnumRenderLayer.MOUNT;
-			tmp_frame = mAvatar.gotoAnimation(mAction, mDir, 0, 0);
+			mRender.layer = EnumDirection.isBackDirection(mTransform.dir) ? EnumRenderLayer.MOUNT_BACK : EnumRenderLayer.MOUNT;
+			mAvatar.gotoAnimation(mTransform.action, mTransform.dir, 0, 0);
 		}
 
 		override protected function onLoadAvatarComplete() : void
 		{
-			mDir = mAction = -1;
 			mTransform.centerOffsetY = -mAvatar.height;
-			mData.isRide = true;
+			mTransform.isRide = true;
+			changeAvatarAction();
 		}
 	}
 }

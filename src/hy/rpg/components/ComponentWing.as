@@ -17,8 +17,6 @@ package hy.rpg.components
 		{
 			super.notifyAdded();
 			mResource.priority = EnumLoadPriority.WING;
-//			mIsUseFilters = false;
-			mUseDefaultAvatar = false;
 		}
 
 		override protected function onStart() : void
@@ -31,16 +29,16 @@ package hy.rpg.components
 		 * 转换动作的一些操作
 		 *
 		 */
-		override protected function changeAnimation() : void
+		override protected function changeAvatarAction() : void
 		{
-			tmp_frame = mAvatar.gotoDirection(mDir);
-			mRender.layer = EnumDirection.isBackDirection(mDir) ? EnumRenderLayer.WING_BACK : EnumRenderLayer.WING;
+			mAvatar.gotoDirection(mTransform.dir);
+			mRender.layer = EnumDirection.isBackDirection(mTransform.dir) ? EnumRenderLayer.WING_BACK : EnumRenderLayer.WING;
 		}
 
 		override protected function onLoadAvatarComplete() : void
 		{
-			mDir = mAction = -1;
-			tmp_frame = mAvatar.gotoAnimation(SActionType.IDLE, mTransform.dir, 0, 0);
+			mAvatar.gotoAnimation(SActionType.IDLE, mTransform.dir, 0, 0);
+			changeAvatarAction();
 		}
 	}
 }

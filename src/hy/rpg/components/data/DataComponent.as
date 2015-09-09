@@ -17,12 +17,10 @@ package hy.rpg.components.data
 		public var weaponId : String;
 		public var wingId : String;
 		public var mountId : String;
-		public var action : int;
 		public var targetX : int;
 		public var targetY : int;
 		public var targetGridX : int;
 		public var targetGridY : int;
-		public var isRide : Boolean;
 		public var transform : STransform;
 
 		public function DataComponent(type : * = null)

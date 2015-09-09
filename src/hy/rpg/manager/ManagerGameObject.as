@@ -107,7 +107,7 @@ package hy.rpg.manager
 				data.mountId = "SHMountTaoTie";
 			data.name = "无法无天";
 			data.isMe = true;
-			data.action = SActionType.IDLE;
+			data.transform.action = SActionType.IDLE;
 			data.transform.dir = EnumDirection.SOUTH;
 			data.id = 999999;
 			mObjectDatas.push(data);
@@ -134,7 +134,7 @@ package hy.rpg.manager
 				data.level = 100 * Math.random();
 				data.hp_max = 200 * data.level;
 				data.hp_cur = data.hp_max * Math.random();
-				data.action = SActionType.IDLE;
+				data.transform.action = SActionType.IDLE;
 				data.transform.dir = 1 + int(6 * Math.random());
 				data.transform.x = UtilsCommon.getPixelXByGrid(gridX);
 				data.transform.y = UtilsCommon.getPixelYByGrid(gridY);
