@@ -9,6 +9,7 @@ package hy.rpg.components
 	import hy.game.state.StateComponent;
 	import hy.rpg.components.data.DataComponent;
 	import hy.rpg.manager.ManagerGameCreate;
+	import hy.rpg.seek.SRoadSeeker;
 	import hy.rpg.state.EnumState;
 	import hy.rpg.utils.UtilsCommon;
 
@@ -25,6 +26,7 @@ package hy.rpg.components
 		 */
 		private const mInterval : int = 100;
 
+		private var mSeekRoad : SRoadSeeker;
 		private var mData : DataComponent;
 		private var mState : StateComponent;
 		private var mDelay : int;
@@ -37,6 +39,7 @@ package hy.rpg.components
 
 		override protected function onStart() : void
 		{
+			mSeekRoad = SRoadSeeker.getInstance();
 			mState = mOwner.getComponentByType(StateComponent) as StateComponent;
 			mData = mOwner.getComponentByType(DataComponent) as DataComponent;
 			Config.stage.addEventListener(MouseEvent.CLICK, onClick);
@@ -54,10 +57,14 @@ package hy.rpg.components
 			if (STime.getTimer - mDelay < mInterval)
 				return;
 			mDelay = STime.getTimer;
-			mData.targetX = SCameraObject.sceneX + evt.stageX;
-			mData.targetY = SCameraObject.sceneY + evt.stageY;
-			mData.targetGridX = UtilsCommon.getGridXByPixel(mData.targetX);
-			mData.targetGridY = UtilsCommon.getGridYByPixel(mData.targetY);
+			var clickGridX : int = UtilsCommon.getGridXByPixel(SCameraObject.sceneX + evt.stageX);
+			var clickGridY : int = UtilsCommon.getGridYByPixel(SCameraObject.sceneY + evt.stageY);
+			if (mSeekRoad.isBlock(clickGridX, clickGridY))
+				return;
+			mData.targetGridX = clickGridX;
+			mData.targetGridY = clickGridY;
+			mData.targetX = UtilsCommon.getPixelXByGrid(clickGridX);
+			mData.targetY = UtilsCommon.getPixelYByGrid(clickGridY);
 			ManagerGameCreate.getInstance().createSceneEffect("clickRoad", (mClickCount++).toString(), mData.targetX, mData.targetY, 1);
 			mState.changeStateById(EnumState.WALK);
 		}

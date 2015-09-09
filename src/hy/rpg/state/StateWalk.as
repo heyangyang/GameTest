@@ -19,6 +19,8 @@ package hy.rpg.state
 		private var mPaths : Array;
 		private var mStep : int;
 		private var mStepEnd : int;
+		private var mStepTargetX : int;
+		private var mStepTargetY : int;
 		private var mLastTargetGridX : int;
 		private var mLastTargetGridY : int;
 		private var mTargetDistance : int;
@@ -42,9 +44,10 @@ package hy.rpg.state
 		{
 			if (mSeekRoad.isBlock(mData.targetGridX, mData.targetGridY))
 				return false;
-			mPaths = mSeekRoad.find(UtilsCommon.getGridXByPixel(mTransform.x), UtilsCommon.getGridXByPixel(mTransform.y), mData.targetGridX, mData.targetGridY);
-			if (!mPaths || mPaths.length == 0)
+			var tPaths : Array = mSeekRoad.find(UtilsCommon.getGridXByPixel(mTransform.x), UtilsCommon.getGridXByPixel(mTransform.y), mData.targetGridX, mData.targetGridY);
+			if (!tPaths || tPaths.length <= 1)
 				return false;
+			mPaths = tPaths;
 			return true;
 		}
 
@@ -57,7 +60,8 @@ package hy.rpg.state
 			mLastTargetGridX = mData.targetGridX;
 			mLastTargetGridY = mData.targetGridY;
 			mStepEnd = mPaths.length;
-			mStep = 0;
+			mStepTargetX = mStepTargetY = -1
+			mStep = 1;
 		}
 
 		/**
@@ -70,33 +74,45 @@ package hy.rpg.state
 			super.update();
 			if (mLastTargetGridX != mData.targetGridX || mLastTargetGridY != mData.targetGridY)
 			{
-				if (!tryChangeState())
+				if (tryChangeState())
 				{
-					onStand();
-					return;
+					enterState();
 				}
-				enterState();
 			}
 
-			mTargetDistance = UtilsCommon.getDistance(mTransform.x, mTransform.y, mData.targetX, mData.targetY);
+			if (mStepTargetX == -1 || mStepTargetY == -1)
+			{
+				mStepTargetX = UtilsCommon.getPixelXByGrid(mPaths[mStep][0]);
+				mStepTargetY = UtilsCommon.getPixelYByGrid(mPaths[mStep][1]);
+				updateAnagle();
+			}
+
+			mTargetDistance = UtilsCommon.getDistance(mTransform.x, mTransform.y, mStepTargetX, mStepTargetY);
 			mMoveSpeed = mData.speed * STime.deltaTime;
-			mTargetAnagle = UtilsCommon.getAngle(mTransform.x, mTransform.y, mData.targetX, mData.targetY);
+
 
 			//距离小于速度,达到这格格子末尾
 			if (mTargetDistance <= Math.ceil(mMoveSpeed))
 			{
-				onStand();
+				if (++mStep >= mStepEnd)
+				{
+					mTransform.x = mData.targetX;
+					mTransform.y = mData.targetY;
+					onStand();
+					return;
+				}
+				mStepTargetX = mStepTargetY = -1
 			}
-			else
-			{
-				mTransform.dir = UtilsCommon.getDirection(mTargetAnagle);
-				mTransform.mAddX = UtilsCommon.cosd(mTargetAnagle) * mMoveSpeed;
-				mTransform.mAddY = UtilsCommon.sind(mTargetAnagle) * mMoveSpeed;
-				mTransform.x += mTransform.mAddX;
-				mTransform.y += mTransform.mAddY;
-				if (!mData.isMe && !SCameraObject.isInScreen(mTransform))
-					ManagerGameObject.getInstance().deleteGameObject(mOwner);
-			}
+			mTransform.x += UtilsCommon.cosd(mTargetAnagle) * mMoveSpeed;
+			mTransform.y += UtilsCommon.sind(mTargetAnagle) * mMoveSpeed;
+//			if (!mData.isMe && !SCameraObject.isInScreen(mTransform))
+//				ManagerGameObject.getInstance().deleteGameObject(mOwner);
+		}
+
+		private function updateAnagle() : void
+		{
+			mTargetAnagle = UtilsCommon.getAngle(mTransform.x, mTransform.y, mStepTargetX, mStepTargetY);
+			mTransform.dir = UtilsCommon.getDirection(mTargetAnagle);
 		}
 
 		private function onStand() : void
